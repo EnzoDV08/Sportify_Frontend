@@ -1,9 +1,11 @@
 export interface Event {
+  eventId: number;
   title: string;
-  date: string; // Use `string` if you're returning ISO date from the API
   description?: string;
+  date: string;
   location: string;
   type?: string;
   visibility?: string;
   status?: string;
+  creatorId?: number;
 }
