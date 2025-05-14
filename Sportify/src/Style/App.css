@@ -1,0 +1,15 @@
+.layout-container {
+  display: flex;
+  height: 100vh;
+  width: 95vw;
+  overflow: hidden;
+  margin-left: 5vw;
+}
+
+
+.page-content {
+  flex-grow: 1;
+  background-color: #0d0f15;
+  padding: 2rem;
+  overflow-y: auto;
+}
