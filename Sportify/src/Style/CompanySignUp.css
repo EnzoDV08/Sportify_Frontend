@@ -1,5 +1,5 @@
-/* Full-screen background behind the form */
-.signup-background {
+/* Background styling */
+.company-signup-background {
   width: 100vw;
   height: 100vh;
   background-size: cover;
@@ -10,8 +10,8 @@
   justify-content: center;
 }
 
-/* Wrapper that contains image and form side by side */
-.signup-container {
+/* Container with side-by-side layout */
+.company-signup-container {
   display: flex;
   width: 85%;
   max-width: 1200px;
@@ -21,19 +21,19 @@
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
 }
 
-/* Left image styling */
-.signup-image {
+/* Left side image */
+.company-signup-image {
   width: 50%;
   position: relative;
 }
 
-.signup-image .background-img {
+.company-signup-image .background-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.signup-image .logo-overlay {
+.company-signup-image .logo-overlay {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -42,7 +42,7 @@
 }
 
 /* Form styles */
-.signup-form {
+.company-signup-form {
   width: 50%;
   padding: 3rem;
   display: flex;
@@ -62,44 +62,12 @@
   margin-bottom: 1rem;
   border-radius: 6px;
   border: 1px solid #ccc;
-    background-color: white;
-}
-
-.signup-divider {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 1.5rem 0;
-}
-
-.signup-divider hr {
-  flex: 1;
-  height: 1px;
-  background-color: #ccc;
-  border: none;
-}
-
-.signup-divider span {
-  margin: 0 1rem;
-  color: #666;
-}
-
-.signup-google {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 0.75rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  color: black;
   background-color: white;
-  cursor: pointer;
-  margin-bottom: 1rem;
+  resize: none;
 }
 
 .signup-checkbox {
-    color: black;
+  color: black;
   display: flex;
   align-items: center;
   font-size: 0.9rem;
@@ -156,7 +124,7 @@
 }
 
 .signup-login-text {
-    color: black;
+  color: black;
   margin-top: 1rem;
   text-align: center;
   font-size: 0.9rem;
@@ -166,31 +134,4 @@
   color: #e76f00;
   text-decoration: none;
   font-weight: bold;
-}
-
-.signup-company-box {
-  margin-top: 2rem;
-  text-align: center;
-}
-
-.signup-company-text {
-  color: #333;
-  font-size: 0.95rem;
-  margin-bottom: 0.5rem;
-}
-
-.signup-company-link {
-  color: #e76f00;
-  font-weight: bold;
-  text-decoration: none;
-  padding: 0.5rem 1rem;
-  border: 2px solid #e76f00;
-  border-radius: 5px;
-  display: inline-block;
-  transition: all 0.3s ease;
-}
-
-.signup-company-link:hover {
-  background-color: #e76f00;
-  color: white;
 }

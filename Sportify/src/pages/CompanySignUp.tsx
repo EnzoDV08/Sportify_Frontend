@@ -1,24 +1,28 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import '../Style/SignUp.css';
-import { createUser } from '../services/api';
+import '../Style/CompanySignUp.css';
+import { createCompany } from '../services/api';
 import vectorImage from '../assets/Vector8.png';
 import frameImage from '../assets/Frame12.png';
 import backgroundImage from '../assets/background.png';
 
-function SignUp() {
+function CompanySignUp() {
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
+    name: '',
     email: '',
-    username: '',
     password: '',
     confirmPassword: '',
+    description: '',
+    website: '',
     agreed: false
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const target = e.target as HTMLInputElement;
+    const { name, value, type, checked } = target;
+
     setForm(prev => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value
@@ -39,35 +43,37 @@ function SignUp() {
     }
 
     try {
-      await createUser({
-        name: form.username,
+      await createCompany({
+        name: form.name,
         email: form.email,
-        password: form.password
+        password: form.password,
+        description: form.description,
+        website: form.website
       });
 
-      alert('User created successfully!');
-      navigate('/dashboard');
+      alert('Organization registered successfully!');
+      navigate('/home');
     } catch (error) {
       console.error(error);
-      alert('Failed to create user.');
+      alert('Failed to register organization.');
     }
   };
 
   return (
     <div
-      className="signup-background"
+      className="company-signup-background"
       style={{ backgroundImage: `url(${backgroundImage})` }}
     >
-      <div className="signup-container">
-        {/* Left image side */}
-        <div className="signup-image">
+      <div className="company-signup-container">
+        {/* Left image */}
+        <div className="company-signup-image">
           <img src={vectorImage} alt="Vector" className="background-img" />
-          <img src={frameImage} alt="Logo overlay" className="logo-overlay" />
+          <img src={frameImage} alt="Logo" className="logo-overlay" />
         </div>
 
-        {/* Form side */}
-        <form onSubmit={handleSubmit} className="signup-form">
-          <h2 className="signup-title">CREATE ACCOUNT</h2>
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="company-signup-form">
+          <h2 className="signup-title">REGISTER ORGANIZATION</h2>
 
           <input
             type="email"
@@ -80,11 +86,27 @@ function SignUp() {
 
           <input
             type="text"
-            name="username"
-            placeholder="Username"
+            name="name"
+            placeholder="Organization Name"
             onChange={handleChange}
             className="signup-input"
             required
+          />
+
+          <input
+            type="text"
+            name="website"
+            placeholder="Website URL"
+            onChange={handleChange}
+            className="signup-input"
+          />
+
+          <textarea
+            name="description"
+            placeholder="Short Description"
+            onChange={handleChange}
+            className="signup-input"
+            rows={3}
           />
 
           <input
@@ -105,20 +127,6 @@ function SignUp() {
             required
           />
 
-          <div className="signup-divider">
-            <hr />
-            <span>or</span>
-            <hr />
-          </div>
-
-          <button type="button" className="signup-google">
-            <img
-              src="https://developers.google.com/identity/images/g-logo.png"
-              alt="Google"
-            />
-            <span>Sign Up with Google</span>
-          </button>
-
           <label className="signup-checkbox">
             <input
               type="checkbox"
@@ -130,19 +138,13 @@ function SignUp() {
           </label>
 
           <button type="submit" className="signup-button">
-            Sign Up
+            Register Organization
           </button>
-          <div className="signup-company-box">
-  <p className="signup-company-text">Are you a sports organisation?</p>
-  <Link to="/company-signup" className="signup-company-link">
-    Register as a Partner
-  </Link>
-</div>
 
           <p className="signup-login-text">
-            Have an account?{' '}
-            <Link to="/login" className="signup-login-link">
-              Log In
+            Want to sign up as a regular user?{' '}
+            <Link to="/signup" className="signup-login-link">
+              Back to User Sign Up
             </Link>
           </p>
         </form>
@@ -151,4 +153,5 @@ function SignUp() {
   );
 }
 
-export default SignUp;
+export default CompanySignUp;
+
