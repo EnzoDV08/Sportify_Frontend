@@ -1,73 +1,63 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import '../Style/Login.css'
-import { loginUser } from '../services/api'
+import { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import '../Style/Login.css';
+import { loginUser } from '../services/api';
 
 function Login() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const [form, setForm] = useState({ email: '', password: '' });
 
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setForm(prev => ({ ...prev, [name]: value }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
+    console.log("Trying login with:", form);
 
     try {
-      await loginUser(email, password)
-      navigate('/dashboard')
-    } catch (err) {
-      setError('Invalid email or password')
+      const response = await loginUser(form.email, form.password);
+      console.log("Login successful:", response);
+
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('userType', response.userType);
+      localStorage.setItem('userId', response.userId); // optional
+
+      if (response.userType === 'admin') navigate('/dashboard');
+      else if (response.userType === 'company') navigate('/company-dashboard');
+      else navigate('/home');
+    } catch (error) {
+      console.error("Login failed:", error);
+      alert('Login failed. Please check your credentials.');
     }
-  }
+  };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
-      <div className="bg-white rounded-xl shadow-lg overflow-hidden w-full max-w-4xl flex">
-        {/* Left image panel */}
-        <div className="w-1/2 bg-cover bg-center" style={{ backgroundImage: `url('https://i.imgur.com/4M7IWwP.jpeg')` }} />
+    <form onSubmit={handleSubmit} className="login-form">
+      <h2 className="login-title">WELCOME BACK</h2>
 
-        {/* Right login form */}
-        <form onSubmit={handleSubmit} className="w-1/2 p-10 space-y-4">
-          <h2 className="text-2xl font-bold text-orange-600 mb-4">LOG IN</h2>
+      <input type="email" name="email" placeholder="Email" onChange={handleChange} className="login-input" required />
+      <input type="password" name="password" placeholder="Password" onChange={handleChange} className="login-input" required />
 
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full border px-4 py-2 rounded-md"
-            required
-          />
+      <button type="submit" className="login-button">Log In</button>
 
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full border px-4 py-2 rounded-md"
-            required
-          />
-
-          {error && <p className="text-red-500 text-sm">{error}</p>}
-
-          <button
-            type="submit"
-            className="w-full bg-orange-500 text-white py-2 rounded-full font-semibold hover:bg-orange-600"
-          >
-            Log In
-          </button>
-
-          <p className="text-sm text-center">
-            Don’t have an account?{' '}
-            <a href="/signup" className="text-orange-500 font-semibold hover:underline">
-              Sign Up
-            </a>
-          </p>
-        </form>
+      <div className="login-divider">
+        <hr />
+        <span>or</span>
+        <hr />
       </div>
-    </div>
-  )
+
+      <button type="button" className="login-google">
+        <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" />
+        <span>Log In with Google</span>
+      </button>
+
+      <p className="login-register-text">
+        Don't have an account? <Link to="/auth/signup" className="login-register-link">Sign Up</Link>
+      </p>
+    </form>
+  );
 }
 
-export default Login
+export default Login;

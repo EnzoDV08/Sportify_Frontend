@@ -88,15 +88,34 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  padding: 0.75rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  color: black;
-  background-color: white;
+  gap: 12px;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid #ccc;
+  border-radius: 999px;
+  background-color: #ffffff;
   cursor: pointer;
-  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  font-size: 1rem;
 }
+
+.signup-google img {
+  width: 22px;
+  height: 22px;
+}
+
+.signup-google span {
+  color: #444;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+.signup-google:hover {
+  border-color: #e76f00;
+  background-color: #fdf5ef;
+}
+
 
 .signup-checkbox {
     color: black;
@@ -104,6 +123,7 @@
   align-items: center;
   font-size: 0.9rem;
   margin-bottom: 1.5rem;
+  margin-top: 1rem;
 }
 
 .signup-checkbox input[type="checkbox"] {
@@ -194,3 +214,4 @@
   background-color: #e76f00;
   color: white;
 }
+
