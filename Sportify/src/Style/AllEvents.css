@@ -1,0 +1,418 @@
+.all-events-page {
+  padding: 2rem;
+  color: white;
+  min-height: 100vh;
+}
+
+.event-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  background-color: white;
+  border-radius: 20px;
+  padding: 10px 10px;
+  width: 100%;
+  color: #333;
+}
+
+.search-bar input {
+  border: none;
+  outline: none;
+  margin-left: 0.5rem;
+  font-size: 1rem;
+  background: transparent;
+  width: 100%;
+  color: #333;
+}
+
+.search-icon {
+  color: #ff9100;
+  font-size: 1.2rem;
+}
+
+/* Layout for Events This Week + Sidebar */
+.events-this-week-grid {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+}
+
+.main-column {
+  flex: 3;
+  min-width: 60%;
+}
+
+.sidebar-column {
+  flex: 1;
+  min-width: 250px;
+}
+
+.section-subtitle {
+  color: #ff9100;
+  font-size: 30px;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+/* Week Event Card */
+.week-event-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.week-grid-card {
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.week-grid-img {
+  height: 120px;
+  background: #ff9100;
+  width: 100%;
+}
+
+.week-grid-info {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.week-card-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  margin-bottom: 0.4rem;
+}
+
+.host-tag {
+  background: #eee;
+  color: #222;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.status-tag {
+  background: #2e7d32;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: bold;
+}
+
+.week-grid-title {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #ff9100;
+  margin: 0.3rem 0;
+}
+
+.week-grid-desc {
+  font-size: 0.85rem;
+  color: #555;
+  margin-bottom: 0.5rem;
+}
+
+.week-grid-meta {
+  font-size: 0.75rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
+.week-grid-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.5rem;
+}
+
+.visibility-tag {
+  background: #2c2c2c;
+  color: white;
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  border-radius: 8px;
+}
+
+.view-button {
+  background-color: #2c2c2c;
+  color: white;
+  border: none;
+  padding: 5px 14px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.view-button:hover {
+  background-color: #444;
+}
+
+/* Past Events Sidebar */
+.sidebar-title {
+  color: #ff9100;
+  font-size: 30px;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.past-events {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.past-card {
+  background-color: #3a3a3a;
+  padding: 0.75rem;
+  border-radius: 10px;
+  position: relative;
+  color: white;
+  font-size: 0.8rem;
+}
+
+.ended-tag {
+  background-color: #d32f2f;
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: bold;
+  display: inline-block;
+  margin-bottom: 0.3rem;
+}
+
+.past-title {
+  font-weight: bold;
+  font-size: 0.85rem;
+  margin: 0.2rem 0;
+}
+
+.past-meta {
+  font-size: 0.75rem;
+  color: #ddd;
+  margin-bottom: 0.3rem;
+}
+
+.past-user {
+  font-size: 0.75rem;
+  color: #fff;
+}
+
+/* Optional icon style */
+.past-meta::before {
+  content: "📍 ";
+}
+
+.section-title {
+  font-size: 50px;
+  margin-bottom: 2rem;
+  font-weight: bold;
+  color: #ff9100;
+}
+
+.events-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.event-card {
+  background-color: white;
+  display: flex;
+  overflow: hidden;
+  color: black;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  align-items: center;
+}
+
+.event-image-placeholder {
+  width: 490px;
+  height: 361px;
+  background-color: #ff9100;
+  flex-shrink: 0;
+}
+
+.host-logo-placeholder {
+  width: 40px;
+  height: 40px;
+  background-color: #3a3a3a;
+  border-radius: 6px;
+}
+
+.event-details {
+  padding: 1.5rem;
+  flex-grow: 1;
+  flex-direction: column;
+  display: flex;
+  justify-content: space-between;
+}
+
+.event-title {
+  font-size: 30px;
+  font-weight: bold;
+  color: #ff9100;
+}
+
+.event-description {
+  font-size: 20px;
+  color: #444;
+  margin: 0.5rem 0;
+}
+
+.event-location {
+  font-size: 15px;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.event-tags {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.visibility-tag {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 8px;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.visibility-tag.public {
+  background-color: #2c2c2c;
+  color: white;
+}
+
+.visibility-tag.private {
+  background-color: #ff1744;
+  color: white;
+}
+
+.hosted-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.host-logo {
+  width: 40px;
+  height: auto;
+  object-fit: contain;
+}
+
+.hosted-by {
+  font-size: 0.85rem;
+  color: #333;
+}
+
+.avatar-stack {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.8rem;
+}
+
+.avatars {
+  display: flex;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  background-color: #ccc;
+  border-radius: 50%;
+  margin-left: -6px;
+  border: 2px solid white;
+}
+
+.plus-count {
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.event-date-box {
+  text-align: center;
+  background-color: #fff3e0;
+  padding: 5rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-left: 2px solid #ff9100;
+  min-width: 100px;
+}
+
+.date-block {
+  font-weight: bold;
+  color: #000;
+}
+
+.month {
+  font-size: 35px;
+  color: #ff9100;
+}
+
+.day {
+  font-size: 30px;
+}
+
+.time {
+  font-size: 20px;
+  color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  margin-top: 0.3rem;
+}
+
+.view-btn {
+  margin-top: 1rem;
+  background-color: #ff9100;
+  color: white;
+  text-decoration: none;
+  padding: 15px 40px;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: bold;
+  display: inline-block;
+  transition: background 0.3s;
+}
+
+.view-btn:hover {
+  background-color: #ffaa33;
+}
+
+.event-icon {
+  margin-right: 6px;
+  vertical-align: middle;
+}

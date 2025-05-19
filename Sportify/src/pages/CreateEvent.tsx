@@ -10,6 +10,7 @@ function CreateEvent() {
   const [type, setType] = useState('');
   const [visibility, setVisibility] = useState('');
   const [status, setStatus] = useState('');
+  const [isPrivate, setIsPrivate] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,8 +25,13 @@ function CreateEvent() {
       type,
       visibility,
       status,
+      isPrivate,
       creatorId: userId,
-      eventId: 0, 
+      adminId: userId,
+      eventId: 0, // placeholder, backend generates real ID
+      invitedUserIds: null,
+      latitude: null,
+      longitude: null,
     };
 
     const response = await fetch('http://localhost:5000/api/events', {
@@ -81,6 +87,15 @@ function CreateEvent() {
           <option value="ongoing">Ongoing</option>
           <option value="completed">Completed</option>
         </select>
+
+        <label>
+          <input
+            type="checkbox"
+            checked={isPrivate}
+            onChange={(e) => setIsPrivate(e.target.checked)}
+          />
+          Private Event?
+        </label>
 
         <button type="submit">Create Event</button>
       </form>
