@@ -1,28 +1,65 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import Sidebar from '../Components/Sidebar';
-import AdminDashboard from '../pages/AdminDashboard';
-import AllEvents from '../pages/AllEvents';
-import SingleEvent from '../pages/SingleEvent';
-import CreateEvent from '../pages/CreateEvent';
-import '../Style/App.css';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import Login from './Login';
+import Home from './Home';
+import AllEvents from './AllEvents';
+import SingleEvent from './SingleEvent';
+import CreateEvent from './CreateEvent';
+import AdminDashboard from './AdminDashboard';
+import MainLayout from './MainLayout';
+
+const router = createBrowserRouter(
+  [
+    {
+      path: '/',
+      element: <Login /> 
+    },
+    {
+      path: '/',
+      element: <MainLayout />,
+      children: [
+        {
+      path: '/',
+      element: <Login /> 
+        },
+        {
+          path: '/home',
+          element: <Home />
+        },
+
+        {
+          path: '/dashboard',
+          element: <AdminDashboard />
+        },
+        {
+          path: '/events',
+          element: <AllEvents />
+        },
+        {
+          path: '/events/:id',
+          element: <SingleEvent />
+        },
+        {
+          path: '/add-event',
+          element: <CreateEvent />
+        }
+      ]
+    },
+    {
+      path: '*',
+      element: <Login />
+    }
+  ],
+  {
+    future: {
+      // @ts-expect-error — these aren't typed yet in v6.30
+      v7_startTransition: true,
+      v7_relativeSplatPath: true
+    }
+  }
+);
 
 function App() {
-  return (
-    <BrowserRouter>
-      <div className="layout-container">
-        <Sidebar />
-        <div className="page-content">
-          <Routes>
-            <Route path="/" element={<Navigate to="/" />} />
-            <Route path="/events" element={<AllEvents />} />
-            <Route path="/events/:id" element={<SingleEvent />} />
-            <Route path="/dashboard" element={<AdminDashboard />} />
-            <Route path="/add-event" element={<CreateEvent />} />
-          </Routes>
-        </div>
-      </div>
-    </BrowserRouter>
-  );
+  return <RouterProvider router={router} />;
 }
 
 export default App;
