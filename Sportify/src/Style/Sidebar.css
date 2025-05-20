@@ -7,12 +7,12 @@
 .main-app-layout .page-content {
   flex-grow: 1;
   padding: 1rem;
-  margin-left: 5rem; /* Always leave room for collapsed sidebar */
+  margin-left: 5rem; 
   transition: margin-left 0.3s ease;
 }
 
 .main-app-layout .sidebar.expanded ~ .page-content {
-  margin-left: 5rem; /* Sidebar overlays, keep margin same */
+  margin-left: 5rem; 
 }
 
 

@@ -1,16 +1,18 @@
 import { useEffect, useState } from 'react'
 import {
   fetchUserAchievements,
+  fetchAllAchievements,
   createAchievement,
   assignAchievement,
-  UserAchievement,
-  fetchAllAchievements,
 } from '../services/api'
+
+import {
+  UserAchievement,
+  FullAchievement
+} from '../models/achievement'
+
 import '../Style/AdminDashboard.css'
 
-interface FullAchievement extends UserAchievement {
-  achievementId: number
-}
 
 const AdminDashboard = () => {
   const [userAchievements, setUserAchievements] = useState<UserAchievement[]>([])

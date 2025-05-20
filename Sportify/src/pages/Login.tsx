@@ -19,31 +19,41 @@ const LoginPage: FC = () => {
 
       setTimeout(() => {
         toast.remove();
-      }, 3000); // 3 seconds
+      }, 3000); 
     }
   };
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
+const handleLogin = async (e: React.FormEvent) => {
+  e.preventDefault();
 
-    try {
-      const response = await fetch('http://localhost:5000/api/users/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
+  try {
+    const response = await fetch('http://localhost:5000/api/users/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
 
-      if (response.ok) {
-        showToast('Login successful!');
-        setTimeout(() => navigate('/events'), 1500);
-      } else {
-        showToast('Incorrect email or password.');
-      }
-    } catch (error) {
-      console.error('Login failed:', error);
-      showToast('An error occurred. Please try again.');
+    if (response.ok) {
+      const result = await response.json();
+
+     
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('userType', result.userType); 
+      localStorage.setItem('userId', result.userId);
+
+      showToast('Login successful!');
+
+     
+      setTimeout(() => navigate('/home'), 1500);
+    } else {
+      showToast('Incorrect email or password.');
     }
-  };
+  } catch (error) {
+    console.error('Login failed:', error);
+    showToast('An error occurred. Please try again.');
+  }
+};
+
 
   return (
     <div className="login-page">
