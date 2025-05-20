@@ -14,6 +14,7 @@ export const fetchSingleEvent = async (id: number): Promise<Event> => {
   return await response.json();
 };
 
+// Login
 import { LoginRequest, LoginResponse } from '../models/user';
 
 export const loginUser = async (credentials: LoginRequest): Promise<LoginResponse> => {

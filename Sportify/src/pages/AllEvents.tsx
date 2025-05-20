@@ -57,13 +57,13 @@ function AllEvents() {
   return (
     <div className="all-events-page">
       <div className="events-section-white"
-      style={{
-        backgroundImage: `url(${bgWhite})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        minHeight: '65vh'
-      }}>
+        style={{
+          backgroundImage: `url(${bgWhite})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          minHeight: '65vh',
+        }}>
         <div className="event-header">
           <div className="event-bar">
             <FaSearch className="search-icon" />
@@ -151,7 +151,7 @@ function AllEvents() {
       </div>
 
         <div className="section-divider"></div>
-        <h1 className="section-title">Upcoming Events</h1>
+        <h1 className="event-section-title">Upcoming Events</h1>
         <div className="upcoming-events">
           {filteredEvents.map((event) => {
             const date = new Date(event.date);

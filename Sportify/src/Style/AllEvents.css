@@ -1,5 +1,11 @@
 /* Layout Base */
 
+.all-events-page {
+  width: 100%; /* Force full screen width */
+  margin: 0;
+  padding: 0;
+}
+
 /* Top Section Background */
 .events-section-white {
   height: auto;
@@ -67,14 +73,14 @@
 /* Section Titles */
 .section-subtitle,
 .sidebar-title,
-.section-title {
+.event-section-title {
   font-size: 30px;
   font-weight: bold;
   color: #ff9100;
   margin-bottom: 1rem;
 }
 
-.section-title {
+.event-section-title {
   font-size: 36px;
   padding: 20px 30px;
 }
