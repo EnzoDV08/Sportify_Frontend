@@ -1,73 +1,111 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import '../Style/Login.css'
-import { loginUser } from '../api'
+import { FC, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import '../Style/Login.css';
+import GoogleIcon from '../assets/Icons/Google.svg';
 
-function Login() {
-  const navigate = useNavigate()
+const LoginPage: FC = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
+  const showToast = (message: string) => {
+    const toast = document.createElement('div');
+    toast.className = 'alert alert-success w-fit px-4 py-2 text-white bg-green-500 shadow-lg';
+    toast.innerText = message;
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    const toastContainer = document.getElementById('toast-container');
+    if (toastContainer) {
+      toastContainer.appendChild(toast);
 
-    try {
-      await loginUser(email, password)
-      navigate('/dashboard')
-    } catch (err) {
-      setError('Invalid email or password')
+      setTimeout(() => {
+        toast.remove();
+      }, 3000); 
     }
+  };
+
+const handleLogin = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  try {
+    const response = await fetch('http://localhost:5000/api/users/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+
+     
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('userType', result.userType); 
+      localStorage.setItem('userId', result.userId);
+
+      showToast('Login successful!');
+
+     
+      setTimeout(() => navigate('/home'), 1500);
+    } else {
+      showToast('Incorrect email or password.');
+    }
+  } catch (error) {
+    console.error('Login failed:', error);
+    showToast('An error occurred. Please try again.');
   }
+};
+
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
-      <div className="bg-white rounded-xl shadow-lg overflow-hidden w-full max-w-4xl flex">
-        {/* Left image panel */}
-        <div className="w-1/2 bg-cover bg-center" style={{ backgroundImage: `url('https://i.imgur.com/4M7IWwP.jpeg')` }} />
+    <div className="login-page">
+      {/* Toast Container */}
+      <div id="toast-container" className="toast toast-bottom toast-end fixed z-50" />
 
-        {/* Right login form */}
-        <form onSubmit={handleSubmit} className="w-1/2 p-10 space-y-4">
-          <h2 className="text-2xl font-bold text-orange-600 mb-4">LOG IN</h2>
+      <div className="login-container">
+        <div className="login-image" />
+        <div className="login-form">
+          <h1>Welcome Back!</h1>
+          <h2>LOG IN</h2>
+          <form onSubmit={handleLogin} className="login-inputs">
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
 
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full border px-4 py-2 rounded-md"
-            required
-          />
+            <div className="PasswordCont">
+              <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <a href="#" className="forgot-password">Forgot Password?</a>
+            </div>
 
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full border px-4 py-2 rounded-md"
-            required
-          />
+            <button type="submit" className="login-btn">Login</button>
+          </form>
 
-          {error && <p className="text-red-500 text-sm">{error}</p>}
+          <div className="or-divider">
+            <hr />
+            <span>OR</span>
+            <hr />
+          </div>
 
-          <button
-            type="submit"
-            className="w-full bg-orange-500 text-white py-2 rounded-full font-semibold hover:bg-orange-600"
-          >
-            Log In
+          <button className="google-full-btn" type="button">
+            <span>Login with Google</span>
+            <img src={GoogleIcon} alt="Google login" />
           </button>
 
-          <p className="text-sm text-center">
-            Don’t have an account?{' '}
-            <a href="/signup" className="text-orange-500 font-semibold hover:underline">
-              Sign Up
-            </a>
+          <p className="SignUpButtonText">
+            Don't have an account? <a href="/signup">Sign up</a>
           </p>
-        </form>
+        </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default LoginPage;

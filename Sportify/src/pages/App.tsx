@@ -1,45 +1,67 @@
-import { useState, useEffect } from 'react'
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import { PropagateLoader } from 'react-spinners'
-import viteLogo from '../assets/vite.svg'
-import reactLogo from '../assets/react.svg'
-import '../Style/App.css'
-import AdminDashboard from './AdminDashboard'
-import SignUp from '../pages/SignUp'
-import Login from './LogIn'
-import Profile from './Profile'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import Login from './Login';
+import Home from './Home';
+import AllEvents from './AllEvents';
+import SingleEvent from './SingleEvent';
+import CreateEvent from './CreateEvent';
+import AdminDashboard from './AdminDashboard';
+import MainLayout from './MainLayout';
+
+const router = createBrowserRouter(
+  [
+    {
+      path: '/',
+      element: <Login /> 
+    },
+    {
+      path: '/',
+      element: <MainLayout />,
+      children: [
+        {
+      path: '/',
+      element: <Login /> 
+        },
+        {
+          path: '/home',
+          element: <Home />
+        },
+        
+        {
+          path: '/dashboard',
+          element: <AdminDashboard />
+        },
+        {
+          path: '/events',
+          element: <AllEvents />
+        },
+        {
+          path: '/events/:eventId',
+          element: <SingleEvent />
+        },
+        {
+          path: '/add-event',
+          element: <CreateEvent />
+        }
+      ]
+    },
+    {
+      path: '*',
+      element: <Login />
+    }
+  ],
+  {
+    future: {
+      // @ts-expect-error — these aren't typed yet in v6.30
+      v7_startTransition: true,
+      v7_relativeSplatPath: true
+    }
+  }
+);
 
 function App() {
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false)
-    }, 2000)
-    return () => clearTimeout(timer)
-  }, [])
-
-  if (loading) {
-    return (
-      <div className="spinner-container">
-        <img src={viteLogo} alt="Vite Logo" className="loading-logo" />
-        <PropagateLoader color="#0078d7" size={15} />
-        <p className="loading-text">Loading the future... 🚀</p>
-      </div>
-    )
-  }
-
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Navigate to="/signup" />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/dashboard" element={<AdminDashboard />} />
-        <Route path="/profile" element={<Profile />} />
-      </Routes>
-    </BrowserRouter>
-  )
+  return <RouterProvider router={router} />;
 }
 
-export default App
+export default App;
+
+
