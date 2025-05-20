@@ -25,7 +25,7 @@ const router = createBrowserRouter(
           path: '/home',
           element: <Home />
         },
-
+        
         {
           path: '/dashboard',
           element: <AdminDashboard />
@@ -35,7 +35,7 @@ const router = createBrowserRouter(
           element: <AllEvents />
         },
         {
-          path: '/events/:id',
+          path: '/events/:eventId',
           element: <SingleEvent />
         },
         {
@@ -63,3 +63,5 @@ function App() {
 }
 
 export default App;
+
+
