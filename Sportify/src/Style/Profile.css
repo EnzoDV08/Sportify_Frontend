@@ -32,11 +32,11 @@
 
 .profile-info .label {
   font-weight: bold;
-  color: orange;
+  color: #FF9704;
 }
 
 .profile-about .about-heading {
-  color: orange;
+  color: #FF9704;
   font-weight: bold;
 }
 
@@ -50,7 +50,7 @@
 .profile-avatar button {
   margin-top: 10px;
   padding: 8px 16px;
-  background-color: orange;
+  background-color: #FF9704;
   border: none;
   color: white;
   border-radius: 4px;
@@ -58,23 +58,31 @@
 }
 
 .profile-icons {
-  margin-top: 2rem;
-  background: #eee;
-  padding: 1rem;
+  background-color: #e0e0e0;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   border-radius: 8px;
-  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.icons-bar span {
-  font-size: 2rem;
-  margin: 0 10px;
+.icons-bar {
+  display: flex;
+  flex-grow: 1;
+  justify-content: space-around;
+  font-size: 36px;
 }
 
 .view-all {
-  text-align: right;
-  font-size: 0.9rem;
-  color: #555;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+  margin-left: auto;
+  white-space: nowrap;
 }
+
 
 .profile-stats {
   margin-top: 2rem;
@@ -87,7 +95,7 @@
 }
 
 .profile-stat {
-  background-color: #d17c1b;
+  background-color: #FF9704;
   color: white;
   padding: 12px 24px;
   margin: 10px;
@@ -115,7 +123,7 @@
 }
 
 .profile-stats h2 {
-  color: orange;
+  color: FF9704;
   margin-bottom: 1rem;
 }
 
@@ -128,7 +136,7 @@
 
 
 .stats-box {
-  background-color: #cd7a1d;
+  background-color: #FF9704;
   color: white;
   padding: 10px 20px;
   border-top-left-radius: 15px;
@@ -157,16 +165,14 @@
   justify-content: center;
   flex-wrap: wrap;
   margin-top: 2rem;
+  height: 450px;
 }
 
 .event-card {
   background-color: #fff;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  overflow: hidden;
-  width: 320px;
-  display: flex;
-  flex-direction: column;
+  width: 450px;
+  height: 200px;
 }
 
 .event-image-container {
@@ -191,7 +197,7 @@
   position: absolute;
   top: 10px;
   right: 10px;
-  background-color: #fdd835;
+  background-color: #FF9704;
   color: #000;
   font-weight: bold;
   padding: 5px 12px;
@@ -201,6 +207,8 @@
 
 .event-details {
   padding: 16px;
+  background-color: #FF9704;
+  position: relative;
 }
 
 .event-header {
@@ -211,40 +219,73 @@
 }
 
 .event-title {
-  font-size: 1.2rem;
+  font-size: 20px;
   font-weight: bold;
+  color: black;
 }
 
 .event-type {
-  background-color: #333;
+  background-color: #2f2f2f;
   color: white;
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-size: 12px;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 14px;
 }
 
 .event-description {
   font-size: 14px;
-  color: #555;
+  color: white;
   margin-bottom: 12px;
 }
 
 .event-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  position: relative;
+  margin-top: 12px;
   font-size: 12px;
-  color: #777;
-  margin-bottom: 12px;
+  color: white;
+  width: 100%;
+}
+
+.meta-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.vertical-divider {
+  width: 2px;
+  height: 60px;
+  background-color: white;
+  margin: 0 16px;
+  align-self: center;
+  opacity: 0.6;
+}
+
+.event-tags {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-left: 16px;
+  margin-top: 2px;
 }
 
 .event-tags span {
   display: inline-block;
-  margin-right: 8px;
 }
 
 .event-host {
+  margin-left: auto;
   display: flex;
   align-items: center;
   gap: 8px;
   font-weight: bold;
+  background-color: black;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
 }
 
 .host-img {
@@ -253,6 +294,7 @@
   border-radius: 50%;
   object-fit: cover;
 }
+
 
 
 

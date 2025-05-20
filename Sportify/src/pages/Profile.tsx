@@ -88,24 +88,27 @@ function Profile() {
       A high-energy padel event open to all skill levels. Come compete or just have fun!
     </p>
     <div className="event-meta">
-      <div className="event-date"><span>🗓</span> 12 May · 17:00</div>
-      <div className="event-location"><span>📍</span> Cape Town Stadium</div>
+      <div className="meta-info">
+        <div className="event-date"><span>🗓</span> 12 May · 17:00</div>
+        <div className="event-location"><span>📍</span> Cape Town Stadium</div>
+      </div>
+      <div className='vertical-divider'></div>
       <div className="event-tags">
         <span>🏟 Indoor</span>
         <span>🔥 Active</span>
         <span>🎉 Fun</span>
       </div>
-    </div>
-    <div className="event-host">
-      <span>#1</span>
-      <img src="/images/profile.jpg" alt="host" className="host-img" />
-      <span className="host-name">Pieter Man</span>
+      <div className="event-host">
+        <span>#1</span>
+        <img src="/images/profile.jpg" alt="host" className="host-img" />
+        <span className="host-name">Pieter Man</span>
+      </div>
     </div>
   </div>
 </div>
 
 
-  {/* Beach Ball Showdown */}
+{/* Beach Ball Showdown */}
 <div className="event-card">
   <div className="event-image-container">
     <img src={image33} alt="event2" className="event-image" />
@@ -120,23 +123,26 @@ function Profile() {
       A high-energy Beach Ball event open to all skill levels. Come compete or just have fun!
     </p>
     <div className="event-meta">
-      <div className="event-date"><span>🗓</span> 26 May · 14:00</div>
-      <div className="event-location"><span>📍</span> Pretoria</div>
+      <div className="meta-info">
+        <div className="event-date"><span>🗓</span> 26 May · 14:00</div>
+        <div className="event-location"><span>📍</span> Pretoria</div>
+      </div>
+      <div className="vertical-divider"></div>
       <div className="event-tags">
         <span>🏟 Outdoor</span>
         <span>🔥 Active</span>
         <span>🎉 Fun</span>
       </div>
-    </div>
-    <div className="event-host">
-      <span>#1</span>
-      <img src="/images/profile.jpg" alt="host" className="host-img" />
-      <span className="host-name">Pieter Man</span>
+      <div className="event-host">
+        <span>#1</span>
+        <img src="/images/profile.jpg" alt="host" className="host-img" />
+        <span className="host-name">Pieter Man</span>
+      </div>
     </div>
   </div>
 </div>
 
-  {/* Rugby Tournament */}
+{/* Rugby Tournament */}
 <div className="event-card">
   <div className="event-image-container">
     <img src={image49} alt="event3" className="event-image" />
@@ -151,18 +157,21 @@ function Profile() {
       A high-energy Rugby Tournament open to all skill levels. Come compete or just have fun!
     </p>
     <div className="event-meta">
-      <div className="event-date"><span>🗓</span> 12 June · 17:00</div>
-      <div className="event-location"><span>📍</span> Cape Town Stadium</div>
+      <div className="meta-info">
+        <div className="event-date"><span>🗓</span> 12 June · 17:00</div>
+        <div className="event-location"><span>📍</span> Cape Town Stadium</div>
+      </div>
+      <div className="vertical-divider"></div>
       <div className="event-tags">
         <span>🏟 Outdoor</span>
         <span>🔥 Active</span>
         <span>🎉 Fun</span>
       </div>
-    </div>
-    <div className="event-host">
-      <span>#1</span>
-      <img src="/images/profile.jpg" alt="host" className="host-img" />
-      <span className="host-name">Pieter Man</span>
+      <div className="event-host">
+        <span>#1</span>
+        <img src="/images/profile.jpg" alt="host" className="host-img" />
+        <span className="host-name">Pieter Man</span>
+      </div>
     </div>
   </div>
 </div>
