@@ -28,7 +28,7 @@ function CreateEvent() {
       isPrivate,
       creatorId: userId,
       adminId: userId,
-      eventId: 0, // placeholder, backend generates real ID
+      eventId: 0, 
       invitedUserIds: null,
       latitude: null,
       longitude: null,
