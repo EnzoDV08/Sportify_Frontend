@@ -7,5 +7,10 @@ export interface Event {
   type?: string;
   visibility?: string;
   status?: string;
-  creatorId?: number;
+  creatorId?: number; 
+  adminId?: number;
+  invitedUserIds?: number[] | null;
+  isPrivate?: boolean;
+  latitude?: number | null;
+  longitude?: number | null;
 }

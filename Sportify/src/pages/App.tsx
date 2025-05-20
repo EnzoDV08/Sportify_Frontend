@@ -1,6 +1,9 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Login from './Login';
 import Home from './Home';
+import AllEvents from './AllEvents';
+import SingleEvent from './SingleEvent';
+import CreateEvent from './CreateEvent';
 import AdminDashboard from './AdminDashboard';
 import MainLayout from './MainLayout';
 
@@ -26,6 +29,18 @@ const router = createBrowserRouter(
         {
           path: '/dashboard',
           element: <AdminDashboard />
+        },
+        {
+          path: '/events',
+          element: <AllEvents />
+        },
+        {
+          path: '/events/:eventId',
+          element: <SingleEvent />
+        },
+        {
+          path: '/add-event',
+          element: <CreateEvent />
         }
       ]
     },
