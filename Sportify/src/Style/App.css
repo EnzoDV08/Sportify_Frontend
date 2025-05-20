@@ -24,7 +24,7 @@
 
 .page-container {
   margin-left: 5rem; 
-  width: calc(100% - 5rem);
+  width: calc(100vw - 5rem);
   min-height: 100vh;
   padding: 2rem;
   overflow-x: hidden;
@@ -34,8 +34,6 @@
   flex-direction: column;
 }
 
-.sidebar.expanded ~ .page-container {
-  margin-left: 5rem; 
-  width: calc(100% - 5rem);
-}
+
+
 
