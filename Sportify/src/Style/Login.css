@@ -1,0 +1,254 @@
+@import './fonts.css'; 
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap');
+
+.login-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+    background-image: url('../assets/Login/BackgroundImage.png');
+    background-size: cover;
+    background-position: center;
+}
+
+.login-container {
+  position: relative; /* NEW */
+  display: flex;
+  flex-direction: row;
+  width: clamp(300px, 70vw, 2000px);
+  height: clamp(400px, 75vh, 800px);
+  background-color: white;
+  border-radius: 10px;
+  overflow: visible; /* Allow overflow now */
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+.login-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  background-image: url('../assets/Login/LoginFormImage.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 1;
+
+  border-top-left-radius: 10px;   /* ⬅️ Match container */
+  border-bottom-left-radius: 10px; /* ⬅️ Match container */
+  overflow: hidden;
+
+  /* Optional slant effect */
+  clip-path: polygon(0 0, 100% 0, 85% 100%, 0% 100%);
+}
+
+
+.login-form {
+  z-index: 2;
+  flex: 1;
+  margin-left: 40%; /* Match the image width */
+  padding: 0 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-form h1 {
+    font-size: 2rem;
+    margin-bottom: 15px;
+    color: #DD8100;
+    font-family: 'Eveleth Dot', sans-serif;
+}
+
+.login-form h2 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    color:rgb(34, 34, 34);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+}
+
+.login-inputs{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+    width: 100%;
+}
+
+.login-container input {
+  width: 100%;
+  max-width: 450px;
+  padding: 6px 20px;
+  
+  border: 1px solid rgb(34, 34, 34);
+  border-radius: 10px;
+
+  font-size: 1.2rem;
+  color: rgb(34, 34, 34);
+  background-color: #fff;
+  font-family: 'oswald', sans-serif;
+
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.PasswordCont {
+  position: relative;
+  width: 100%;
+  max-width: 450px;
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  gap: 5px;
+}
+
+.forgot-password {
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: #dd8100;
+  font-family: 'oswald', sans-serif;
+  text-decoration: none;
+  white-space: nowrap;
+  right: 0;
+  width: 100%;
+  text-align: right;
+  
+}
+
+.forgot-password:hover {
+  text-decoration: underline;
+}
+
+
+.login-container input::placeholder {
+  color: rgba(34, 34, 34, 0.5); 
+}
+
+.login-container input:focus {
+  border-color: #ffa500;
+  box-shadow: 0 0 0 2px rgba(255, 165, 0, 0.3);
+}
+
+.or-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    max-width: 350px;
+    margin: 25px 0;
+}
+
+.or-divider hr {
+    flex: 1;
+    height: 1px;
+    background-color: #dd8100;
+    border: none;
+}
+
+.or-divider span {
+    color: #dd8100;
+    font-weight: 500;
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.8rem;
+}
+
+.google-full-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+
+  width: 100%;
+  max-width: 450px;
+  padding: 5px 20px;
+  height: 40px;
+  margin-top: 20px;
+
+  background-color: white;
+  border: 1px solid rgb(34, 34, 34);
+  border-radius: 10px;
+
+  font-family: 'Oswald', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  color: rgb(34, 34, 34);
+  cursor: pointer;
+
+  transition: box-shadow 0.3s ease;
+  overflow: hidden; /* ensures image can't force overflow */
+}
+
+.google-full-btn:hover {
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+}
+
+.google-full-btn img {
+  flex-shrink: 0;      /* 👈 prevents it from shrinking */
+  width: 30px;
+  height: 30px;
+  object-fit: contain; /* 👈 ensures no stretching */
+}
+
+
+/* ✅ Mobile responsiveness */
+@media (max-width: 768px) {
+    .login-container {
+        flex-direction: column;
+        height: auto; /* allow height to adapt on smaller screens */
+    }
+
+    .login-image {
+        height: 200px;
+    }
+}
+
+.login-btn {
+  width: 100%;
+  max-width: 450px;
+  padding: 6px 0;
+  margin-top: 25px;
+
+  background-color: #dd8100;
+  color: white;
+
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.2rem;
+
+  border: none;
+  border-radius: 10px; /* fully rounded button */
+  cursor: pointer;
+
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.login-btn:hover {
+  background-color: #c97400;
+  transform: scale(1.02);
+}
+
+.SignUpButtonText {
+  font-size: 1rem;
+  font-weight: 400;
+  color: rgb(34, 34, 34);
+  font-family: 'oswald', sans-serif;
+  text-decoration: none;
+  white-space: nowrap;
+  width: 100%;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.SignUpButtonText a {
+  color: #dd8100;
+  text-decoration: none;
+}
+
+.SignUpButtonText a:hover {
+  text-decoration: underline;
+}

@@ -1,17 +1,26 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import AllEvents from '../Components/AllEvents';
-import SingleEvent from '../Components/SingleEvent';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import Login from '../pages/Login'
+
+const router = createBrowserRouter(
+  [
+    {
+      path: '*',
+      element: <Login />
+    }
+  ],
+  {
+    future: {
+      // @ts-expect-error — these aren't typed yet in v6.30
+      v7_startTransition: true,
+      
+      v7_relativeSplatPath: true
+    }
+  }
+)
+
 
 function App() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Navigate to="/events" />} />
-        <Route path="/events" element={<AllEvents />} />
-        <Route path="/events/:id" element={<SingleEvent />} />
-      </Routes>
-    </BrowserRouter>
-  );
+  return <RouterProvider router={router} />
 }
 
-export default App;
+export default App

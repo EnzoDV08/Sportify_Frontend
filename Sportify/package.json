@@ -1,6 +1,7 @@
 {
   "name": "sportify-frontend",
   "version": "1.0.0",
+  "type": "module",
   "main": "dist-electron/main.js",
   "scripts": {
     "dev": "vite",
@@ -8,14 +9,17 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tailwindcss/vite": "^4.1.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.30.0"
+    "react-router-dom": "^6.30.0",
+    "tailwindcss": "^4.1.7"
   },
   "devDependencies": {
     "@types/react": "^19.1.4",
     "@types/react-dom": "^19.1.5",
     "@vitejs/plugin-react": "^4.4.1",
+    "daisyui": "^5.0.35",
     "electron": "^36.2.0",
     "vite": "^6.3.5",
     "vite-plugin-electron": "^0.29.0",

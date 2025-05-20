@@ -13,3 +13,16 @@ export const fetchSingleEvent = async (id: number): Promise<Event> => {
   if (!response.ok) throw new Error('Failed to fetch event');
   return await response.json();
 };
+
+import { LoginRequest, LoginResponse } from '../models/user';
+
+export const loginUser = async (credentials: LoginRequest): Promise<LoginResponse> => {
+  const response = await fetch('http://localhost:5000/api/users/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(credentials),
+  });
+
+  if (!response.ok) throw new Error('Login failed');
+  return await response.json();
+};

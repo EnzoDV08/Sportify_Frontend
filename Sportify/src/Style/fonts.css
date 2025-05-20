@@ -1,0 +1,22 @@
+@font-face {
+  font-family: 'Eveleth Regular';
+  src: url('../assets/fonts/Eveleth/Eveleth Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Eveleth Bold';
+  src: url('../assets/fonts/Eveleth/Eveleth Bold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Eveleth Dot';
+  src: url('../assets/fonts/Eveleth/Eveleth Dot Light.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+}
+/* Add more styles as needed */
+
