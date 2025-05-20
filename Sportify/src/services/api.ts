@@ -27,3 +27,68 @@ export const loginUser = async (credentials: LoginRequest): Promise<LoginRespons
   if (!response.ok) throw new Error('Login failed');
   return await response.json();
 };
+
+import {
+  UserAchievement,
+  FullAchievement,
+  CreateAchievementRequest,
+  AssignAchievementRequest
+} from '../models/achievement';
+
+
+
+export const fetchUserAchievements = async (
+  userId: number
+): Promise<UserAchievement[]> => {
+  const response = await fetch(`http://localhost:5000/api/achievements/user/${userId}`)
+  if (!response.ok) {
+    throw new Error(`❌ Failed to fetch achievements for user ${userId}`)
+  }
+  return await response.json()
+}
+
+
+export const fetchAllAchievements = async (): Promise<FullAchievement[]> => {
+  const response = await fetch('http://localhost:5000/api/achievements')
+  if (!response.ok) {
+    throw new Error('❌ Failed to fetch all achievements')
+  }
+  return await response.json()
+}
+
+
+export const createAchievement = async (
+  data: CreateAchievementRequest
+): Promise<boolean> => {
+  const response = await fetch('http://localhost:5000/api/achievements', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  })
+
+  if (!response.ok) {
+    console.error(await response.text())
+    throw new Error('❌ Failed to create achievement')
+  }
+
+  return true
+}
+
+
+export const assignAchievement = async (
+  data: AssignAchievementRequest
+): Promise<boolean> => {
+  const response = await fetch('http://localhost:5000/api/achievements/assign', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  })
+
+  if (!response.ok) {
+    console.error(await response.text())
+    throw new Error('❌ Failed to assign achievement')
+  }
+
+  return true
+}
+
