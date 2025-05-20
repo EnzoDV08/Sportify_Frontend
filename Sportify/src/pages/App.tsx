@@ -7,6 +7,7 @@ import '../Style/App.css'
 import AdminDashboard from './AdminDashboard'
 import SignUp from '../pages/SignUp'
 import Login from './LogIn'
+import Profile from './Profile'
 
 function App() {
   const [loading, setLoading] = useState(true)
@@ -35,6 +36,7 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
         <Route path="/dashboard" element={<AdminDashboard />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
     </BrowserRouter>
   )

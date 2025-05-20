@@ -135,7 +135,7 @@ function SignUp() {
 
           <p className="signup-login-text">
             Have an account?{' '}
-            <Link to="/login" className="signup-login-link">
+            <Link to="/profile" className="signup-login-link">
               Log In
             </Link>
           </p>
