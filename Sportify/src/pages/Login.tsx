@@ -1,63 +1,101 @@
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { FC, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../Style/Login.css';
-import { loginUser } from '../services/api';
+import GoogleIcon from '../assets/Icons/Google.svg';
 
-function Login() {
+const LoginPage: FC = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const navigate = useNavigate();
-  const [form, setForm] = useState({ email: '', password: '' });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
+  const showToast = (message: string) => {
+    const toast = document.createElement('div');
+    toast.className = 'alert alert-success w-fit px-4 py-2 text-white bg-green-500 shadow-lg';
+    toast.innerText = message;
+
+    const toastContainer = document.getElementById('toast-container');
+    if (toastContainer) {
+      toastContainer.appendChild(toast);
+
+      setTimeout(() => {
+        toast.remove();
+      }, 3000); // 3 seconds
+    }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Trying login with:", form);
 
     try {
-      const response = await loginUser(form.email, form.password);
-      console.log("Login successful:", response);
+      const response = await fetch('http://localhost:5000/api/users/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
 
-      localStorage.setItem('isLoggedIn', 'true');
-      localStorage.setItem('userType', response.userType);
-      localStorage.setItem('userId', response.userId); // optional
-
-      if (response.userType === 'admin') navigate('/dashboard');
-      else if (response.userType === 'company') navigate('/company-dashboard');
-      else navigate('/home');
+      if (response.ok) {
+        showToast('Login successful!');
+        setTimeout(() => navigate('/events'), 1500);
+      } else {
+        showToast('Incorrect email or password.');
+      }
     } catch (error) {
-      console.error("Login failed:", error);
-      alert('Login failed. Please check your credentials.');
+      console.error('Login failed:', error);
+      showToast('An error occurred. Please try again.');
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="login-form">
-      <h2 className="login-title">WELCOME BACK</h2>
+    <div className="login-page">
+      {/* Toast Container */}
+      <div id="toast-container" className="toast toast-bottom toast-end fixed z-50" />
 
-      <input type="email" name="email" placeholder="Email" onChange={handleChange} className="login-input" required />
-      <input type="password" name="password" placeholder="Password" onChange={handleChange} className="login-input" required />
+      <div className="login-container">
+        <div className="login-image" />
+        <div className="login-form">
+          <h1>Welcome Back!</h1>
+          <h2>LOG IN</h2>
+          <form onSubmit={handleLogin} className="login-inputs">
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
 
-      <button type="submit" className="login-button">Log In</button>
+            <div className="PasswordCont">
+              <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <a href="#" className="forgot-password">Forgot Password?</a>
+            </div>
 
-      <div className="login-divider">
-        <hr />
-        <span>or</span>
-        <hr />
+            <button type="submit" className="login-btn">Login</button>
+          </form>
+
+          <div className="or-divider">
+            <hr />
+            <span>OR</span>
+            <hr />
+          </div>
+
+          <button className="google-full-btn" type="button">
+            <span>Login with Google</span>
+            <img src={GoogleIcon} alt="Google login" />
+          </button>
+
+          <p className="SignUpButtonText">
+            Don't have an account? <a href="/signup">Sign up</a>
+          </p>
+        </div>
       </div>
-
-      <button type="button" className="login-google">
-        <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" />
-        <span>Log In with Google</span>
-      </button>
-
-      <p className="login-register-text">
-        Don't have an account? <Link to="/auth/signup" className="login-register-link">Sign Up</Link>
-      </p>
-    </form>
+    </div>
   );
-}
+};
 
-export default Login;
+export default LoginPage;

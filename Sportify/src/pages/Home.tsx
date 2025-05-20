@@ -1,12 +1,11 @@
-import React from 'react';
+import { FC } from 'react';
 
-const Home: React.FC = () => {
+const LoginPage: FC = () => {
   return (
-    <div className="page-content">
-      <h1>Welcome to Sportify</h1>
-      <p>This is the home page. Navigate using the sidebar.</p>
-    </div>
+    <>
+        Hello
+    </>
   );
 };
 
-export default Home;
+export default LoginPage;

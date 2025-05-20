@@ -1,20 +1,2 @@
-# Always use LF for all text files
-* text=auto eol=lf
-
-# Explicitly declare line endings for common file types
-*.js     text eol=lf
-*.ts     text eol=lf
-*.tsx    text eol=lf
-*.css    text eol=lf
-*.html   text eol=lf
-*.json   text eol=lf
-*.md     text eol=lf
-*.yml    text eol=lf
-*.sh     text eol=lf
-
-# Treat binary files properly
-*.png binary
-*.jpg binary
-*.jpeg binary
-*.gif binary
-*.svg binary
+# Auto detect text files and perform LF normalization
+* text=auto
