@@ -106,7 +106,7 @@ function AllEvents() {
                       </div>
                       <div className="event-footer">
                         <span className="week-event-visibility">{event.visibility?.toUpperCase() || "PUBLIC"}</span>
-                        <Link to={`/events/${event.eventId}`} className="event-view-btn">View</Link>
+                        <Link to={`/events/${event.eventId}`} className="event-week-view-btn">View</Link>
                       </div>
                     </div>
                   );
@@ -196,7 +196,7 @@ function AllEvents() {
                     <div className="event-date-middle">{day}</div>
                     <div className="event-date-bottom">{time}</div>
                   </div>
-                  <Link to={`/events/${event.eventId}`} className="view-btn">
+                  <Link to={`/events/${event.eventId}`} className="event-view-btn">
                     View
                   </Link>
                 </div>

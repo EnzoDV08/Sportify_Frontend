@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Event } from '../models/event';
+import { createEvent } from '../services/api';
 import '../Style/CreateEvent.css';
 
 function CreateEvent() {
@@ -16,86 +16,94 @@ function CreateEvent() {
     e.preventDefault();
 
     const userId = Number(localStorage.getItem('userId'));
+    if (!userId) {
+      alert('User not logged in.');
+      return;
+    }
 
-    const newEvent: Event = {
-      title,
-      description,
-      date,
-      location,
-      type,
-      visibility,
-      status,
-      isPrivate,
-      creatorId: userId,
-      adminId: userId,
-      eventId: 0, 
-      invitedUserIds: null,
-      latitude: null,
-      longitude: null,
-    };
+    try {
+      await createEvent(
+        {
+          title,
+          description,
+          date,
+          location,
+          type,
+          visibility,
+          status,
+        },
+        userId
+      );
 
-    const response = await fetch('http://localhost:5000/api/events', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(newEvent),
-    });
-
-    if (response.ok) {
-      alert('Event created!');
-    } else {
+      alert('Event created successfully!');
+      // Clear form
+      setTitle('');
+      setDescription('');
+      setDate('');
+      setLocation('');
+      setType('');
+      setVisibility('');
+      setStatus('');
+      setIsPrivate(false);
+    } catch (err) {
+      console.error(err);
       alert('Failed to create event.');
     }
   };
 
   return (
     <div className="create-event-container">
-      <h2>Create a New Event</h2>
       <form className="create-event-form" onSubmit={handleSubmit}>
-        <label>Title</label>
-        <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required />
+        <h2>Create a New Event</h2>
 
-        <label>Description</label>
-        <textarea value={description} onChange={(e) => setDescription(e.target.value)} />
+        <div className="form-group full">
+          <label>Title</label>
+          <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required />
+        </div>
 
-        <label>Date</label>
-        <input type="date" value={date} onChange={(e) => setDate(e.target.value)} required />
+        <div className="form-group full">
+          <label>Description</label>
+          <textarea value={description} onChange={(e) => setDescription(e.target.value)} />
+        </div>
 
-        <label>Location</label>
-        <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} required />
+        <div className="form-group half">
+          <label>Date</label>
+          <input type="date" value={date} onChange={(e) => setDate(e.target.value)} required />
+        </div>
 
-        <label>Type</label>
-        <select value={type} onChange={(e) => setType(e.target.value)}>
-          <option value="">Select type</option>
-          <option value="training">Training</option>
-          <option value="match">Match</option>
-          <option value="meetup">Meetup</option>
-        </select>
+        <div className="form-group half">
+          <label>Location</label>
+          <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} required />
+        </div>
 
-        <label>Visibility</label>
-        <select value={visibility} onChange={(e) => setVisibility(e.target.value)}>
-          <option value="">Select visibility</option>
-          <option value="public">Public</option>
-          <option value="private">Private</option>
-        </select>
+        <div className="form-group half">
+          <label>Type</label>
+          <select value={type} onChange={(e) => setType(e.target.value)} required>
+            <option value="">Select type</option>
+            <option value="training">Training</option>
+            <option value="match">Match</option>
+            <option value="meetup">Meetup</option>
+          </select>
+        </div>
 
-        <label>Status</label>
-        <select value={status} onChange={(e) => setStatus(e.target.value)}>
-          <option value="">Select status</option>
-          <option value="upcoming">Upcoming</option>
-          <option value="ongoing">Ongoing</option>
-          <option value="completed">Completed</option>
-        </select>
+        <div className="form-group half">
+          <label>Visibility</label>
+          <select value={visibility} onChange={(e) => setVisibility(e.target.value)} required>
+            <option value="">Select visibility</option>
+            <option value="public">Public</option>
+            <option value="private">Private</option>
+          </select>
+        </div>
 
-        <label>
-          <input
-            type="checkbox"
-            checked={isPrivate}
-            onChange={(e) => setIsPrivate(e.target.checked)}
-          />
-          Private Event?
-        </label>
+        <div className="form-group full">
+          <label>Status</label>
+          <select value={status} onChange={(e) => setStatus(e.target.value)} required>
+            <option value="">Select status</option>
+            <option value="upcoming">Upcoming</option>
+            <option value="ongoing">Ongoing</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
 
         <button type="submit">Create Event</button>
       </form>
