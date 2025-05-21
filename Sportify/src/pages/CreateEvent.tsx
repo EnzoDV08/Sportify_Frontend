@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { createEvent } from '../services/api';
 import '../Style/CreateEvent.css';
 
+// Set up state for each input field
 function CreateEvent() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -12,15 +13,18 @@ function CreateEvent() {
   const [status, setStatus] = useState('');
   const [isPrivate, setIsPrivate] = useState(false);
 
+  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Get the logged-in user's ID
     const userId = Number(localStorage.getItem('userId'));
     if (!userId) {
       alert('User not logged in.');
       return;
     }
 
+  // Send event data to backend
     try {
       await createEvent(
         {
@@ -100,7 +104,6 @@ function CreateEvent() {
           <select value={status} onChange={(e) => setStatus(e.target.value)} required>
             <option value="">Select status</option>
             <option value="upcoming">Upcoming</option>
-            <option value="ongoing">Ongoing</option>
             <option value="completed">Completed</option>
           </select>
         </div>

@@ -46,7 +46,7 @@
 .form-group input,
 .form-group textarea,
 .form-group select {
-  padding: 0.8rem 1.5rem 0.8rem 0.8rem; /* Extra right padding for dropdown arrow */
+  padding: 0.8rem 1.5rem 0.8rem 0.8rem; 
   border: none;
   border-radius: 6px;
   background-color: #3a3a3a;

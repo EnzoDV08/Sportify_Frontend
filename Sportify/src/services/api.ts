@@ -1,6 +1,5 @@
 import { Event } from '../models/event';
-
-
+// Define what data is needed to create an event
 interface CreateEventDto {
   title: string;
   description?: string;
@@ -30,11 +29,11 @@ export const createEvent = async (eventData: CreateEventDto, userId: number): Pr
   const response = await fetch(`http://localhost:5000/api/events?userId=${userId}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(eventData), // only DTO fields sent
+    body: JSON.stringify(eventData),
   });
 
   if (!response.ok) {
-    console.error(await response.text()); // helpful debug output
+    console.error(await response.text());
     throw new Error('Failed to create event.');
   }
 
