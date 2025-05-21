@@ -1,4 +1,14 @@
 import { Event } from '../models/event';
+// Define what data is needed to create an event
+interface CreateEventDto {
+  title: string;
+  description?: string;
+  date: string;
+  location: string;
+  type?: string;
+  visibility?: string;
+  status?: string;
+}
 
 // Get all events
 export const fetchEvents = async (): Promise<Event[]> => {
@@ -11,6 +21,22 @@ export const fetchEvents = async (): Promise<Event[]> => {
 export const fetchSingleEvent = async (id: number): Promise<Event> => {
   const response = await fetch(`http://localhost:5000/api/events/${id}`);
   if (!response.ok) throw new Error('Failed to fetch event');
+  return await response.json();
+};
+
+// Create a new event
+export const createEvent = async (eventData: CreateEventDto, userId: number): Promise<Event> => {
+  const response = await fetch(`http://localhost:5000/api/events?userId=${userId}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(eventData),
+  });
+
+  if (!response.ok) {
+    console.error(await response.text());
+    throw new Error('Failed to create event.');
+  }
+
   return await response.json();
 };
 

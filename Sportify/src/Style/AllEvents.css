@@ -153,14 +153,17 @@
 }
 
 .event-status {
-  position: absolute;
+    position: absolute;
   top: 0.5rem;
-  left: 0.5rem;
+  right: 0.5rem; 
   background-color: #2e7d32;
   color: white;
   font-size: 0.7rem;
   padding: 0.2rem 0.5rem;
   font-weight: bold;
+  border-top-right-radius: 6px;
+  border-bottom-left-radius: 6px;
+  z-index: 2;
 }
 
 .event-body {
@@ -195,7 +198,7 @@
   color: white;
 }
 
-.event-view-btn {
+.event-week-view-btn {
   width: 40%;
   height: auto;
   text-align: center;
@@ -208,7 +211,7 @@
   text-decoration: none;
 }
 
-.event-view-btn:hover {
+.event-week-view-btn:hover {
   background-color: #494949;
 }
 
@@ -234,12 +237,15 @@
 .event-status-past {
   position: absolute;
   top: 0.5rem;
-  left: 0.5rem;
+  right: 0.5rem;
   background-color: #d32f2f;
   color: white;
   font-size: 0.7rem;
   padding: 0.2rem 0.5rem;
   font-weight: bold;
+  border-top-right-radius: 6px;
+  border-bottom-left-radius: 6px;
+  z-index: 2;
 }
 
 .event-footer-past {
@@ -444,7 +450,7 @@
 }
 
 
-.view-btn {
+.event-view-btn {
   text-align: center;
   width: 100%;
   margin-top: 1rem;
@@ -458,7 +464,7 @@
   transition: background 0.3s;
 }
 
-.view-btn:hover {
+.event-view-btn:hover {
   background-color: #ffaa33;
 }
 

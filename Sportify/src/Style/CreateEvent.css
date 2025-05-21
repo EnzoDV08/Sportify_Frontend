@@ -1,60 +1,104 @@
+/* Main container */
 .create-event-container {
   width: 100%;
-  margin: 0 auto;
-  align-items: center;
+  min-height: 100vh;
   display: flex;
-  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   padding: 2rem;
-  background-color: #1f1f1f;
-  border-radius: 10px;
-  color: #f9f9f9;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
-  margin: 15px;
 }
 
-.create-event-container h2 {
+/* Form box */
+.create-event-form {
+  background-color: #2b2b2b;
+  padding: 2rem 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+  width: 100%;
+  max-width: 750px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.2rem;
+  color: #f9f9f9;
+}
+
+/* Heading */
+.create-event-form h2 {
+  grid-column: span 2;
   text-align: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.5rem;
   color: #f59e0b;
 }
 
-.create-event-form {
+/* Field group wrappers */
+.form-group {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
 }
 
-.create-event-form label {
+/* Label styling */
+.form-group label {
   font-weight: 500;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.3rem;
 }
 
-.create-event-form input,
-.create-event-form textarea,
-.create-event-form select {
-  padding: 0.6rem;
+/* Input, select, textarea styling */
+.form-group input,
+.form-group textarea,
+.form-group select {
+  padding: 0.8rem 1.5rem 0.8rem 0.8rem; 
   border: none;
   border-radius: 6px;
-  background-color: #2e2e2e;
-  color: white;
+  background-color: #3a3a3a;
+  color: #fff;
   font-size: 1rem;
+  width: 100%;
 }
 
-.create-event-form textarea {
+/* Textarea specifics */
+textarea {
   resize: vertical;
   min-height: 100px;
 }
 
+/* Full-width fields like title/description */
+.full {
+  grid-column: span 2;
+}
+
+/* Half-width columns (side by side) */
+.half {
+  grid-column: span 1;
+}
+
+
+/* Submit button */
 .create-event-form button {
-  padding: 0.8rem;
+  grid-column: span 2;
+  padding: 0.9rem;
   border: none;
   border-radius: 6px;
   background-color: #f59e0b;
   color: black;
   font-weight: bold;
+  font-size: 1rem;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .create-event-form button:hover {
   background-color: #d97706;
+}
+
+/* Responsive stack on smaller screens */
+@media (max-width: 768px) {
+  .create-event-form {
+    grid-template-columns: 1fr;
+  }
+
+  .half,
+  .full,
+  .create-event-form button {
+    grid-column: span 1;
+  }
 }
