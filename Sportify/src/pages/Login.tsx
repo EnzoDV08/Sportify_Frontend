@@ -36,14 +36,14 @@ const handleLogin = async (e: React.FormEvent) => {
     if (response.ok) {
       const result = await response.json();
 
-
+     
       localStorage.setItem('isLoggedIn', 'true');
       localStorage.setItem('userType', result.userType); 
       localStorage.setItem('userId', result.userId);
 
       showToast('Login successful!');
 
-
+     
       setTimeout(() => navigate('/home'), 1500);
     } else {
       showToast('Incorrect email or password.');
@@ -53,7 +53,9 @@ const handleLogin = async (e: React.FormEvent) => {
     showToast('An error occurred. Please try again.');
   }
 };
-return (
+
+
+  return (
     <div className="login-page">
       {/* Toast Container */}
       <div id="toast-container" className="toast toast-bottom toast-end fixed z-50" />
@@ -64,11 +66,9 @@ return (
           <h1>Welcome Back!</h1>
           <h2>LOG IN</h2>
           <form onSubmit={handleLogin} className="login-inputs">
-            
             <input
               type="email"
               placeholder="Email"
-              className="EmailInput"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required

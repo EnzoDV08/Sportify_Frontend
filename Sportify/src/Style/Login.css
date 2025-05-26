@@ -77,10 +77,11 @@
     flex-direction: column;
     align-items: center;
     gap: 25px;
-    width: 450px;
+    width: 100%;
 }
 
 .login-container input {
+  width: 100%;
   max-width: 450px;
   padding: 6px 20px;
   
@@ -97,17 +98,13 @@
 }
 
 .PasswordCont {
+  position: relative;
   width: 100%;
   max-width: 450px;
   display: flex;
   flex-direction: column;
   height: auto;
   gap: 5px;
-}
-
-.EmailInput {
-  width: 100%;
-  display: flex;
 }
 
 .forgot-password {
