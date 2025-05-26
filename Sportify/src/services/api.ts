@@ -3,11 +3,14 @@ import { Event } from '../models/event';
 interface CreateEventDto {
   title: string;
   description?: string;
-  date: string;
+  startDateTime: string;
+  endDateTime: string;
   location: string;
   type?: string;
   visibility?: string;
   status?: string;
+  requiredItems?: string;
+  imageUrl?: string | null;
 }
 
 // Get all events
@@ -35,6 +38,39 @@ export const createEvent = async (eventData: CreateEventDto, userId: number): Pr
   if (!response.ok) {
     console.error(await response.text());
     throw new Error('Failed to create event.');
+  }
+
+  return await response.json();
+};
+
+// delete an event by ID
+export const deleteEvent = async (eventId: number): Promise<void> => {
+  const response = await fetch(`http://localhost:5000/api/events/${eventId}`, {
+    method: 'DELETE',
+  });
+
+  if (!response.ok) {
+    console.error(await response.text());
+    throw new Error('Failed to delete event.');
+  }
+};
+
+// Update an existing event
+interface UpdateEventDto extends CreateEventDto {} // reuse same structure
+
+export const updateEvent = async (
+  eventId: number,
+  eventData: UpdateEventDto
+): Promise<Event> => {
+  const response = await fetch(`http://localhost:5000/api/events/${eventId}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(eventData),
+  });
+
+  if (!response.ok) {
+    console.error(await response.text());
+    throw new Error('Failed to update event.');
   }
 
   return await response.json();

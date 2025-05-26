@@ -6,6 +6,7 @@ import SingleEvent from './SingleEvent';
 import CreateEvent from './CreateEvent';
 import AdminDashboard from './AdminDashboard';
 import MainLayout from './MainLayout';
+import MyEvents from './MyEvents';
 
 const router = createBrowserRouter(
   [
@@ -41,6 +42,10 @@ const router = createBrowserRouter(
         {
           path: '/add-event',
           element: <CreateEvent />
+        },
+        {
+          path: '/my-events',
+          element: <MyEvents />
         }
       ]
     },
