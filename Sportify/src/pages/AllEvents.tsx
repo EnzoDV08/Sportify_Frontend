@@ -12,6 +12,7 @@ import '../Style/AllEvents.css';
 import bgWhite from '../assets/Slide 16_9 - 5.png'; 
 
 
+// Check if the event date is in this week
 function isThisWeek(dateString: string): boolean {
   const today = new Date();
   const eventDate = new Date(dateString);
@@ -24,12 +25,14 @@ function isThisWeek(dateString: string): boolean {
   return eventDate >= startOfWeek && eventDate <= endOfWeek;
 }
 
+// Store all events and user input
 function AllEvents() {
   const [events, setEvents] = useState<Event[]>([]);
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
 
+// Load events when page loads
   useEffect(() => {
     fetchEvents()
       .then((data) => {
@@ -40,6 +43,7 @@ function AllEvents() {
       .finally(() => setLoading(false));
   }, []);
 
+// Filter events when search input changes (title or location)
   useEffect(() => {
     const lower = searchTerm.toLowerCase();
     const results = events.filter(e =>
@@ -49,6 +53,7 @@ function AllEvents() {
     setFilteredEvents(results);
   }, [searchTerm, events]);
 
+ // Split events into this week and past events
   const thisWeekEvents = filteredEvents.filter(event => isThisWeek(event.date));
   const pastEvents = filteredEvents.filter(event => new Date(event.date) < new Date());
 
@@ -106,7 +111,7 @@ function AllEvents() {
                       </div>
                       <div className="event-footer">
                         <span className="week-event-visibility">{event.visibility?.toUpperCase() || "PUBLIC"}</span>
-                        <Link to={`/events/${event.eventId}`} className="event-view-btn">View</Link>
+                        <Link to={`/events/${event.eventId}`} className="event-week-view-btn">View</Link>
                       </div>
                     </div>
                   );
@@ -196,7 +201,7 @@ function AllEvents() {
                     <div className="event-date-middle">{day}</div>
                     <div className="event-date-bottom">{time}</div>
                   </div>
-                  <Link to={`/events/${event.eventId}`} className="view-btn">
+                  <Link to={`/events/${event.eventId}`} className="event-view-btn">
                     View
                   </Link>
                 </div>
