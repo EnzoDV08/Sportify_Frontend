@@ -1,18 +1,9 @@
-/* ============================= */
-/*          IMPORTS             */
-/* ============================= */
-
 @import './fonts.css';
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap');
 
-
-/* ============================= */
-/*        LAYOUT CONTAINERS     */
-/* ============================= */
-
-/* Fullscreen background wrapper */
-.login-page {
+/* Layout Containers */
+.signup-page {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -23,8 +14,7 @@
   background-position: center;
 }
 
-/* Main container that holds the image and form */
-.login-container {
+.signup-container {
   position: relative;
   display: flex;
   flex-direction: row;
@@ -41,14 +31,13 @@
   transform: translateY(20px);
 }
 
-/* Left-side image section */
-.login-image {
+.signup-image {
   position: absolute;
   top: 0;
   left: 0;
   width: 55%;
   height: 100%;
-  background-image: url('../assets/Login/LoginFormImage.png');
+  background-image: url('../assets/Signup/SignUpFormImage.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -58,7 +47,6 @@
   border-bottom-left-radius: 10px;
 }
 
-/* Sportify logo on desktop view (centered in image area) */
 .sportify-logo {
   position: absolute;
   top: 50%;
@@ -71,8 +59,8 @@
   animation: logoPop 3s ease-in-out infinite;
 }
 
-/* Form container on the right */
-.login-form {
+/* Form Styles */
+.signup-form {
   z-index: 2;
   flex: 1;
   margin-left: 50%;
@@ -83,23 +71,7 @@
   align-items: center;
 }
 
-
-/* ============================= */
-/*       FORM & INPUT STYLES    */
-/* ============================= */
-
-.login-form {
-  z-index: 2;
-  flex: 1;
-  margin-left: 50%;
-  padding: 0 40px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-.login-form h1 {
+.signup-form h1 {
   font-size: 2rem;
   margin-bottom: 15px;
   color: #DD8100;
@@ -107,7 +79,7 @@
   text-align: center;
 }
 
-.login-form h2 {
+.signup-form h2 {
   font-size: 1.8rem;
   margin-bottom: 20px;
   color: rgb(34, 34, 34);
@@ -116,7 +88,7 @@
   text-align: center;
 }
 
-.login-inputs {
+.signup-inputs {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -130,11 +102,11 @@
   animation: fadeUpStagger 0.4s ease forwards;
 }
 
-.login-inputs > *:nth-child(1) { animation-delay: 0.2s; }
-.login-inputs > *:nth-child(2) { animation-delay: 0.4s; }
-.login-inputs > *:nth-child(3) { animation-delay: 0.6s; }
+.signup-inputs > *:nth-child(1) { animation-delay: 0.2s; }
+.signup-inputs > *:nth-child(2) { animation-delay: 0.4s; }
+.signup-inputs > *:nth-child(3) { animation-delay: 0.6s; }
 
-.login-container input {
+.signup-container input {
   width: 100%;
   padding: 6px 20px;
   border: 1px solid rgb(34, 34, 34);
@@ -147,11 +119,11 @@
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.login-container input::placeholder {
+.signup-container input::placeholder {
   color: rgba(34, 34, 34, 0.5);
 }
 
-.login-container input:focus {
+.signup-container input:focus {
   border-color: #ffa500;
   box-shadow: 0 0 0 2px rgba(255, 165, 0, 0.3);
 }
@@ -222,13 +194,8 @@
   transition: color 0.2s ease, transform 0.2s ease;
 }
 
-
-/* ============================= */
-/*     BUTTONS & CTA STYLES     */
-/* ============================= */
-
-/* Login Button */
-.login-btn {
+/* Buttons */
+.signup-btn {
   position: relative;
   height: 40px;
   padding: 6px 0;
@@ -246,36 +213,11 @@
   z-index: 1;
 }
 
-.login-btn:hover {
+.signup-btn:hover {
   background-color: #c97400;
   transform: scale(1.02);
 }
 
-/* Login loading state */
-.login-btn.login-loading {
-  position: relative;
-  background: linear-gradient(270deg, #000000, #2c2c2c, #000000);
-  background-size: 400% 400%;
-  animation: gradientSlide 2s ease infinite;
-  color: white;
-  cursor: wait;
-  border: none;
-  height: 40px;
-  border-radius: 10px;
-}
-
-.login-btn.login-loading::before {
-  content: '';
-  position: absolute;
-  inset: -2px;
-  border-radius: 12px;
-  background: linear-gradient(270deg, #555, #000, #222, #555);
-  background-size: 400% 400%;
-  animation: borderGlow 3s ease infinite;
-  z-index: -1;
-}
-
-/* Google Login Button */
 .google-full-btn {
   display: flex;
   align-items: center;
@@ -307,7 +249,7 @@
   object-fit: contain;
 }
 
-/* Signup Text CTA */
+/* Signup CTA */
 .SignUpButtonText {
   font-size: 1rem;
   font-weight: 400;
@@ -329,11 +271,7 @@
   text-decoration: underline;
 }
 
-
-/* ============================= */
-/*         OR DIVIDER STYLES    */
-/* ============================= */
-
+/* Divider */
 .or-divider {
   display: flex;
   align-items: center;
@@ -358,11 +296,7 @@
   font-size: 0.8rem;
 }
 
-
-/* ============================= */
-/*     SPORTIFY MOBILE LOGO     */
-/* ============================= */
-
+/* Logo for Mobile */
 .sportify-logo-mobile {
   display: block;
   max-width: 200px;
@@ -371,19 +305,13 @@
   animation: dropInBounce 0.8s ease-out forwards;
 }
 
-/* Only visible on mobile */
 @media (min-width: 769px) {
   .sportify-logo-mobile {
     display: none;
   }
 }
 
-
-/* ============================= */
-/*           TOAST STYLES       */
-/* ============================= */
-
-/* Toast container that holds all toasts */
+/* Toast (same shared styles) */
 .toast-container {
   position: absolute;
   top: 20px;
@@ -396,7 +324,6 @@
   pointer-events: none;
 }
 
-/* Each individual toast */
 .toast {
   position: relative;
   margin: 0 auto;
@@ -418,21 +345,15 @@
   transition: all 0.3s ease;
 }
 
-/* Success toast style */
 .toast-success {
   background: linear-gradient(135deg, rgba(40, 167, 69, 0.4), rgba(33, 136, 56, 0.5));
 }
 
-/* Error toast style */
 .toast-error {
   background: linear-gradient(135deg, rgba(229, 57, 53, 0.4), rgba(183, 28, 28, 0.5));
 }
 
-
-/* ============================= */
-/*         ANIMATIONS SECTION   */
-/* ============================= */
-
+/* Animations */
 @keyframes fadeSlideIn {
   to {
     opacity: 1;
@@ -470,37 +391,21 @@
   100% { opacity: 0; transform: translateY(-10px) scale(0.98); }
 }
 
-@keyframes gradientSlide {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-@keyframes borderGlow {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
 @keyframes logoPop {
   0%, 100% { transform: translate(-50%, -50%) scale(1); }
   50% { transform: translate(-50%, -50%) scale(1.03); }
 }
 
-
-/* ============================= */
-/*     RESPONSIVE DESIGN RULES  */
-/* ============================= */
-
+/* Responsive */
 @media (max-width: 768px) {
-  .login-container {
+  .signup-container {
     flex-direction: column;
     height: auto;
     width: 90%;
     padding: 1.5rem;
   }
 
-  .login-image,
+  .signup-image,
   .sportify-logo {
     display: none;
   }
@@ -509,24 +414,18 @@
     display: block;
   }
 
-  .login-form {
+  .signup-form {
     margin-left: 0;
     width: 100%;
     align-items: center;
     padding: 0;
   }
 
-  .login-form h1 {
+  .signup-form h1 {
     font-size: 1.6rem;
   }
 
-  .login-form h2 {
+  .signup-form h2 {
     font-size: 1.3rem;
-  }
-}
-
-@media (min-width: 769px) {
-  .sportify-logo-mobile {
-    display: none; /* Hide on desktop only */
   }
 }

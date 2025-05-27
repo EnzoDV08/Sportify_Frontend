@@ -1,5 +1,6 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Login from './Login';
+import Signup from './SignUp';
 import Home from './Home';
 import AllEvents from './AllEvents';
 import SingleEvent from './SingleEvent';
@@ -9,6 +10,7 @@ import MainLayout from './MainLayout';
 import Profile from './Profile';
 import ViewProfile from './ViewProfile';
 import EditProfile from './EditProfile';
+import MyEvents from './MyEvents';
 
 const router = createBrowserRouter(
   [
@@ -17,18 +19,21 @@ const router = createBrowserRouter(
       element: <Login /> 
     },
     {
+      path: '/signup',
+      element: <Signup />
+    },
+    {
       path: '/',
       element: <MainLayout />,
       children: [
         {
-      path: '/',
-      element: <Login /> 
+          path: '/',
+          element: <Login /> 
         },
         {
           path: '/home',
           element: <Home />
         },
-        
         {
           path: '/dashboard',
           element: <AdminDashboard />
@@ -56,6 +61,11 @@ const router = createBrowserRouter(
         {
           path: '/edit-profile',
           element: <EditProfile />
+        
+        },
+        {
+          path: '/my-events',
+          element: <MyEvents />
         }
       ]
     },
@@ -72,6 +82,7 @@ const router = createBrowserRouter(
     }
   }
 );
+
 
 function App() {
   return <RouterProvider router={router} />;

@@ -1,4 +1,17 @@
 import { Event } from '../models/event';
+// Define what data is needed to create an event
+interface CreateEventDto {
+  title: string;
+  description?: string;
+  startDateTime: string;
+  endDateTime: string;
+  location: string;
+  type?: string;
+  visibility?: string;
+  status?: string;
+  requiredItems?: string;
+  imageUrl?: string | null;
+}
 
 // Get all events
 export const fetchEvents = async (): Promise<Event[]> => {
@@ -11,6 +24,55 @@ export const fetchEvents = async (): Promise<Event[]> => {
 export const fetchSingleEvent = async (id: number): Promise<Event> => {
   const response = await fetch(`http://localhost:5000/api/events/${id}`);
   if (!response.ok) throw new Error('Failed to fetch event');
+  return await response.json();
+};
+
+// Create a new event
+export const createEvent = async (eventData: CreateEventDto, userId: number): Promise<Event> => {
+  const response = await fetch(`http://localhost:5000/api/events?userId=${userId}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(eventData),
+  });
+
+  if (!response.ok) {
+    console.error(await response.text());
+    throw new Error('Failed to create event.');
+  }
+
+  return await response.json();
+};
+
+// delete an event by ID
+export const deleteEvent = async (eventId: number): Promise<void> => {
+  const response = await fetch(`http://localhost:5000/api/events/${eventId}`, {
+    method: 'DELETE',
+  });
+
+  if (!response.ok) {
+    console.error(await response.text());
+    throw new Error('Failed to delete event.');
+  }
+};
+
+// Update an existing event
+interface UpdateEventDto extends CreateEventDto {} // reuse same structure
+
+export const updateEvent = async (
+  eventId: number,
+  eventData: UpdateEventDto
+): Promise<Event> => {
+  const response = await fetch(`http://localhost:5000/api/events/${eventId}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(eventData),
+  });
+
+  if (!response.ok) {
+    console.error(await response.text());
+    throw new Error('Failed to update event.');
+  }
+
   return await response.json();
 };
 

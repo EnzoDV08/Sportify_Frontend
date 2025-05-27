@@ -10,7 +10,7 @@ export interface Event {
   requiredItems?: string;
   startDateTime: string;
   endDateTime: string;
-  creatorUserId?: number;
+  creatorUserId: number;
   adminId?: number;
   invitedUserIds?: number[] | null;
   isPrivate?: boolean;
