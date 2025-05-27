@@ -1,18 +1,17 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import '../Style/Profile.css';
+import '../Style/ViewProfile.css';
 import image48 from '../assets/image 48.png';
 import image33 from '../assets/image 33.png';
 import image49 from '../assets/image 49.png';
 import ProfileIcon from '../assets/profile-icon.png';
 
-function Profile() {
+function ViewProfile() {
   return (
     <div className="profile-container">
       {/* Header */}
       <div className="profile-header">
         <div className="profile-info">
-          <h1>Pieter Man</h1>
+          <h1>Pieter </h1>
           <p><span className="label">Email:</span> pieterDieMan@gmail.com</p>
           <p><span className="label">Nickname:</span> DieManPieta</p>
           <p><span className="label">Favourite sport:</span> Netbal</p>
@@ -24,8 +23,7 @@ function Profile() {
           <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
         </div>
         <div className="profile-avatar">
-          <img src={ProfileIcon} alt="Profile" />
-            <button>Edit Profile</button>
+            <img src={ProfileIcon} alt="Profile" />
         </div>
       </div>
 
@@ -163,16 +161,9 @@ function Profile() {
   </div>
 </div>
 </div>
-
-      {/* End of Events won Section */}
-          <p className="view-profile-link"></p>
-            <a href="/view-profile">View Full Profile</a>
-
-            <p className="edit-profile-link"></p>
-          <a href="/edit-profile">Edit Profile</a>
-
-    </div>
+</div>
   );
+  
 }
 
-export default Profile;
+export default ViewProfile;

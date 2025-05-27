@@ -6,6 +6,9 @@ import SingleEvent from './SingleEvent';
 import CreateEvent from './CreateEvent';
 import AdminDashboard from './AdminDashboard';
 import MainLayout from './MainLayout';
+import Profile from './Profile';
+import ViewProfile from './ViewProfile';
+import EditProfile from './EditProfile';
 
 const router = createBrowserRouter(
   [
@@ -41,6 +44,18 @@ const router = createBrowserRouter(
         {
           path: '/add-event',
           element: <CreateEvent />
+        },
+        {
+          path: '/profile',
+          element: <Profile />
+        },
+        {
+          path: '/view-profile',
+          element: <ViewProfile />
+        },
+        {
+          path: '/edit-profile',
+          element: <EditProfile />
         }
       ]
     },

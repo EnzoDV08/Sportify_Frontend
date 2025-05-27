@@ -115,7 +115,9 @@ const Sidebar = () => {
           <div className="profile-info">
             <p className="name">Pieter Man</p>
             <p className="email">pieterDieMan@gmail.com</p>
-            <button className="view-btn">View Profile</button>
+            <Link to="/profile">
+              <button className="view-btn">View Profile</button>
+            </Link>
           </div>
         )}
       </div>
