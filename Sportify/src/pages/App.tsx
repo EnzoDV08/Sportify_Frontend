@@ -1,5 +1,6 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Login from './Login';
+import Signup from './SignUp';
 import Home from './Home';
 import AllEvents from './AllEvents';
 import SingleEvent from './SingleEvent';
@@ -15,18 +16,21 @@ const router = createBrowserRouter(
       element: <Login /> 
     },
     {
+      path: '/signup',
+      element: <Signup />
+    },
+    {
       path: '/',
       element: <MainLayout />,
       children: [
         {
-      path: '/',
-      element: <Login /> 
+          path: '/',
+          element: <Login /> 
         },
         {
           path: '/home',
           element: <Home />
         },
-        
         {
           path: '/dashboard',
           element: <AdminDashboard />
@@ -62,6 +66,7 @@ const router = createBrowserRouter(
     }
   }
 );
+
 
 function App() {
   return <RouterProvider router={router} />;
