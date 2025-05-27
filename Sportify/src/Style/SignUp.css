@@ -1,0 +1,431 @@
+@import './fonts.css';
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap');
+
+/* Layout Containers */
+.signup-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  background-image: url('../assets/Login/BackgroundImage.png');
+  background-size: cover;
+  background-position: center;
+}
+
+.signup-container {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  width: clamp(300px, 70vw, 2000px);
+  height: clamp(400px, 75vh, 800px);
+  background-color: white;
+  border-radius: 10px;
+  overflow: visible;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem 0;
+  box-sizing: border-box;
+  animation: fadeSlideIn 0.6s ease forwards;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.signup-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 55%;
+  height: 100%;
+  background-image: url('../assets/Signup/SignUpFormImage.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 1;
+  clip-path: polygon(0 0, 100% 0, 70% 100%, 0% 100%);
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+
+.sportify-logo {
+  position: absolute;
+  top: 50%;
+  left: 45%;
+  transform: translate(-50%, -50%);
+  max-width: 70%;
+  height: auto;
+  z-index: 2;
+  filter: drop-shadow(0 0 5px rgba(0,0,0,0.3));
+  animation: logoPop 3s ease-in-out infinite;
+}
+
+/* Form Styles */
+.signup-form {
+  z-index: 2;
+  flex: 1;
+  margin-left: 50%;
+  padding: 0 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.signup-form h1 {
+  font-size: 2rem;
+  margin-bottom: 15px;
+  color: #DD8100;
+  font-family: 'Eveleth Dot', sans-serif;
+  text-align: center;
+}
+
+.signup-form h2 {
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  color: rgb(34, 34, 34);
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  text-align: center;
+}
+
+.signup-inputs {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 25px;
+  width: 100%;
+  max-width: 450px;
+  padding: 0 1rem;
+  box-sizing: border-box;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeUpStagger 0.4s ease forwards;
+}
+
+.signup-inputs > *:nth-child(1) { animation-delay: 0.2s; }
+.signup-inputs > *:nth-child(2) { animation-delay: 0.4s; }
+.signup-inputs > *:nth-child(3) { animation-delay: 0.6s; }
+
+.signup-container input {
+  width: 100%;
+  padding: 6px 20px;
+  border: 1px solid rgb(34, 34, 34);
+  border-radius: 10px;
+  font-size: 1.2rem;
+  color: rgb(34, 34, 34);
+  background-color: #fff;
+  font-family: 'oswald', sans-serif;
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.signup-container input::placeholder {
+  color: rgba(34, 34, 34, 0.5);
+}
+
+.signup-container input:focus {
+  border-color: #ffa500;
+  box-shadow: 0 0 0 2px rgba(255, 165, 0, 0.3);
+}
+
+.EmailCont,
+.PasswordCont {
+  width: 100%;
+  max-width: 450px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.password-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.forgot-password {
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: #dd8100;
+  font-family: 'oswald', sans-serif;
+  text-decoration: none;
+  white-space: nowrap;
+  width: 100%;
+  text-align: right;
+}
+
+.forgot-password:hover {
+  text-decoration: underline;
+}
+
+.inline-error {
+  color: #e53935;
+  font-size: 0.9rem;
+  font-family: 'Oswald', sans-serif;
+  white-space: nowrap;
+}
+
+.password-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.password-input-wrapper input {
+  padding-right: 40px;
+}
+
+.toggle-password {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0;
+}
+
+.toggle-password:hover {
+  color: #dd8100;
+  transform: translateY(-50%) scale(1.1);
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+/* Buttons */
+.signup-btn {
+  position: relative;
+  height: 40px;
+  padding: 6px 0;
+  width: 100%;
+  max-width: 450px;
+  background-color: #dd8100;
+  color: white;
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-sizing: border-box;
+  z-index: 1;
+}
+
+.signup-btn:hover {
+  background-color: #c97400;
+  transform: scale(1.02);
+}
+
+.google-full-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+  max-width: 450px;
+  height: 40px;
+  background-color: white;
+  border: 1px solid rgb(34, 34, 34);
+  border-radius: 10px;
+  font-family: 'Oswald', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  color: rgb(34, 34, 34);
+  cursor: pointer;
+  transition: box-shadow 0.3s ease;
+  overflow: hidden;
+}
+
+.google-full-btn:hover {
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+}
+
+.google-full-btn img {
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+}
+
+/* Signup CTA */
+.SignUpButtonText {
+  font-size: 1rem;
+  font-weight: 400;
+  color: rgb(34, 34, 34);
+  font-family: 'oswald', sans-serif;
+  text-decoration: none;
+  white-space: nowrap;
+  width: 100%;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.SignUpButtonText a {
+  color: #dd8100;
+  text-decoration: none;
+}
+
+.SignUpButtonText a:hover {
+  text-decoration: underline;
+}
+
+/* Divider */
+.or-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 350px;
+  margin: 12px 0;
+}
+
+.or-divider hr {
+  flex: 1;
+  height: 1px;
+  background-color: #dd8100;
+  border: none;
+}
+
+.or-divider span {
+  color: #dd8100;
+  font-weight: 500;
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.8rem;
+}
+
+/* Logo for Mobile */
+.sportify-logo-mobile {
+  display: block;
+  max-width: 200px;
+  height: auto;
+  margin-bottom: 10px;
+  animation: dropInBounce 0.8s ease-out forwards;
+}
+
+@media (min-width: 769px) {
+  .sportify-logo-mobile {
+    display: none;
+  }
+}
+
+/* Toast (same shared styles) */
+.toast-container {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.toast {
+  position: relative;
+  margin: 0 auto;
+  min-width: 220px;
+  max-width: 400px;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-family: 'Oswald', sans-serif;
+  font-size: 1rem;
+  text-align: center;
+  color: white;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  opacity: 0;
+  transform: translateY(-20px) scale(0.98);
+  animation: fadeInOut 3s ease forwards;
+  pointer-events: all;
+  transition: all 0.3s ease;
+}
+
+.toast-success {
+  background: linear-gradient(135deg, rgba(40, 167, 69, 0.4), rgba(33, 136, 56, 0.5));
+}
+
+.toast-error {
+  background: linear-gradient(135deg, rgba(229, 57, 53, 0.4), rgba(183, 28, 28, 0.5));
+}
+
+/* Animations */
+@keyframes fadeSlideIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeUpStagger {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes dropInBounce {
+  0% {
+    opacity: 0;
+    transform: translateY(-60px);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(10px);
+  }
+  80% {
+    transform: translateY(-5px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(-10px) scale(0.98); }
+  10%, 90% { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(-10px) scale(0.98); }
+}
+
+@keyframes logoPop {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.03); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .signup-container {
+    flex-direction: column;
+    height: auto;
+    width: 90%;
+    padding: 1.5rem;
+  }
+
+  .signup-image,
+  .sportify-logo {
+    display: none;
+  }
+
+  .sportify-logo-mobile {
+    display: block;
+  }
+
+  .signup-form {
+    margin-left: 0;
+    width: 100%;
+    align-items: center;
+    padding: 0;
+  }
+
+  .signup-form h1 {
+    font-size: 1.6rem;
+  }
+
+  .signup-form h2 {
+    font-size: 1.3rem;
+  }
+}

@@ -145,7 +145,7 @@ const handleLogin = async (e: React.FormEvent) => {
           </form>
 
           <p className="SignUpButtonText">
-            Don't have an account? <a href="/signup">Sign up</a>
+            Don't have an account? <span onClick={() => navigate('/signup')} style={{ cursor: 'pointer', color: '#dd8100' }}>Sign up</span>
           </p>
         </div>
       </div>
