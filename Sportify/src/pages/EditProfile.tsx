@@ -180,14 +180,6 @@ const EditProfile: React.FC = () => {
         <label>Age</label>
         <input type="number" name="age" value={formData.age} onChange={handleChange} />
 
-        <label>Select Achievement</label>
-        <select name="selectedAchievement" value={formData.selectedAchievement} onChange={handleChange}>
-          <option value="">-- Choose One --</option>
-          {achievements.map((achievement, index) => (
-            <option key={index} value={achievement}>{achievement}</option>
-          ))}
-        </select>
-
         {/* ✅ Move upload outside of <select> to prevent nesting error */}
         <label>Upload Profile Picture</label>
         <input
