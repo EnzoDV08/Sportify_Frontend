@@ -8,6 +8,7 @@ import CreateEvent from './CreateEvent';
 import AdminDashboard from './AdminDashboard';
 import MainLayout from './MainLayout';
 import MyEvents from './MyEvents';
+import EditEvent from './EditEvent';
 
 const router = createBrowserRouter(
   [
@@ -50,6 +51,10 @@ const router = createBrowserRouter(
         {
           path: '/my-events',
           element: <MyEvents />
+        },
+        {
+          path: '/edit-event/:id',
+          element: <EditEvent />
         }
       ]
     },

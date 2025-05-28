@@ -5,9 +5,11 @@
   min-height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: center;
-  padding: 2rem;
-  margin: 50px 0px;
+  align-items: flex-start;       /* aligns form to the top */
+  padding: 4rem 1rem;
+  box-sizing: border-box;
+  overflow-y: auto;
+  background-color: #ffffff;     /* optional: match your theme */
 }
 
 /* Form box */
