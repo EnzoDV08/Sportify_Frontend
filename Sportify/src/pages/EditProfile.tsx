@@ -33,8 +33,8 @@ const EditProfile: React.FC = () => {
 
       try {
         const [userRes, profileRes] = await Promise.all([
-          fetch(`http://localhost:5000/api/Users/${userId}`),
-          fetch(`http://localhost:5000/api/Profiles/${userId}`)
+          fetch(`http://localhost/api/Users/${userId}`),
+          fetch(`http://localhost/api/Profiles/${userId}`)
         ]);
 
         if (!userRes.ok || !profileRes.ok) throw new Error('Failed to load profile');
@@ -70,13 +70,40 @@ const EditProfile: React.FC = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const data = new FormData();
+    data.append('image', file);
+
+    try {
+      const res = await fetch('http://localhost/api/upload', {
+        method: 'POST',
+        body: data,
+      });
+
+      const contentType = res.headers.get("content-type");
+      if (!res.ok || !contentType?.includes("application/json")) {
+        const errorText = await res.text();
+        throw new Error(`Upload failed: ${errorText}`);
+      }
+
+      const result = await res.json();
+      console.log('Image uploaded, URL:', result.imageUrl);
+      setFormData(prev => ({ ...prev, profilePicture: result.imageUrl }));
+    } catch (err) {
+      console.error('Image upload failed:', err);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!userId) return;
 
     try {
-      // Update user basic info
-      await fetch(`http://localhost:5000/api/Users/${userId}`, {
+      // Update user info
+      await fetch(`http://localhost/api/Users/${userId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -87,7 +114,7 @@ const EditProfile: React.FC = () => {
       });
 
       // Update profile
-      await fetch(`http://localhost:5000/api/Profiles/${userId}`, {
+      await fetch(`http://localhost/api/Profiles/${userId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -160,6 +187,15 @@ const EditProfile: React.FC = () => {
             <option key={index} value={achievement}>{achievement}</option>
           ))}
         </select>
+
+        {/* ✅ Move upload outside of <select> to prevent nesting error */}
+        <label>Upload Profile Picture</label>
+        <input
+          type="file"
+          accept="image/*"
+          name="profilePictureUpload"
+          onChange={handleImageUpload}
+        />
 
         <button type="submit">Save Changes</button>
       </form>
