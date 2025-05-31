@@ -1,11 +1,15 @@
+@import './fonts.css'; 
 /* Main container */
 .create-event-container {
   width: 100%;
   min-height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: center;
-  padding: 2rem;
+  align-items: flex-start;       /* aligns form to the top */
+  padding: 4rem 1rem;
+  box-sizing: border-box;
+  overflow-y: auto;
+  background-color: #ffffff;     /* optional: match your theme */
 }
 
 /* Form box */
@@ -24,6 +28,8 @@
 
 /* Heading */
 .create-event-form h2 {
+  font-family: 'Eveleth Dot', sans-serif;
+  font-size: 35px;
   grid-column: span 2;
   text-align: center;
   margin-bottom: 0.5rem;
