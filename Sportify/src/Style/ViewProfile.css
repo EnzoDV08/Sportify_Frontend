@@ -32,11 +32,11 @@
 
 .profile-info .label {
   font-weight: bold;
-  color: #DD8100;
+  color: #FF9704;
 }
 
 .profile-about .about-heading {
-  color: #DD8100;
+  color: #FF9704;
   font-weight: bold;
 }
 
@@ -45,16 +45,18 @@
   height: 150px;
   border-radius: 50%;
   object-fit: cover;
+  margin-top: -20px;
 }
 
 .profile-avatar button {
   margin-top: 10px;
   padding: 8px 16px;
-  background-color: #DD8100;
+  background-color: #FF9704;
   border: none;
   color: white;
   border-radius: 4px;
   cursor: pointer;
+  margin-bottom: 50px;
 }
 
 .profile-icons {
@@ -95,7 +97,7 @@
 }
 
 .profile-stat {
-  background-color: #DD8100;
+  background-color: #FF9704;
   color: white;
   padding: 12px 24px;
   margin: 10px;
@@ -136,7 +138,7 @@
 
 
 .stats-box {
-  background-color: #DD8100;
+  background-color: #FF9704;
   color: white;
   padding: 10px 20px;
   border-top-left-radius: 15px;
@@ -188,7 +190,7 @@
   height: 100%;
   object-fit: cover;
   display: block;
-  border-bottom: 2px solid #DD8100;
+  border-bottom: 2px solid #f7941d;
   box-shadow: inset 0px -1px 0px rgba(0, 0, 0, 0.1);
 }
 
@@ -197,7 +199,7 @@
   position: absolute;
   top: 10px;
   right: 10px;
-  background-color: #DD8100;
+  background-color: #FF9704;
   color: #000;
   font-weight: bold;
   padding: 5px 12px;
@@ -207,7 +209,7 @@
 
 .event-details {
   padding: 16px;
-  background-color: #DD8100;
+  background-color: #FF9704;
   position: relative;
 }
 
@@ -296,6 +298,26 @@
 }
 
 
+.view-profile-button-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.view-profile-btn {
+  background-color: #FD5308;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.view-profile-btn:hover {
+  background-color: #e04b07;
+}
 
 
 /* Responsive adjustments */

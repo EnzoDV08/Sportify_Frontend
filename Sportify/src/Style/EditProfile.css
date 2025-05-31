@@ -1,0 +1,31 @@
+.edit-profile-container {
+  padding: 2rem;
+  max-width: 600px;
+  margin: auto;
+  background-color: #FD5308;
+}
+
+.edit-profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  color: black;
+}
+
+.edit-profile-form input,
+.edit-profile-form textarea,
+.edit-profile-form select {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  color: black;
+}
+
+.edit-profile-form button {
+  padding: 0.75rem;
+  background-color: #FD5308;
+  color: black;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
