@@ -17,10 +17,23 @@ import '../Style/Sidebar.css';
 import logo from '../assets/SportifyLogo.png';
 
 const Sidebar = () => {
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(() => {
+  const stored = localStorage.getItem('sidebarExpanded');
+  return stored === 'true'; // default to false if not set
+});
+
+const toggleSidebar = () => {
+  const newState = !isExpanded;
+  setIsExpanded(newState);
+  localStorage.setItem('sidebarExpanded', String(newState));
+};
+
   const [showSettings, setShowSettings] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const userType = localStorage.getItem("userType");
+  const userName = localStorage.getItem("userName") || "Guest";
+  const userEmail = localStorage.getItem("userEmail") || "guest@example.com";
+
 
   const handleSignOut = () => {
     localStorage.clear();
@@ -35,7 +48,8 @@ const Sidebar = () => {
         </div>
 
         <div className="toggle-panel">
-          <button onClick={() => setIsExpanded(!isExpanded)} className="toggle-btn">
+         <button onClick={toggleSidebar} className="toggle-btn">
+
             {isExpanded ? <FaAngleDoubleLeft size={22} /> : <FaAngleDoubleRight size={22} />}
           </button>
         </div>
@@ -109,18 +123,19 @@ const Sidebar = () => {
         </nav>
       </div>
 
-      <div className="profile" data-tooltip="View Profile">
-        <img src="/profile.jpg" alt="profile" className="profile-img" />
-        {isExpanded && (
-          <div className="profile-info">
-            <p className="name">Pieter Man</p>
-            <p className="email">pieterDieMan@gmail.com</p>
-            <Link to="/profile">
-              <button className="view-btn">View Profile</button>
-            </Link>
-          </div>
-        )}
-      </div>
+     <div className="profile" data-tooltip="View Profile">
+  <img src="/profile.jpg" alt="profile" className="profile-img" />
+  {isExpanded && (
+    <div className="profile-info">
+      <p className="name">{userName}</p>
+      <p className="email">{userEmail}</p>
+      <Link to="/profile">
+        <button className="view-btn">View Profile</button>
+      </Link>
+    </div>
+  )}
+</div>
+
     </div>
   );
 };

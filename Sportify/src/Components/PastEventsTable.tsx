@@ -2,91 +2,26 @@ import { useEffect, useState, Fragment } from 'react'
 import { Event } from '../models/event'
 import { User } from '../models/user'
 import { motion, AnimatePresence } from 'framer-motion'
+import { assignAchievement } from '../services/api'
+import { fetchEvents } from '../services/api'
+
+
 
 interface UserWithRole extends User {
   role?: string
 }
 
 interface MockEvent extends Event {
-  participants: UserWithRole[]
-  sportType: string
-  creatorId: number
-  status: 'Completed' | 'Upcoming'
+  participants: UserWithRole[];
+  sportType: string;
+  status: 'Completed' | 'Upcoming'; 
+  creatorId?: number;
 }
 
-const mockEvents: MockEvent[] = [
-  {
-    eventId: 1,
-    title: 'Spring Soccer Match',
-    sportType: 'Soccer',
-    date: '2025-06-26T14:00:00',
-    location: 'Cape Town Stadium',
-    creatorId: 1,
-    status: 'Completed',
-    participants: [
-      { userId: 1, name: 'Alice', email: 'alice@mail.com', password: '', role: 'Captain' },
-      { userId: 2, name: 'Bob', email: 'bob@mail.com', password: '', role: 'Goalkeeper' }
-    ]
-  },
-  {
-    eventId: 2,
-    title: 'Winter Football Cup',
-    sportType: 'Football',
-    date: '2024-10-26T10:00:00',
-    location: 'Johannesburg Arena',
-    creatorId: 1,
-    status: 'Completed',
-    participants: [
-      { userId: 3, name: 'Charlie', email: 'charlie@mail.com', password: '', role: 'Player' }
-    ]
-  },
-  {
-    eventId: 3,
-    title: 'Elite Basketball Showdown',
-    sportType: 'Basketball',
-    date: '2025-07-02T18:30:00',
-    location: 'Durban Arena',
-    creatorId: 1,
-    status: 'Completed',
-    participants: [
-      { userId: 4, name: 'David', email: 'david@mail.com', password: '', role: 'Captain' },
-      { userId: 5, name: 'Eva', email: 'eva@mail.com', password: '', role: 'Player' },
-      { userId: 6, name: 'Frank', email: 'frank@mail.com', password: '', role: 'Player' }
-    ]
-  },
-  {
-    eventId: 4,
-    title: 'Marathon Finals',
-    sportType: 'Running',
-    date: '2025-07-10T08:00:00',
-    location: 'Pretoria Track',
-    creatorId: 1,
-    status: 'Completed',
-    participants: [
-      { userId: 7, name: 'Grace', email: 'grace@mail.com', password: '', role: 'Runner' },
-      { userId: 8, name: 'Henry', email: 'henry@mail.com', password: '', role: 'Runner' },
-      { userId: 9, name: 'Isla', email: 'isla@mail.com', password: '', role: 'Runner' },
-      { userId: 10, name: 'Jack', email: 'jack@mail.com', password: '', role: 'Runner' }
-    ]
-  },
-  {
-    eventId: 5,
-    title: 'Swimming Championship',
-    sportType: 'Swimming',
-    date: '2025-07-12T10:00:00',
-    location: 'Cape Swim Centre',
-    creatorId: 1,
-    status: 'Completed',
-    participants: [
-      { userId: 11, name: 'Kate', email: 'kate@mail.com', password: '', role: 'Swimmer' },
-      { userId: 12, name: 'Leo', email: 'leo@mail.com', password: '', role: 'Swimmer' }
-    ]
-  }
-]
 
 
 const PastEventsTable = () => {
-  const adminId = 1 
+  const adminId = Number(localStorage.getItem('userId'));
   const [events, setEvents] = useState<MockEvent[]>([])
   const [expandedEventId, setExpandedEventId] = useState<number | null>(null)
   const [searches, setSearches] = useState<Record<number, string>>({})
@@ -108,9 +43,34 @@ const PastEventsTable = () => {
 
   
 
-  useEffect(() => {
-    setEvents(mockEvents)
-  }, [])
+useEffect(() => {
+  const loadEvents = async () => {
+    try {
+      const allEvents = await fetchEvents();
+      const adminId = Number(localStorage.getItem('userId'));
+
+      const createdByAdmin = allEvents
+        .filter(e =>
+          e.creatorUserId === adminId || e.adminId === adminId
+        )
+        .map(e => ({
+          ...e,
+          sportType: e.type || 'General',
+          participants: e.participants || []
+        })) as MockEvent[];
+
+      setEvents(createdByAdmin);
+    } catch (err) {
+      console.error('❌ Failed to fetch events:', err);
+    }
+  };
+
+  loadEvents();
+}, []);
+
+
+
+
 
   const toggleExpand = (eventId: number) => {
     setExpandedEventId(prev => (prev === eventId ? null : eventId))
@@ -130,7 +90,7 @@ const PastEventsTable = () => {
         e.location.toLowerCase().includes(q)
         );
         const matchesSport = !sportFilter || e.sportType === sportFilter;
-        const matchesDate = !dateFilter || new Date(e.date).toISOString().split('T')[0] === dateFilter;
+        const matchesDate = !dateFilter || new Date(e.startDateTime).toISOString().split('T')[0] === dateFilter;
 
         return matchesQuery && matchesSport && matchesDate;
     });
@@ -158,16 +118,34 @@ const PastEventsTable = () => {
     }
   }
 
-  const handleAssign = (userId: number) => {
-    if (assigned[userId]) {
-      setAssigned(prev => ({ ...prev, [userId]: false }))
-    } else if (selectedAchievements[userId]) {
-      alert(`✅ Achievement assigned: ${selectedAchievements[userId]}`)
-      setAssigned(prev => ({ ...prev, [userId]: true }))
-    } else {
-      alert('⚠️ Select an achievement before assigning.')
-    }
+const handleAssign = async (userId: number) => {
+  if (assigned[userId]) {
+    setAssigned(prev => ({ ...prev, [userId]: false }))
+    return
   }
+
+  const achievementName = selectedAchievements[userId]
+  if (!achievementName) {
+    alert('⚠️ Select an achievement before assigning.')
+    return
+  }
+
+  try {
+    await assignAchievement({
+      userId: String(userId),
+      achievementId: achievementName,
+      awardedByAdminId: localStorage.getItem('userId') || ''
+    })
+
+
+    alert(`✅ Achievement assigned: ${achievementName}`)
+    setAssigned(prev => ({ ...prev, [userId]: true }))
+  } catch (err) {
+    console.error(err)
+    alert('❌ Failed to assign achievement.')
+  }
+}
+
 
   const handleRemoveUser = (eventId: number, userId: number) => {
     setEvents(prev =>
@@ -184,12 +162,12 @@ const PastEventsTable = () => {
   }
 
   const completedEvents = events.filter(e => e.status === 'Completed' && e.creatorId === adminId)
-  const recentEvents = completedEvents.filter(e => new Date(e.date) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000))
-  const olderEvents = completedEvents.filter(e => new Date(e.date) <= new Date(Date.now() - 7 * 24 * 60 * 60 * 1000))
+  const recentEvents = completedEvents.filter(e => new Date(e.startDateTime) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000))
+  const olderEvents = completedEvents.filter(e => new Date(e.startDateTime) <= new Date(Date.now() - 7 * 24 * 60 * 60 * 1000))
 
   const renderEventTable = (data: MockEvent[], title: string, headerColor: string) => (
     <div className="mt-10">
-      <h2 className={`text-2xl font-bold mb-4 ${headerColor === '#DD8100' ? 'text-[#DD8100]' : 'text-[#BB6E00]'}`}>
+      <h2 className={`text-2xl font-bold mb-4 ${headerColor === '#DD8100' ? 'text-[#dd8100e8]' : 'text-[#BB6E00]'}`}>
         {title}
       </h2>
 
@@ -223,7 +201,7 @@ const PastEventsTable = () => {
                   <td className="p-3 font-medium">{event.eventId}</td>
                   <td className="p-3">{event.title}</td>
                   <td className="p-3">{event.sportType}</td>
-                  <td className="p-3">{new Date(event.date).toLocaleString()}</td>
+                  <td className="p-3">{new Date(event.startDateTime).toLocaleString()}</td>
                   <td className="p-3">{event.location}</td>
                   <td className="p-3">{event.participants.length}</td>
                   <td className="p-3">{event.status}</td>

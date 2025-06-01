@@ -1,54 +1,73 @@
 import { useState } from 'react';
 import { createEvent } from '../services/api';
+import ImageSelector from '../Components/ImageSelector';
 import '../Style/CreateEvent.css';
 
-// Set up state for each input field
+
 function CreateEvent() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [date, setDate] = useState('');
+  const [startDateTime, setStartDateTime] = useState('');
+  const [endDateTime, setEndDateTime] = useState('');
   const [location, setLocation] = useState('');
   const [type, setType] = useState('');
   const [visibility, setVisibility] = useState('');
-  const [status, setStatus] = useState('');
-  const [isPrivate, setIsPrivate] = useState(false);
+  const [requiredItems, setRequiredItems] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
+  const [imageSearchTerm, setImageSearchTerm] = useState('');
 
-  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Get the logged-in user's ID
     const userId = Number(localStorage.getItem('userId'));
     if (!userId) {
       alert('User not logged in.');
       return;
     }
-
-  // Send event data to backend
+        console.log("Submitting Event:", {
+      title,
+      description,
+      startDateTime,
+      endDateTime,
+      location,
+      type,
+      visibility,
+      requiredItems,
+      imageUrl
+    });
     try {
-      await createEvent(
-        {
-          title,
-          description,
-          date,
-          location,
-          type,
-          visibility,
-          status,
-        },
-        userId
-      );
+      const cleanedImageUrl = imageUrl.includes('images.unsplash.com')
+        ? `${imageUrl.replace(/w=\d+/, 'w=1200')}&auto=format`
+        : imageUrl;
+
+    await createEvent(
+      {
+        title,
+        description,
+        startDateTime,
+        endDateTime,
+        location,
+        type,
+        status: "upcoming",
+        visibility,
+        requiredItems,
+        imageUrl: cleanedImageUrl,
+      },
+      userId
+    );
+
 
       alert('Event created successfully!');
-      // Clear form
       setTitle('');
       setDescription('');
-      setDate('');
+      setStartDateTime('');
+      setEndDateTime('');
       setLocation('');
       setType('');
       setVisibility('');
-      setStatus('');
-      setIsPrivate(false);
+      setRequiredItems('');
+      setImageUrl('');
+      setImageSearchTerm('');
     } catch (err) {
       console.error(err);
       alert('Failed to create event.');
@@ -57,6 +76,7 @@ function CreateEvent() {
 
   return (
     <div className="create-event-container">
+
       <form className="create-event-form" onSubmit={handleSubmit}>
         <h2>Create a New Event</h2>
 
@@ -71,11 +91,21 @@ function CreateEvent() {
         </div>
 
         <div className="form-group half">
-          <label>Date</label>
-          <input type="date" value={date} onChange={(e) => setDate(e.target.value)} required />
+          <label>Start Date & Time</label>
+          <input type="datetime-local" value={startDateTime} onChange={(e) => setStartDateTime(e.target.value)} required />
         </div>
 
         <div className="form-group half">
+          <label>End Date & Time</label>
+          <input type="datetime-local" value={endDateTime} onChange={(e) => setEndDateTime(e.target.value)} required />
+        </div>
+
+        <div className="form-group full">
+          <label>Required Items</label>
+          <input type="text" value={requiredItems} onChange={(e) => setRequiredItems(e.target.value)} placeholder="e.g. Water bottle, Shoes" />
+        </div>
+
+        <div className="form-group full">
           <label>Location</label>
           <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} required />
         </div>
@@ -99,14 +129,36 @@ function CreateEvent() {
           </select>
         </div>
 
+        {/* 🔍 Custom image search term */}
         <div className="form-group full">
-          <label>Status</label>
-          <select value={status} onChange={(e) => setStatus(e.target.value)} required>
-            <option value="">Select status</option>
-            <option value="upcoming">Upcoming</option>
-            <option value="completed">Completed</option>
-          </select>
+          <label>Image Search Term</label>
+          <input
+            type="text"
+            value={imageSearchTerm}
+            onChange={(e) => setImageSearchTerm(e.target.value)}
+            placeholder="e.g. marathon, soccer"
+          />
         </div>
+
+        <div className="form-group full">
+          <label>Select an Image</label>
+          <ImageSelector
+            query={imageSearchTerm}
+            onSelect={(url) => {
+              const highRes = url.includes('images.unsplash.com')
+                ? `${url.replace(/w=\d+/, 'w=800')}&auto=format`
+                : url;
+              setImageUrl(highRes);
+            }}
+          />
+        </div>
+
+        {imageUrl && (
+          <div className="form-group full">
+            <label>Selected Image Preview</label>
+            <img src={imageUrl} alt="Selected" style={{ width: '100%', borderRadius: '8px' }} />
+          </div>
+        )}
 
         <button type="submit">Create Event</button>
       </form>

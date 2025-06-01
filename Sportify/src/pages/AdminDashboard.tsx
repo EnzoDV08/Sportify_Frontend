@@ -4,12 +4,11 @@ import EventCreator from '../Components/EventCreator'
 import PastEventsTable from '../Components/PastEventsTable'
 import bannerImage from '../assets/admin-banner.png'
 import AdminLogo from '../assets/AdminLogo.svg'
-import { fetchAdminDetails } from '../services/api'
-import { Admin } from '../models/admin'
+//import { fetchAdminDetails } from '../services/api'
 
 const AdminDashboard = () => {
   const [tab, setTab] = useState('achievements')
-  const [admin, setAdmin] = useState<Admin | null>(null)
+
 
 const tabs = [
   { id: 'achievements', label: '🏆 Achievements' },
@@ -17,9 +16,9 @@ const tabs = [
   { id: 'events', label: '📂 Past Events' }
 ]
 
-  useEffect(() => {
-    fetchAdminDetails().then(setAdmin).catch(console.error)
-  }, [])
+  // useEffect(() => {
+  //   fetchAdminDetails().then(setAdmin).catch(console.error)
+  // }, [])
 
   return (
     <div className="min-h-screen text-[#FF9900]">
@@ -38,27 +37,7 @@ const tabs = [
           <span className="text-[#FF9900] font-bold text-2xl tracking-wide">Bearded</span>
         </div>
 
-        {/* 👤 Admin Profile Info */}
-        {admin && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="relative z-10 flex flex-col items-center justify-center pt-16"
-          >
-            <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-[#FF9900] shadow-2xl bg-black">
-              <img
-                src={admin.profileImage || 'https://via.placeholder.com/150'}
-                alt="Admin"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <h2 className="text-4xl font-extrabold mt-5 text-white">{admin.name}</h2>
-            <p className="text-[#FF9900] text-xl font-semibold mt-1">ID: {admin.adminId}</p>
-            <p className="text-gray-300 text-lg mt-1">{admin.email}</p>
-          </motion.div>
-        )}
-      </div>
+
 
       {/* 🔘 Tabs */}
       <motion.div
@@ -99,6 +78,7 @@ const tabs = [
           </motion.div>
         </AnimatePresence>
       </div>
+    </div>
     </div>
   )
 }

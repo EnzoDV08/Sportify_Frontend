@@ -5,6 +5,7 @@ export interface User {
   password: string
   userType?: string
   username?: string;
+  imageUrl?: string;
 }
 
 export interface LoginRequest {
