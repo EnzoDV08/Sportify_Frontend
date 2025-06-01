@@ -1,8 +1,16 @@
+/* ============================= */
+/*          IMPORTS             */
+/* ============================= */
+
 @import './fonts.css';
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap');
 
-/* Layout Containers */
+
+/* ============================= */
+/*        LAYOUT CONTAINERS     */
+/* ============================= */
+
 .signup-page {
   display: flex;
   justify-content: center;
@@ -59,7 +67,11 @@
   animation: logoPop 3s ease-in-out infinite;
 }
 
-/* Form Styles */
+
+/* ============================= */
+/*       FORM & INPUT STYLES    */
+/* ============================= */
+
 .signup-form {
   z-index: 2;
   flex: 1;
@@ -194,7 +206,11 @@
   transition: color 0.2s ease, transform 0.2s ease;
 }
 
-/* Buttons */
+
+/* ============================= */
+/*     BUTTONS & CTA STYLES     */
+/* ============================= */
+
 .signup-btn {
   position: relative;
   height: 40px;
@@ -249,6 +265,15 @@
   object-fit: contain;
 }
 
+.SignupButtonCont{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 450px;
+}
+
 /* Signup CTA */
 .SignUpButtonText {
   font-size: 1rem;
@@ -259,7 +284,6 @@
   white-space: nowrap;
   width: 100%;
   text-align: center;
-  margin-top: 10px;
 }
 
 .SignUpButtonText a {
@@ -271,7 +295,11 @@
   text-decoration: underline;
 }
 
-/* Divider */
+
+/* ============================= */
+/*         OR DIVIDER STYLES    */
+/* ============================= */
+
 .or-divider {
   display: flex;
   align-items: center;
@@ -296,7 +324,11 @@
   font-size: 0.8rem;
 }
 
-/* Logo for Mobile */
+
+/* ============================= */
+/*     SPORTIFY MOBILE LOGO     */
+/* ============================= */
+
 .sportify-logo-mobile {
   display: block;
   max-width: 200px;
@@ -311,7 +343,11 @@
   }
 }
 
-/* Toast (same shared styles) */
+
+/* ============================= */
+/*           TOAST STYLES       */
+/* ============================= */
+
 .toast-container {
   position: absolute;
   top: 20px;
@@ -353,7 +389,11 @@
   background: linear-gradient(135deg, rgba(229, 57, 53, 0.4), rgba(183, 28, 28, 0.5));
 }
 
-/* Animations */
+
+/* ============================= */
+/*         ANIMATIONS SECTION   */
+/* ============================= */
+
 @keyframes fadeSlideIn {
   to {
     opacity: 1;
@@ -396,7 +436,11 @@
   50% { transform: translate(-50%, -50%) scale(1.03); }
 }
 
-/* Responsive */
+
+/* ============================= */
+/*     RESPONSIVE DESIGN RULES  */
+/* ============================= */
+
 @media (max-width: 768px) {
   .signup-container {
     flex-direction: column;

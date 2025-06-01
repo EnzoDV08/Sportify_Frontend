@@ -8,16 +8,21 @@ import CreateEvent from './CreateEvent';
 import AdminDashboard from './AdminDashboard';
 import MainLayout from './MainLayout';
 import MyEvents from './MyEvents';
+import OrganizationSignupPage from './OrganizationSignupPage'; // ✅ NEW
 
 const router = createBrowserRouter(
   [
     {
       path: '/',
-      element: <Login /> 
+      element: <Login />
     },
     {
       path: '/signup',
       element: <Signup />
+    },
+    {
+      path: '/org-signup', // ✅ NEW
+      element: <OrganizationSignupPage />
     },
     {
       path: '/',
@@ -25,7 +30,7 @@ const router = createBrowserRouter(
       children: [
         {
           path: '/',
-          element: <Login /> 
+          element: <Login />
         },
         {
           path: '/home',
@@ -67,11 +72,8 @@ const router = createBrowserRouter(
   }
 );
 
-
 function App() {
   return <RouterProvider router={router} />;
 }
 
 export default App;
-
-
