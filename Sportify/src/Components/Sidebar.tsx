@@ -93,6 +93,7 @@ const toggleSidebar = () => {
                 <p className="dropdown-item">📬 New friend request</p>
                 <p className="dropdown-item">🏆 You earned a new achievement</p>
                 <p className="dropdown-item">📅 Event starts soon</p>
+                <Link to="/notifications" className="dropdown-item">📩 View Event Invites</Link>
               </div>
             )}
           </div>

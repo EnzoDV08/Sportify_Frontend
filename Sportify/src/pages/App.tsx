@@ -12,6 +12,7 @@ import ViewProfile from './ViewProfile';
 import EditProfile from './EditProfile';
 import MyEvents from './MyEvents';
 import EditEvent from './EditEvent';
+import InvitedEvents from './InvitedEvents';
 
 const router = createBrowserRouter(
   [
@@ -71,6 +72,10 @@ const router = createBrowserRouter(
         {
           path: '/edit-event/:id',
           element: <EditEvent />
+        },
+        {
+          path: '/notifications',
+          element: <InvitedEvents />
         }
       ]
     },
