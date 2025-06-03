@@ -11,6 +11,7 @@ function SingleEvent() {
   const [error, setError] = useState<string | null>(null);
   const [otherEvents, setOtherEvents] = useState<Event[]>([]);
   const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  const userId = Number(localStorage.getItem('userId'));
 
   useEffect(() => {
     const eventId = Number(id);
@@ -75,7 +76,14 @@ function SingleEvent() {
           <div><span>{String(countdown.minutes).padStart(2, '0')}</span> Minutes</div>
           <div><span>{String(countdown.seconds).padStart(2, '0')}</span> Seconds</div>
         </div>
+        <div style={{ display: 'flex', gap: '1rem' }}>
         <button className="single-join-button">JOIN</button>
+        {event.creatorUserId === userId && (
+          <Link to={`/edit-event/${event.eventId}`} className="single-join-button">
+            Edit Event
+          </Link>
+        )}
+  </div>
       </div>
 
       <div className="single-event-main-content">

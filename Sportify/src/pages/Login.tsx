@@ -39,15 +39,22 @@ const handleLogin = async (e: React.FormEvent) => {
       body: JSON.stringify({ email, password }),
     });
 
-    if (response.ok) {
-      const result = await response.json();
-      localStorage.setItem('isLoggedIn', 'true');
-      localStorage.setItem('userType', result.userType);
-      localStorage.setItem('userId', result.userId);
+if (response.ok) {
+  const result = await response.json();
 
-      showToast('Login successful!', 'success');
-      setTimeout(() => navigate('/home'), 1500);
-    } else {
+  // ✅ Store login info
+  localStorage.setItem('isLoggedIn', 'true');
+  localStorage.setItem('userType', result.userType);
+  localStorage.setItem('userId', result.userId);
+
+  // ✅ ADD these two lines below:
+  localStorage.setItem('userName', result.name);    // 👈 Comes from backend
+  localStorage.setItem('userEmail', result.email);  // 👈 Comes from backend
+
+  showToast('Login successful!', 'success');
+  setTimeout(() => navigate('/home'), 1500);
+}
+ else {
       // 🔽 Start of improved error handling
       const contentType = response.headers.get('content-type');
       let errorMessage = 'Login failed.';

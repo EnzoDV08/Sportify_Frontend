@@ -77,6 +77,7 @@ function AllEvents() {
   if (loading) return <p className="loading-text">Loading events...</p>;
 
   return (
+    <div className="sportify-events-page">
     <div className="all-events-page">
       <div className="events-section-white"
         style={{
@@ -238,7 +239,9 @@ function AllEvents() {
         })}
       </div>
     </div>
+    </div>
   );
 }
 
 export default AllEvents;
+

@@ -41,12 +41,13 @@ function MyEvents() {
               <img src={event.imageUrl || '/placeholder.jpg'} alt={event.title} className="my-event-img" />
               <div className="my-event-content">
                 <h2 className="my-event-title">{event.title}</h2>
-                <p className="my-event-description">{event.description}</p>
-                <p className="my-event-meta">{new Date(event.startDateTime).toLocaleString()} - {new Date(event.endDateTime).toLocaleTimeString()}</p>
+                <p className="my-event-meta">
+                  {new Date(event.startDateTime).toLocaleString()} - {new Date(event.endDateTime).toLocaleTimeString()}
+                </p>
                 <p className="my-event-meta">📍 {event.location}</p>
 
                 <div className="my-event-actions">
-                  <Link to={`/edit-event/${event.eventId}`} className="my-btn my-update-btn">Update</Link>
+                  <Link to={`/events/${event.eventId}`} className="my-btn my-update-btn">View</Link>
                   <button onClick={() => handleDelete(event.eventId)} className="my-btn my-delete-btn">Delete</button>
                 </div>
               </div>
