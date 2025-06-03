@@ -87,18 +87,22 @@ const Sidebar = () => {
         </nav>
       </div>
 
-      <div className="profile">
-        <img src="/profile.jpg" alt="profile" className="profile-img" />
-        {isExpanded && (
-          <div className="profile-info">
-            <p className="name">Pieter Man</p>
-            <p className="email">pieterDieMan@gmail.com</p>
-            <Link to="/profile">
-              <button className="view-btn">View Profile</button>
-            </Link>
-          </div>
-        )}
-      </div>
+<div className="profile">
+  <img
+    src={localStorage.getItem('profilePicture') || '/placeholder-profile.jpg'}
+    alt="profile"
+    className="profile-img"
+  />
+  {isExpanded && (
+    <div className="profile-info">
+      <p className="name">{localStorage.getItem('name') || 'Guest'}</p>
+      <p className="email">{localStorage.getItem('email') || 'example@email.com'}</p>
+      <Link to="/profile">
+        <button className="view-btn">View Profile</button>
+      </Link>
+    </div>
+  )}
+</div>
     </div>
   );
 };
