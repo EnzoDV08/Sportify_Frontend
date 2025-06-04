@@ -100,7 +100,7 @@ function Profile() {
   </div>
 
   <div className="profile-avatar">
-    <img src={profile?.profilePicture || "/placeholder-profile.jpg"} alt="Profile" />
+<img src={`http://localhost:5000/${profile?.profilePicture}`} />
     <button className="edit-profile-btn" onClick={() => navigate('/edit-profile')}>Edit Profile</button>
   </div>
 </div>
