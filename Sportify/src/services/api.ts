@@ -11,6 +11,7 @@ interface CreateEventDto {
   status?: string;
   requiredItems?: string;
   imageUrl?: string | null;
+  invitedUserIds?: number[];
 }
 
 // Get all events
@@ -74,6 +75,33 @@ export const updateEvent = async (
   }
 
   return await response.json();
+};
+
+// Get events the user is invited to
+export const fetchInvitedEvents = async (userId: number): Promise<Event[]> => {
+  const response = await fetch(`http://localhost:5000/api/EventParticipants/InvitedEvents/${userId}`);
+  if (!response.ok) {
+    console.error(await response.text());
+    throw new Error('Failed to fetch invited events');
+  }
+  return await response.json();
+};
+
+export const acceptInvite = async (eventId: number, userId: number): Promise<void> => {
+  const response = await fetch(`http://localhost:5000/api/EventParticipants/AcceptInvite?eventId=${eventId}&userId=${userId}`, {
+    method: 'POST'
+  });
+  if (!response.ok) throw new Error('Failed to accept invite.');
+};
+
+export const rejectInvite = async (eventId: number, userId: number): Promise<void> => {
+  const response = await fetch(`http://localhost:5000/api/EventParticipants/RejectInvite?eventId=${eventId}&userId=${userId}`, {
+    method: 'POST'
+  });
+
+  if (!response.ok) {
+    throw new Error(await response.text() || 'Failed to reject invite');
+  }
 };
 
 // Login
