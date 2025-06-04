@@ -18,7 +18,6 @@
     "react-dom": "^18.2.0",
     "react-icons": "^5.5.0",
     "react-router-dom": "^6.30.0",
-    "sportify-frontend": "file:",
     "tailwindcss": "^4.1.7"
   },
   "devDependencies": {
