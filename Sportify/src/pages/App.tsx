@@ -8,7 +8,7 @@ import CreateEvent from './CreateEvent';
 import AdminDashboard from './AdminDashboard';
 import MainLayout from './MainLayout';
 import Profile from './Profile';
-import ViewProfile from './ViewProfile';
+// import ViewProfile from './ViewProfile';
 import EditProfile from './EditProfile';
 import MyEvents from './MyEvents';
 import OrganizationSignupPage from './OrganizationSignupPage'; // ✅ NEW
@@ -61,10 +61,10 @@ const router = createBrowserRouter(
           path: '/profile',
           element: <Profile />
         },
-        {
-          path: '/view-profile',
-          element: <ViewProfile />
-        },
+        // {
+        //   path: '/view-profile',
+        //   element: <ViewProfile />
+        // },
         {
           path: '/edit-profile',
           element: <EditProfile />
