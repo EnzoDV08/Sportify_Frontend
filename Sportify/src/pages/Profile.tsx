@@ -22,7 +22,7 @@ interface UserProfile {
   socialMediaLink?: string;
   gender?: string;
   age?: number;
-  selectedAchievement?: string; // 🏅 Make sure this exists
+  selectedAchievement?: string;
 }
 
 function Profile() {
@@ -31,6 +31,8 @@ function Profile() {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+
+  const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
     const userId = localStorage.getItem('userId');
@@ -42,8 +44,8 @@ function Profile() {
     const fetchUserInfo = async () => {
       try {
         const [userRes, profileRes] = await Promise.all([
-          fetch(`http://localhost:5000/api/Users/${userId}`),
-          fetch(`http://localhost:5000/api/Profiles/${userId}`)
+          fetch(`${baseUrl}/api/Users/${userId}`),
+          fetch(`${baseUrl}/api/Profiles/${userId}`)
         ]);
 
         if (!userRes.ok || !profileRes.ok) throw new Error('Fetch failed');
@@ -86,41 +88,44 @@ function Profile() {
 
   return (
     <div className="profile-container">
-<div className="profile-header">
-  <div className="profile-info">
-    <h1>{user?.name}</h1>
-    <p><span className="label">Email:</span> {user?.email}</p>
-    <p><span className="label">Favourite sport:</span> {profile?.favoriteSports}</p>
-    <p><span className="label">Age:</span> {profile?.age}</p>
-  </div>
+      <div className="profile-header">
+        <div className="profile-info">
+          <h1>{user?.name}</h1>
+          <p><span className="label">Email:</span> {user?.email}</p>
+          <p><span className="label">Favourite sport:</span> {profile?.favoriteSports}</p>
+          <p><span className="label">Age:</span> {profile?.age}</p>
+        </div>
 
-  <div className="profile-about">
-    <p className="label">Who Am I?</p>
-    <p>{profile?.bio || 'No bio provided.'}</p>
-  </div>
+        <div className="profile-about">
+          <p className="label">Who Am I?</p>
+          <p>{profile?.bio || 'No bio provided.'}</p>
+        </div>
 
-  <div className="profile-avatar">
-<img src={`http://localhost:5000/${profile?.profilePicture}`} />
-    <button className="edit-profile-btn" onClick={() => navigate('/edit-profile')}>Edit Profile</button>
-  </div>
-</div>
+        <div className="profile-avatar">
+          {profile?.profilePicture && (
+            <img src={`${baseUrl}/${profile.profilePicture}`} alt="Profile" />
+          )}
+          <button className="edit-profile-btn" onClick={() => navigate('/edit-profile')}>
+            Edit Profile
+          </button>
+        </div>
+      </div>
 
-<div className="icons-bar">
-  <span>⚽</span><span>🏀</span><span>🏋️‍♂️</span><span>🎯</span><span>🏕️</span><span>🏊</span>
-</div>
+      <div className="icons-bar">
+        <span>⚽</span><span>🏀</span><span>🏋️‍♂️</span><span>🎯</span><span>🏕️</span><span>🏊</span>
+      </div>
 
-<h2 className="section-title">Overall Stats</h2>
-<div className="stats-wrapper">
-  <div className="stats-container">
-    <div className="stats-box"><span>Competed Events </span><span>8</span></div>
-    <div className="stats-box"><span>Active Event Time </span><span>300h</span></div>
-    <div className="stats-box"><span>First Places </span><span>3</span></div>
-    <div className="stats-box"><span>Second Places </span><span>6</span></div>
-    <div className="stats-box"><span>Third Places </span><span>4</span></div>
-    <div className="stats-box"><span>Total Points </span><span>3059</span></div>
-  </div>
-</div>
-
+      <h2 className="section-title">Overall Stats</h2>
+      <div className="stats-wrapper">
+        <div className="stats-container">
+          <div className="stats-box"><span>Competed Events </span><span>8</span></div>
+          <div className="stats-box"><span>Active Event Time </span><span>300h</span></div>
+          <div className="stats-box"><span>First Places </span><span>3</span></div>
+          <div className="stats-box"><span>Second Places </span><span>6</span></div>
+          <div className="stats-box"><span>Third Places </span><span>4</span></div>
+          <div className="stats-box"><span>Total Points </span><span>3059</span></div>
+        </div>
+      </div>
     </div>
   );
 }

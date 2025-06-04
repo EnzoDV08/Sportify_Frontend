@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import '../Style/EditProfile.css';
 
-const API_BASE = 'http://localhost:5000';
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 const EditProfile: React.FC = () => {
   const userId = localStorage.getItem('userId');
@@ -104,7 +104,6 @@ const EditProfile: React.FC = () => {
     if (!userId) return;
 
     try {
-      // Update user info
       await fetch(`${API_BASE}/api/Users/${userId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -115,7 +114,6 @@ const EditProfile: React.FC = () => {
         })
       });
 
-      // Update profile
       await fetch(`${API_BASE}/api/Profiles/${userId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
