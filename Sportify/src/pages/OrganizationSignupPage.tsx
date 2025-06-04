@@ -2,14 +2,15 @@ import { FC, useState } from 'react';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import '../Style/SignUp.css';
-import GoogleIcon from '../assets/Icons/Google.svg';
 import SportifyLogo from '../assets/Icons/SportifyLogo.svg';
 
-const SignupPage: FC = () => {
+const OrganizationSignupPage: FC = () => {
   const [email, setEmail] = useState('');
-  const [username, setUsername] = useState('');
+  const [orgName, setOrgName] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [website, setWebsite] = useState('');
+  const [contactPerson, setContactPerson] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [passwordError, setPasswordError] = useState('');
@@ -45,39 +46,26 @@ const SignupPage: FC = () => {
     }
 
     try {
-      // 🔍 Step 1: Check for existing email
-      const usersResponse = await fetch('http://localhost:5000/api/users');
-      const users = await usersResponse.json();
-
-      const emailExists = users.some((user: any) => user.email.toLowerCase() === email.toLowerCase());
-
-      if (emailExists) {
-        setEmailError('Email already exists');
-        showToast('Email already exists', 'error');
-        setLoading(false);
-        return;
-      }
-
-      // ✅ Step 2: Create user if email is unique
-      const response = await fetch('http://localhost:5000/api/users', {
+      const response = await fetch('http://localhost:5000/api/organizations/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           email,
-          name: username,
+          name: orgName,
           password: confirmPassword,
+          website,
+          contactPerson,
         }),
       });
 
       if (response.ok) {
         const result = await response.json();
 
-        // 🎉 Auto-login
         localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('userType', result.userType);
-        localStorage.setItem('userId', result.userId);
+        localStorage.setItem('userType', 'organization');
+        localStorage.setItem('organizationId', result.organizationId);
 
-        showToast('Signup successful!', 'success');
+        showToast('Organization signup successful!', 'success');
         setTimeout(() => navigate('/home'), 1500);
       } else {
         const text = await response.text();
@@ -102,33 +90,45 @@ const SignupPage: FC = () => {
 
         <div className="signup-form">
           <img src={SportifyLogo} alt="Sportify Logo" className="sportify-logo-mobile" />
-
-          <h1>Welcome!</h1>
+          <h1>Welcome Organization!</h1>
           <h2>SIGN UP</h2>
 
           <form className="signup-inputs" onSubmit={handleSignup}>
-            <div className="EmailCont">
-              <input
-                type="email"
-                placeholder="Email"
-                className="EmailInput"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-              {emailError && <p className="inline-error">{emailError}</p>}
-            </div>
+            <input
+              type="text"
+              placeholder="Organization Name"
+              className="EmailInput"
+              value={orgName}
+              onChange={(e) => setOrgName(e.target.value)}
+              required
+            />
 
-            <div className="EmailCont">
-              <input
-                type="text"
-                placeholder="Username"
-                className="EmailInput"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-              />
-            </div>
+            <input
+              type="email"
+              placeholder="Email"
+              className="EmailInput"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            {emailError && <p className="inline-error">{emailError}</p>}
+
+            <input
+              type="text"
+              placeholder="Website (optional)"
+              className="EmailInput"
+              value={website}
+              onChange={(e) => setWebsite(e.target.value)}
+            />
+
+            <input
+              type="text"
+              placeholder="Contact Person"
+              className="EmailInput"
+              value={contactPerson}
+              onChange={(e) => setContactPerson(e.target.value)}
+              required
+            />
 
             <div className="PasswordCont">
               <div className="password-input-wrapper">
@@ -169,45 +169,24 @@ const SignupPage: FC = () => {
               {passwordError && <p className="inline-error">{passwordError}</p>}
             </div>
 
-
-            <div className="SignupButtonCont">
-              <button
-                type="submit"
-                className={`signup-btn ${loading ? 'login-loading' : ''}`}
-                disabled={loading}
-              >
-                {loading ? 'Signing up...' : 'Sign Up'}
-              </button>
-
-              <p className="SignUpButtonText">
-              Already have an account? <span onClick={() => navigate('/')} style={{ cursor: 'pointer', color: '#dd8100' }}>Log in</span>
-              </p>
-            </div>
-
-            <div className="or-divider">
-              <hr />
-              <span>OR</span>
-              <hr />
-            </div>
-
-            <button className="google-full-btn" type="button">
-              <span>Sign up with Google</span>
-              <img src={GoogleIcon} alt="Google sign up" />
+            <button
+              type="submit"
+              className={`signup-btn ${loading ? 'login-loading' : ''}`}
+              disabled={loading}
+            >
+              {loading ? 'Signing up...' : 'Sign Up'}
             </button>
-          </form>
-
-
-
-          <p className="SignUpButtonText">
-            Want to register as an organization?{' '}
-            <span onClick={() => navigate('/org-signup')} style={{ cursor: 'pointer', color: '#dd8100' }}>
-              Click here
-            </span>
-          </p>
+        </form>
+            <p className="SignUpButtonText">
+                Want to register as a user instead?{' '}
+                <span onClick={() => navigate('/signup')} style={{ cursor: 'pointer', color: '#dd8100' }}>
+                    Click here
+                </span>
+            </p>
         </div>
       </div>
     </div>
   );
 };
 
-export default SignupPage;
+export default OrganizationSignupPage;

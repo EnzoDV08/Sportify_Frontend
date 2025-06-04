@@ -33,48 +33,52 @@ const handleLogin = async (e: React.FormEvent) => {
   setLoading(true);
 
   try {
-    const response = await fetch('http://localhost:5000/api/users/login', {
+    // Try logging in as a regular user first
+    let response = await fetch('http://localhost:5000/api/users/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
     });
 
-if (response.ok) {
-  const result = await response.json();
+    // If user login fails, try organization login
+    if (!response.ok) {
+      response = await fetch('http://localhost:5000/api/organizations/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
 
-  // ✅ Store login info
-  localStorage.setItem('isLoggedIn', 'true');
-  localStorage.setItem('userType', result.userType);
-  localStorage.setItem('userId', result.userId);
-
-  // ✅ ADD these two lines below:
-  localStorage.setItem('userName', result.name);    // 👈 Comes from backend
-  localStorage.setItem('userEmail', result.email);  // 👈 Comes from backend
-
-  showToast('Login successful!', 'success');
-  setTimeout(() => navigate('/home'), 1500);
-}
- else {
-      // 🔽 Start of improved error handling
-      const contentType = response.headers.get('content-type');
-      let errorMessage = 'Login failed.';
-
-      if (contentType?.includes('application/json')) {
-        const errorData = await response.json();
-        errorMessage = errorData.message || errorMessage;
-      } else {
-        const text = await response.text();
-        console.warn('Received non-JSON response:', text);
-        errorMessage = text.includes('HTTP') ? 'Server error. Please try again.' : text;
+      if (!response.ok) {
+        const errorText = await response.text();
+        showToast(errorText || 'Login failed.', 'error');
+        setError(errorText);
+        return;
       }
 
-      setError(errorMessage);
-      showToast(errorMessage, 'error');
+      // ✅ Org login success
+      const orgResult = await response.json();
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('userType', 'organization');
+      localStorage.setItem('userId', orgResult.organizationId);
+
+      showToast('Organization login successful!', 'success');
+      setTimeout(() => navigate('/home'), 1500);
+      return;
     }
+
+    // ✅ User login success
+    const userResult = await response.json();
+    localStorage.setItem('isLoggedIn', 'true');
+    localStorage.setItem('userType', userResult.userType);
+    localStorage.setItem('userId', userResult.userId);
+
+    showToast('Login successful!', 'success');
+    setTimeout(() => navigate('/home'), 1500);
+
   } catch (err) {
     console.error('Login failed:', err);
-    setError('An error occurred. Please try again.');
     showToast('An error occurred. Please try again.', 'error');
+    setError('An error occurred. Please try again.');
   } finally {
     setLoading(false);
   }
