@@ -35,19 +35,21 @@ const toggleSidebar = () => {
   const userName = localStorage.getItem("userName") || "Guest";
   const userEmail = localStorage.getItem("userEmail") || "guest@example.com";
 
+  const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
 const [profileImageUrl, setProfileImageUrl] = useState<string>('');
 
 const fetchProfileImage = async () => {
   if (!userId) return;
   try {
-    const res = await fetch(`http://localhost:5000/api/profile/${userId}`);
+    const res = await fetch(`${baseUrl}/api/profile/${userId}`);
     if (!res.ok) {
       console.warn(`Profile not found for user ID: ${userId}`);
       return;
     }
     const data = await res.json();
     if (data.profilePicture) {
-      setProfileImageUrl(`http://localhost:5000/uploads/${data.profilePicture}`);
+      setProfileImageUrl(`${baseUrl}/uploads/${data.profilePicture}`);
     }
   } catch (error) {
     console.error("Sidebar profile fetch error:", error);
