@@ -1,4 +1,5 @@
 import { useState, ReactNode } from 'react';
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   FaHome,
@@ -33,6 +34,38 @@ const toggleSidebar = () => {
   const userType = localStorage.getItem("userType");
   const userName = localStorage.getItem("userName") || "Guest";
   const userEmail = localStorage.getItem("userEmail") || "guest@example.com";
+
+const [profileImageUrl, setProfileImageUrl] = useState<string>('');
+
+const fetchProfileImage = async () => {
+  if (!userId) return;
+  try {
+    const res = await fetch(`http://localhost:5000/api/profile/${userId}`);
+    if (!res.ok) {
+      console.warn(`Profile not found for user ID: ${userId}`);
+      return;
+    }
+    const data = await res.json();
+    if (data.profilePicture) {
+      setProfileImageUrl(`http://localhost:5000/uploads/${data.profilePicture}`);
+    }
+  } catch (error) {
+    console.error("Sidebar profile fetch error:", error);
+  }
+};
+
+const [userId, setUserId] = useState<string | null>(null);
+
+useEffect(() => {
+  const id = localStorage.getItem("userId");
+  setUserId(id);
+}, []);
+
+useEffect(() => {
+  if (userId) {
+    fetchProfileImage();
+  }
+}, [userId]);
 
 
   const handleSignOut = () => {
@@ -125,7 +158,11 @@ const toggleSidebar = () => {
       </div>
 
      <div className="profile" data-tooltip="View Profile">
-  <img src="/profile.jpg" alt="profile" className="profile-img" />
+<img
+  src={profileImageUrl || '/profile.jpg'}
+  alt="profile"
+  className="profile-img"
+/>
   {isExpanded && (
     <div className="profile-info">
       <p className="name">{userName}</p>
