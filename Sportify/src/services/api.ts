@@ -1,5 +1,14 @@
 import { Event } from '../models/event';
-// Define what data is needed to create an event
+import { LoginRequest, LoginResponse } from '../models/user';
+import {
+  UserAchievement,
+  FullAchievement,
+  CreateAchievementRequest,
+  AssignAchievementRequest
+} from '../models/achievement';
+import { JoinRequest } from '../models/request'; 
+
+// ===== CreateEvent DTO shared across actions =====
 interface CreateEventDto {
   title: string;
   description?: string;
@@ -14,21 +23,21 @@ interface CreateEventDto {
   invitedUserIds?: number[];
 }
 
-// Get all events
+interface UpdateEventDto extends CreateEventDto {}
+
+// ===== Events =====
 export const fetchEvents = async (): Promise<Event[]> => {
   const response = await fetch('http://localhost:5000/api/events');
   if (!response.ok) throw new Error('Failed to fetch events');
   return await response.json();
 };
 
-// Get one event by ID
 export const fetchSingleEvent = async (id: number): Promise<Event> => {
   const response = await fetch(`http://localhost:5000/api/events/${id}`);
   if (!response.ok) throw new Error('Failed to fetch event');
   return await response.json();
 };
 
-// Create a new event
 export const createEvent = async (eventData: CreateEventDto, userId: number): Promise<Event> => {
   const response = await fetch(`http://localhost:5000/api/events?userId=${userId}`, {
     method: 'POST',
@@ -44,7 +53,6 @@ export const createEvent = async (eventData: CreateEventDto, userId: number): Pr
   return await response.json();
 };
 
-// delete an event by ID
 export const deleteEvent = async (eventId: number): Promise<void> => {
   const response = await fetch(`http://localhost:5000/api/events/${eventId}`, {
     method: 'DELETE',
@@ -56,13 +64,7 @@ export const deleteEvent = async (eventId: number): Promise<void> => {
   }
 };
 
-// Update an existing event
-interface UpdateEventDto extends CreateEventDto {} // reuse same structure
-
-export const updateEvent = async (
-  eventId: number,
-  eventData: UpdateEventDto
-): Promise<Event> => {
+export const updateEvent = async (eventId: number, eventData: UpdateEventDto): Promise<Event> => {
   const response = await fetch(`http://localhost:5000/api/events/${eventId}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
@@ -77,7 +79,18 @@ export const updateEvent = async (
   return await response.json();
 };
 
-// Get events the user is invited to
+export const joinEvent = async (eventId: number, userId: number): Promise<void> => {
+  const response = await fetch(`http://localhost:5000/api/EventParticipants/JoinEvent?eventId=${eventId}&userId=${userId}`, {
+    method: 'POST'
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(error || 'Failed to join event');
+  }
+};
+
+// ===== Invites =====
 export const fetchInvitedEvents = async (userId: number): Promise<Event[]> => {
   const response = await fetch(`http://localhost:5000/api/EventParticipants/InvitedEvents/${userId}`);
   if (!response.ok) {
@@ -104,9 +117,28 @@ export const rejectInvite = async (eventId: number, userId: number): Promise<voi
   }
 };
 
-// Login
-import { LoginRequest, LoginResponse } from '../models/user';
+// ===== Join Requests (for creators to manage) =====
+export const fetchPendingRequests = async (creatorId: number): Promise<JoinRequest[]> => {
+  const res = await fetch(`http://localhost:5000/api/EventParticipants/PendingRequests/${creatorId}`);
+  if (!res.ok) throw new Error("Failed to fetch pending requests");
+  return await res.json();
+};
 
+export const approveRequest = async (eventId: number, userId: number, approverUserId: number): Promise<void> => {
+  const res = await fetch(`http://localhost:5000/api/EventParticipants/ApproveRequest?eventId=${eventId}&userId=${userId}&approverUserId=${approverUserId}`, {
+    method: 'POST'
+  });
+  if (!res.ok) throw new Error(await res.text());
+};
+
+export const rejectRequest = async (eventId: number, userId: number, approverUserId: number): Promise<void> => {
+  const res = await fetch(`http://localhost:5000/api/EventParticipants/RejectRequest?eventId=${eventId}&userId=${userId}&approverUserId=${approverUserId}`, {
+    method: 'POST'
+  });
+  if (!res.ok) throw new Error(await res.text());
+};
+
+// ===== Login =====
 export const loginUser = async (credentials: LoginRequest): Promise<LoginResponse> => {
   const response = await fetch('http://localhost:5000/api/users/login', {
     method: 'POST',
@@ -118,67 +150,49 @@ export const loginUser = async (credentials: LoginRequest): Promise<LoginRespons
   return await response.json();
 };
 
-import {
-  UserAchievement,
-  FullAchievement,
-  CreateAchievementRequest,
-  AssignAchievementRequest
-} from '../models/achievement';
-
-
-
-export const fetchUserAchievements = async (
-  userId: number
-): Promise<UserAchievement[]> => {
-  const response = await fetch(`http://localhost:5000/api/achievements/user/${userId}`)
+// ===== Achievements =====
+export const fetchUserAchievements = async (userId: number): Promise<UserAchievement[]> => {
+  const response = await fetch(`http://localhost:5000/api/achievements/user/${userId}`);
   if (!response.ok) {
-    throw new Error(`❌ Failed to fetch achievements for user ${userId}`)
+    throw new Error(`❌ Failed to fetch achievements for user ${userId}`);
   }
-  return await response.json()
-}
-
+  return await response.json();
+};
 
 export const fetchAllAchievements = async (): Promise<FullAchievement[]> => {
-  const response = await fetch('http://localhost:5000/api/achievements')
+  const response = await fetch('http://localhost:5000/api/achievements');
   if (!response.ok) {
-    throw new Error('❌ Failed to fetch all achievements')
+    throw new Error('❌ Failed to fetch all achievements');
   }
-  return await response.json()
-}
+  return await response.json();
+};
 
-
-export const createAchievement = async (
-  data: CreateAchievementRequest
-): Promise<boolean> => {
+export const createAchievement = async (data: CreateAchievementRequest): Promise<boolean> => {
   const response = await fetch('http://localhost:5000/api/achievements', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
-  })
+  });
 
   if (!response.ok) {
-    console.error(await response.text())
-    throw new Error('❌ Failed to create achievement')
+    console.error(await response.text());
+    throw new Error('❌ Failed to create achievement');
   }
 
-  return true
-}
+  return true;
+};
 
-
-export const assignAchievement = async (
-  data: AssignAchievementRequest
-): Promise<boolean> => {
+export const assignAchievement = async (data: AssignAchievementRequest): Promise<boolean> => {
   const response = await fetch('http://localhost:5000/api/achievements/assign', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
-  })
+  });
 
   if (!response.ok) {
-    console.error(await response.text())
-    throw new Error('❌ Failed to assign achievement')
+    console.error(await response.text());
+    throw new Error('❌ Failed to assign achievement');
   }
 
-  return true
-}
-
+  return true;
+};

@@ -1,12 +1,28 @@
 import { useEffect, useState } from 'react';
-import { fetchEvents, deleteEvent } from '../services/api';
+import { fetchEvents, deleteEvent, fetchPendingRequests, approveRequest, rejectRequest } from '../services/api';
 import { Event } from '../models/event';
 import { Link } from 'react-router-dom';
 import '../Style/MyEvents.css';
 
+interface PendingRequest {
+  eventId: number;
+  userId: number;
+  status: string;
+  user?: {
+    userId: number;
+    name: string;
+    email: string;
+  };
+  event?: {
+    eventId: number;
+    title: string;
+  };
+}
+
 function MyEvents() {
   const [myEvents, setMyEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
+  const [pendingRequests, setPendingRequests] = useState<PendingRequest[]>([]);
   const userId = Number(localStorage.getItem('userId'));
 
   useEffect(() => {
@@ -17,12 +33,38 @@ function MyEvents() {
       })
       .catch(console.error)
       .finally(() => setLoading(false));
+
+    fetchPendingRequests(userId)
+      .then(setPendingRequests)
+      .catch(console.error);
   }, [userId]);
 
   const handleDelete = async (eventId: number) => {
     if (confirm('Are you sure you want to delete this event?')) {
       await deleteEvent(eventId);
       setMyEvents(myEvents.filter(e => e.eventId !== eventId));
+    }
+  };
+
+  const handleApprove = async (eventId: number, userId: number) => {
+    const approverUserId = Number(localStorage.getItem('userId'));
+    try {
+      await approveRequest(eventId, userId, approverUserId);
+      setPendingRequests(prev =>
+        prev.filter(req => !(req.eventId === eventId && req.userId === userId))
+      );
+    } catch (err) {
+      console.error('Failed to approve request', err);
+    }
+  };
+
+  const handleReject = async (eventId: number, userId: number) => {
+    const approverUserId = Number(localStorage.getItem('userId'));
+    try {
+      await rejectRequest(eventId, userId, approverUserId);
+      setPendingRequests(prev => prev.filter(req => !(req.eventId === eventId && req.userId === userId)));
+    } catch (err) {
+      console.error('Failed to reject request', err);
     }
   };
 
@@ -53,6 +95,27 @@ function MyEvents() {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {pendingRequests.length > 0 && (
+        <div className="my-pending-section">
+          <h2 className="my-section-title">Pending Join Requests</h2>
+          <div className="my-pending-list">
+            {pendingRequests.map(req => (
+              <div key={`${req.eventId}-${req.userId}`} className="join-request-box">
+                <div className="join-request-info">
+                  <p>
+                    <strong>{req.user?.name || 'Unknown User'}</strong> wants to join <strong>{req.event?.title || 'Unknown Event'}</strong>
+                  </p>
+                </div>
+                <div className="join-request-buttons">
+                  <button className="my-approve-btn" onClick={() => handleApprove(req.eventId, req.userId)}>Accept</button>
+                  <button className="my-reject-btn" onClick={() => handleReject(req.eventId, req.userId)}>Reject</button>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>
