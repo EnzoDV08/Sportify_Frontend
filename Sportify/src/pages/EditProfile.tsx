@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import '../Style/EditProfile.css';
 
+const API_BASE = 'http://localhost:5000';
+
 const EditProfile: React.FC = () => {
   const userId = localStorage.getItem('userId');
   const [formData, setFormData] = useState({
@@ -33,8 +35,8 @@ const EditProfile: React.FC = () => {
 
       try {
         const [userRes, profileRes] = await Promise.all([
-          fetch(`http://localhost/api/Users/${userId}`),
-          fetch(`http://localhost/api/Profiles/${userId}`)
+          fetch(`${API_BASE}/api/Users/${userId}`),
+          fetch(`${API_BASE}/api/Profiles/${userId}`)
         ]);
 
         if (!userRes.ok || !profileRes.ok) throw new Error('Failed to load profile');
@@ -78,7 +80,7 @@ const EditProfile: React.FC = () => {
     data.append('image', file);
 
     try {
-      const res = await fetch('http://localhost/api/upload', {
+      const res = await fetch(`${API_BASE}/api/upload`, {
         method: 'POST',
         body: data,
       });
@@ -103,7 +105,7 @@ const EditProfile: React.FC = () => {
 
     try {
       // Update user info
-      await fetch(`http://localhost/api/Users/${userId}`, {
+      await fetch(`${API_BASE}/api/Users/${userId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -114,7 +116,7 @@ const EditProfile: React.FC = () => {
       });
 
       // Update profile
-      await fetch(`http://localhost/api/Profiles/${userId}`, {
+      await fetch(`${API_BASE}/api/Profiles/${userId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -150,9 +152,6 @@ const EditProfile: React.FC = () => {
         <label>Email</label>
         <input type="email" name="email" value={formData.email} onChange={handleChange} required />
 
-        <label>Profile Picture URL</label>
-        <input type="text" name="profilePicture" value={formData.profilePicture} onChange={handleChange} />
-
         <label>Location</label>
         <input type="text" name="location" value={formData.location} onChange={handleChange} />
 
@@ -180,15 +179,6 @@ const EditProfile: React.FC = () => {
         <label>Age</label>
         <input type="number" name="age" value={formData.age} onChange={handleChange} />
 
-        <label>Select Achievement</label>
-        <select name="selectedAchievement" value={formData.selectedAchievement} onChange={handleChange}>
-          <option value="">-- Choose One --</option>
-          {achievements.map((achievement, index) => (
-            <option key={index} value={achievement}>{achievement}</option>
-          ))}
-        </select>
-
-        {/* ✅ Move upload outside of <select> to prevent nesting error */}
         <label>Upload Profile Picture</label>
         <input
           type="file"
