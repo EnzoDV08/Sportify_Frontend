@@ -45,8 +45,10 @@ const SignupPage: FC = () => {
     }
 
     try {
+      const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
       // 🔍 Step 1: Check for existing email
-      const usersResponse = await fetch('http://localhost:5000/api/users');
+      const usersResponse = await fetch(`${baseUrl}/api/users`);
       const users = await usersResponse.json();
 
       const emailExists = users.some((user: any) => user.email.toLowerCase() === email.toLowerCase());
@@ -58,8 +60,8 @@ const SignupPage: FC = () => {
         return;
       }
 
-      // ✅ Step 2: Create user if email is unique
-      const response = await fetch('http://localhost:5000/api/users', {
+      // ✅ Step 2: Create user
+      const response = await fetch(`${baseUrl}/api/users`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -169,7 +171,6 @@ const SignupPage: FC = () => {
               {passwordError && <p className="inline-error">{passwordError}</p>}
             </div>
 
-
             <div className="SignupButtonCont">
               <button
                 type="submit"
@@ -180,7 +181,10 @@ const SignupPage: FC = () => {
               </button>
 
               <p className="SignUpButtonText">
-              Already have an account? <span onClick={() => navigate('/')} style={{ cursor: 'pointer', color: '#dd8100' }}>Log in</span>
+                Already have an account?{' '}
+                <span onClick={() => navigate('/')} style={{ cursor: 'pointer', color: '#dd8100' }}>
+                  Log in
+                </span>
               </p>
             </div>
 
@@ -195,8 +199,6 @@ const SignupPage: FC = () => {
               <img src={GoogleIcon} alt="Google sign up" />
             </button>
           </form>
-
-
 
           <p className="SignUpButtonText">
             Want to register as an organization?{' '}

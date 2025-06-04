@@ -27,63 +27,63 @@ const LoginPage: FC = () => {
     }
   };
 
-const handleLogin = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setError('');
-  setLoading(true);
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
 
-  try {
-    // Try logging in as a regular user first
-    let response = await fetch('http://localhost:5000/api/users/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-    });
+    try {
+      const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
-    // If user login fails, try organization login
-    if (!response.ok) {
-      response = await fetch('http://localhost:5000/api/organizations/login', {
+      // Try logging in as a regular user first
+      let response = await fetch(`${baseUrl}/api/users/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
 
+      // If user login fails, try organization login
       if (!response.ok) {
-        const errorText = await response.text();
-        showToast(errorText || 'Login failed.', 'error');
-        setError(errorText);
+        response = await fetch(`${baseUrl}/api/organizations/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          showToast(errorText || 'Login failed.', 'error');
+          setError(errorText);
+          return;
+        }
+
+        // ✅ Org login success
+        const orgResult = await response.json();
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('userType', 'organization');
+        localStorage.setItem('userId', orgResult.organizationId);
+
+        showToast('Organization login successful!', 'success');
+        setTimeout(() => navigate('/home'), 1500);
         return;
       }
 
-      // ✅ Org login success
-      const orgResult = await response.json();
+      // ✅ User login success
+      const userResult = await response.json();
       localStorage.setItem('isLoggedIn', 'true');
-      localStorage.setItem('userType', 'organization');
-      localStorage.setItem('userId', orgResult.organizationId);
+      localStorage.setItem('userType', userResult.userType);
+      localStorage.setItem('userId', userResult.userId);
 
-      showToast('Organization login successful!', 'success');
+      showToast('Login successful!', 'success');
       setTimeout(() => navigate('/home'), 1500);
-      return;
+    } catch (err) {
+      console.error('Login failed:', err);
+      showToast('An error occurred. Please try again.', 'error');
+      setError('An error occurred. Please try again.');
+    } finally {
+      setLoading(false);
     }
-
-    // ✅ User login success
-    const userResult = await response.json();
-    localStorage.setItem('isLoggedIn', 'true');
-    localStorage.setItem('userType', userResult.userType);
-    localStorage.setItem('userId', userResult.userId);
-
-    showToast('Login successful!', 'success');
-    setTimeout(() => navigate('/home'), 1500);
-
-  } catch (err) {
-    console.error('Login failed:', err);
-    showToast('An error occurred. Please try again.', 'error');
-    setError('An error occurred. Please try again.');
-  } finally {
-    setLoading(false);
-  }
-};
-
+  };
 
   return (
     <div className="login-page">
