@@ -7,6 +7,7 @@ import {
   AssignAchievementRequest
 } from '../models/achievement';
 import { JoinRequest } from '../models/request';
+import { Profile } from '../models/profile';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -22,6 +23,7 @@ interface CreateEventDto {
   requiredItems?: string;
   imageUrl?: string | null;
   invitedUserIds?: number[];
+  sportType?: string;
 }
 
 interface UpdateEventDto extends CreateEventDto {}
@@ -38,6 +40,16 @@ export const fetchSingleEvent = async (id: number): Promise<Event> => {
   if (!response.ok) throw new Error('Failed to fetch event');
   return await response.json();
 };
+
+export const fetchEventsByUser = async (userId: number): Promise<Event[]> => {
+  const response = await fetch(`${API_BASE_URL}/api/events/created-by/${userId}`);
+  if (!response.ok) {
+    console.error(await response.text());
+    throw new Error('Failed to fetch events created by user.');
+  }
+  return await response.json();
+};
+
 
 export const createEvent = async (eventData: CreateEventDto, userId: number): Promise<Event> => {
   const response = await fetch(`${API_BASE_URL}/api/events?userId=${userId}`, {
@@ -155,9 +167,10 @@ export const fetchUserAchievements = async (userId: number): Promise<UserAchieve
 
 export const fetchAllAchievements = async (): Promise<FullAchievement[]> => {
   const response = await fetch(`${API_BASE_URL}/api/achievements`);
-  if (!response.ok) throw new Error('Failed to fetch all achievements');
+  if (!response.ok) throw new Error("Failed to fetch achievements");
   return await response.json();
 };
+
 
 export const createAchievement = async (data: CreateAchievementRequest): Promise<boolean> => {
   const response = await fetch(`${API_BASE_URL}/api/achievements`, {
@@ -174,17 +187,22 @@ export const createAchievement = async (data: CreateAchievementRequest): Promise
   return true;
 };
 
+export const fetchProfile = async (id: number): Promise<Profile> => {
+  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/Profiles/${id}`);
+  if (!response.ok) throw new Error('Failed to fetch profile');
+  return await response.json();
+};
+
 export const assignAchievement = async (data: AssignAchievementRequest): Promise<boolean> => {
-  const response = await fetch(`${API_BASE_URL}/api/achievements/assign`, {
+  const response = await fetch(`${API_BASE_URL}/api/UserAchievements/assign`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   });
-
   if (!response.ok) {
     console.error(await response.text());
     throw new Error('Failed to assign achievement');
   }
-
   return true;
 };
+

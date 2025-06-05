@@ -17,4 +17,8 @@ export interface Event {
   creatorName?: string;
   invitedUserIds?: number[];
   participants?: User[];
+  
+  // ✅ Add these to fix the TypeScript errors:
+  sportType?: string;
+  adminId: number;
 }

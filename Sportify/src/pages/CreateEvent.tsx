@@ -12,6 +12,7 @@ function CreateEvent() {
   const [type, setType] = useState('');
   const [visibility, setVisibility] = useState('');
   const [requiredItems, setRequiredItems] = useState('');
+  const [sportType, setSportType] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [imageSearchTerm, setImageSearchTerm] = useState('');
 
@@ -58,22 +59,25 @@ function CreateEvent() {
         ? `${imageUrl.replace(/w=\d+/, 'w=1200')}&auto=format`
         : imageUrl;
 
-      await createEvent(
-        {
-          title,
-          description,
-          startDateTime,
-          endDateTime,
-          location,
-          type,
-          status: 'upcoming',
-          visibility,
-          requiredItems,
-          imageUrl: cleanedImageUrl,
-          invitedUserIds: invitedUsers.map((u) => u.userId),
-        },
-        userId
-      );
+     await createEvent(
+    {
+      title,
+      description,
+      startDateTime,
+      endDateTime,
+      location,
+      type,
+      sportType,
+      status: 'upcoming',
+      visibility,
+      requiredItems,
+      imageUrl: cleanedImageUrl,
+      invitedUserIds: invitedUsers.map((u) => u.userId),
+      
+    },
+    userId
+  );
+
 
       alert('Event created successfully!');
       setTitle('');
@@ -82,6 +86,7 @@ function CreateEvent() {
       setEndDateTime('');
       setLocation('');
       setType('');
+      setSportType('');
       setVisibility('');
       setRequiredItems('');
       setImageUrl('');
@@ -91,6 +96,8 @@ function CreateEvent() {
       console.error(err);
       alert('Failed to create event.');
     }
+
+    
   };
 
   return (
@@ -142,6 +149,27 @@ function CreateEvent() {
           <label>Location</label>
           <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} required />
         </div>
+
+        <div className="form-group full">
+  <label>Sport Type</label>
+ <select value={sportType} onChange={(e) => setSportType(e.target.value)} required>
+  <option value="">Select sport</option>
+  <option value="Soccer">Soccer</option>
+  <option value="Basketball">Basketball</option>
+  <option value="Swimming">Swimming</option>
+  <option value="Running">Running</option>
+  <option value="Rugby">Rugby</option>
+  <option value="Cycling">Cycling</option>
+  <option value="Karate">Karate</option>
+  <option value="Table Tennis">Table Tennis</option>
+  <option value="Tennis">Tennis</option>
+  <option value="Cricket">Cricket</option>
+  <option value="Volleyball">Volleyball</option>
+  <option value="Golf">Golf</option>
+</select>
+
+</div>
+
 
         <div className="form-group half">
           <label>Type</label>
