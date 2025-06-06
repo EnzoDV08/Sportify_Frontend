@@ -1,90 +1,100 @@
-// src/Components/TopPerformers.tsx
-import '../Style/TopPerformers.css';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import '../Style/TopPerformers.css';
 
-const mockPerformers = [
-  {
-    id: 1,
-    name: 'John Smith',
-    avatar: '/avatars/john.png',
-    totalWins: 5,
-    currentStreak: 3,
-    eventsAttended: 12,
-    points: 1221,
-  },
-  {
-    id: 2,
-    name: 'David Beckham',
-    avatar: '/avatars/david.png',
-    totalWins: 4,
-    currentStreak: 2,
-    eventsAttended: 9,
-    points: 938,
-  },
-  {
-    id: 3,
-    name: 'Raphaël Junior',
-    avatar: '/avatars/raphael.png',
-    totalWins: 3,
-    currentStreak: 2,
-    eventsAttended: 8,
-    points: 878,
-  },
-  {
-    id: 4,
-    name: 'Jana Roberts',
-    avatar: '/avatars/jana.png',
-    totalWins: 3,
-    currentStreak: 1,
-    eventsAttended: 6,
-    points: 865,
-  },
-  {
-    id: 5,
-    name: 'Jessy James',
-    avatar: '/avatars/jessy.png',
-    totalWins: 2,
-    currentStreak: 1,
-    eventsAttended: 6,
-    points: 432,
-  },
-];
+interface Profile {
+  userId: number;
+  profilePicture?: string;
+  name: string;
+  totalPoints: number;
+  totalWins?: number;
+  currentStreak?: number;
+  eventsAttended?: number;
+}
 
 const TopPerformers = () => {
+  const [performers, setPerformers] = useState<Profile[]>([]);
+  const [loading, setLoading] = useState(true);
+  const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
+  useEffect(() => {
+    const loadProfiles = async () => {
+      try {
+        const res = await fetch(`${baseUrl}/api/Profiles`);
+        if (!res.ok) throw new Error('Failed to load profiles');
+        const data: Profile[] = await res.json();
+
+        const sorted = data
+          .filter((p) => typeof p.totalPoints === 'number')
+          .sort((a, b) => b.totalPoints - a.totalPoints)
+          .slice(0, 5);
+
+        setPerformers(sorted);
+      } catch (err) {
+        console.error('❌ Failed to fetch top performers:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProfiles();
+  }, [baseUrl]);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center py-12">
+        <span className="loading loading-spinner text-orange-500 loading-lg"></span>
+      </div>
+    );
+  }
+
+  if (performers.length === 0) return null;
+
   return (
     <section className="top-performers-section">
       <h2 className="leaderboard-title">TOP PERFORMERS THIS WEEK 🏆</h2>
 
-<div className="leaderboard-container">
-  {mockPerformers.map((user, index) => {
-    const isFirst = index === 0;
-    return (
-      <div key={user.id + '-container'}>
-        {/* First place card */}
-        <div className={`leaderboard-card ${isFirst ? 'first-place' : ''}`}>
-          <div className="rank">#{index + 1}</div>
-          <img className="avatar" src={user.avatar} alt={user.name} />
-          <div className="info">
-            <h3>{user.name}</h3>
-            <p>
-              Total Wins: {user.totalWins} &nbsp; | &nbsp;
-              Current Streak: {user.currentStreak} &nbsp; | &nbsp;
-              Events Attended: {user.eventsAttended}
-            </p>
-          </div>
-          <div className="points">{user.points} POINTS</div>
-          <Link to={`/profile/${user.id}`} className="profile-button">
-            View Profile
-          </Link>
-        </div>
+      <div className="leaderboard-container">
+        {performers.map((user, index) => {
+          const isFirst = index === 0;
+          return (
+            <div key={user.userId}>
+              <div className={`leaderboard-card ${isFirst ? 'first-place' : ''}`}>
+                <div className="rank">#{index + 1}</div>
 
-        {/* ➕ ADD divider line ONLY after first card */}
-        {index === 0 && <div className="devider2"></div>}
+                {user.profilePicture ? (
+                  <img
+                    className="avatar"
+                    src={`${baseUrl}/${user.profilePicture}`}
+                    alt={user.name}
+                  />
+                ) : (
+                  <div className="avatar fallback-avatar">
+                    {user.name?.charAt(0).toUpperCase() || 'U'}
+                  </div>
+                )}
+
+                <div className="info">
+                  <h3>{user.name}</h3>
+                  <p>
+                    Total Wins: {user.totalWins ?? 0} &nbsp; | &nbsp;
+                    Streak: {user.currentStreak ?? 0} &nbsp; | &nbsp;
+                    Events: {user.eventsAttended ?? 0}
+                  </p>
+                </div>
+
+                <div className="points">{user.totalPoints} POINTS</div>
+
+                <Link to={`/profile/${user.userId}`} className="profile-button">
+                  View Profile
+                </Link>
+              </div>
+
+              {index === 0 && <div className="devider2"></div>}
+            </div>
+          );
+        })}
       </div>
-    );
-  })}
-</div>
-
     </section>
   );
 };
