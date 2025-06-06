@@ -206,3 +206,17 @@ export const assignAchievement = async (data: AssignAchievementRequest): Promise
   return true;
 };
 
+export const unassignAchievement = async (
+  userId: number,
+  achievementId: number,
+  eventId: number
+): Promise<void> => {
+  const response = await fetch(`${API_BASE_URL}/api/UserAchievements/unassign`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ userId, achievementId, eventId }),
+  });
+  if (!response.ok) throw new Error(await response.text());
+};
+
+
