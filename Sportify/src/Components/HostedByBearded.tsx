@@ -8,23 +8,31 @@ import fallbackImage from '../assets/image 33.png';
 import { FaClock, FaMapMarkerAlt, FaCheck } from 'react-icons/fa';
 
 
+
 const HostedByBearded = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [loading, setLoading] = useState(true);
+
 
 useEffect(() => {
   fetchEvents()
-    .then(fetched => {
-      const sorted = [...fetched].sort(
-        (a, b) =>
-          new Date(b.startDateTime).getTime() - new Date(a.startDateTime).getTime()
+    .then((fetched) => {
+      const beardedEvents = fetched.filter((e) => e.creatorUserId === 2);
+
+      const sorted = [...beardedEvents].sort(
+        (a, b) => new Date(b.startDateTime).getTime() - new Date(a.startDateTime).getTime()
       );
+
       const latestThree = sorted.slice(0, 3);
       setEvents(latestThree);
       setCurrentIndex(1);
     })
-    .catch(console.error);
+    .catch(console.error)
+    .finally(() => setLoading(false)); // ✅ Done loading
 }, []);
+
+
 
   const [now, setNow] = useState(Date.now());
 
@@ -55,7 +63,16 @@ const getCountdown = (eventDate: string) => {
 
 
 
-  if (events.length === 0) return null;
+  if (loading) {
+  return (
+    <div className="w-full flex justify-center items-center py-10">
+      <span className="loading loading-spinner text-orange-500 loading-lg"></span>
+    </div>
+  );
+}
+
+if (events.length === 0) return null;
+
 
   return (
     <section className="bearded-section">

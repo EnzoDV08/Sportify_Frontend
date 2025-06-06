@@ -88,55 +88,52 @@ const PastEventsTable = () => {
   const [eventToDelete, setEventToDelete] = useState<number | null>(null);
   const [allAchievements, setAllAchievements] = useState<FullAchievement[]>([]);
   const [userPoints, setUserPoints] = useState<Record<number, number>>({});
+  const [isLoading, setIsLoading] = useState(true);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
 
-
-
-
-
-
-
-  
 
 useEffect(() => {
- const loadEventsAndAchievements = async () => {
-  try {
-    const allEvents = await fetchEvents();
-    const achievements = await fetchAllAchievements();
+  const loadEventsAndAchievements = async () => {
+    setIsLoading(true);
+    try {
+      const allEvents = await fetchEvents();
+      const achievements = await fetchAllAchievements();
 
-    const pastEvents = allEvents
-      .filter(event =>
-        event.creatorUserId === 2 &&
-        new Date(event.endDateTime) < new Date()
-      )
-      .map(event => ({
-        ...event,
-        sportType: event.sportType || 'General',
-        participants: event.participants || [],
-        status: 'Completed',
-      })) as MockEvent[];
+      const pastEvents = allEvents
+        .filter(event =>
+          event.creatorUserId === 2 &&
+          new Date(event.endDateTime) < new Date()
+        )
+        .map(event => ({
+          ...event,
+          sportType: event.sportType || 'General',
+          participants: event.participants || [],
+          status: 'Completed',
+        })) as MockEvent[];
 
-    // 🌟 Get points for each participant
-    const pointsMap: Record<number, number> = {};
-    for (const event of pastEvents) {
-      for (const user of event.participants) {
-        if (!pointsMap[user.userId]) {
-          const profile = await fetchProfile(user.userId);
-          pointsMap[user.userId] = profile.totalPoints;
+      const pointsMap: Record<number, number> = {};
+      for (const event of pastEvents) {
+        for (const user of event.participants) {
+          if (!pointsMap[user.userId]) {
+            const profile = await fetchProfile(user.userId);
+            pointsMap[user.userId] = profile.totalPoints;
+          }
         }
       }
-    }
 
-    setUserPoints(pointsMap);
-    setEvents(pastEvents);
-    setAllAchievements(achievements);
-  } catch (err) {
-    console.error('❌ Failed to load data:', err);
-  }
-};
+      setUserPoints(pointsMap);
+      setEvents(pastEvents);
+      setAllAchievements(achievements);
+    } catch (err) {
+      console.error('❌ Failed to load data:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   loadEventsAndAchievements();
 }, []);
-
 
 
 
@@ -199,39 +196,47 @@ const handleAssign = async (userId: number, eventId: number) => {
   const achievement = allAchievements.find(a => a.achievementId === achievementId);
 
   if (!achievement) {
-    alert('❌ Achievement not found.');
+    setSuccessMessage(isAlreadyAssigned ? '✅ Achievement unassigned!' : '🎉 Achievement assigned!');
+    setShowSuccessModal(true);
+    setTimeout(() => setShowSuccessModal(false), 2000);
     return;
   }
 
   try {
-    if (isAlreadyAssigned) {
-      await unassignAchievement(userId, achievementId, eventId);
+  if (isAlreadyAssigned) {
+    await unassignAchievement(userId, achievementId, eventId);
 
-      setAssigned(prev => ({ ...prev, [userId]: false }));
-      setUserPoints(prev => ({
-        ...prev,
-        [userId]: (prev[userId] || 0) - achievement.points,
-      }));
-    } else {
-      await assignAchievement({
-        userId,
-        achievementId,
-        eventId,
-        awardedByUserId,
-      });
+    setAssigned(prev => ({ ...prev, [userId]: false }));
+    setUserPoints(prev => ({
+      ...prev,
+      [userId]: (prev[userId] || 0) - achievement.points,
+    }));
+  } else {
+    await assignAchievement({
+      userId,
+      achievementId,
+      eventId,
+      awardedByUserId,
+    });
 
-      setAssigned(prev => ({ ...prev, [userId]: true }));
-      setUserPoints(prev => ({
-        ...prev,
-        [userId]: (prev[userId] || 0) + achievement.points,
-      }));
-      setSelectedAchievements(prev => ({ ...prev, [userId]: '' }));
-    }
-  } catch (err) {
-    console.error(err);
-    alert('❌ Failed to update achievement.');
+    setAssigned(prev => ({ ...prev, [userId]: true }));
+    setUserPoints(prev => ({
+      ...prev,
+      [userId]: (prev[userId] || 0) + achievement.points,
+    }));
+    setSelectedAchievements(prev => ({ ...prev, [userId]: '' }));
   }
+
+  // ✅ Show modal
+  setSuccessMessage(isAlreadyAssigned ? '✅ Achievement unassigned!' : '🎉 Achievement assigned!');
+  setShowSuccessModal(true);
+  setTimeout(() => setShowSuccessModal(false), 2000);
+} catch (err) {
+  console.error(err);
+  alert('❌ Failed to update achievement.');
+}
 };
+
 
 
 
@@ -401,13 +406,14 @@ const handleAssign = async (userId: number, eventId: number) => {
 
     </select>
 
-    <button
-    
-      onClick={() => handleAssign(user.userId, event.eventId)}
-      className={`btn btn-xs ${assigned[user.userId] ? 'btn-error' : 'btn-success'}`}
-    >
-      {assigned[user.userId] ? 'Undo' : 'Assign'}
-    </button>
+  <button
+  disabled={isLoading}
+  onClick={() => handleAssign(user.userId, event.eventId)}
+  className={`btn btn-xs ${assigned[user.userId] ? 'btn-error' : 'btn-success'}`}
+>
+  {assigned[user.userId] ? 'Undo' : 'Assign'}
+</button>
+
   </div>
 </td>
 <td className="text-sm text-green-400 font-semibold">
@@ -532,6 +538,28 @@ return (
         </button>
         <button className="btn btn-sm" onClick={() => setShowDeleteEventModal(false)}>
           Cancel
+        </button>
+      </div>
+    </div>
+  </dialog>
+)}
+{isLoading && (
+  <div className="flex items-center justify-center py-16">
+    <span className="loading loading-spinner text-orange-500 loading-lg"></span>
+  </div>
+)}
+
+{showSuccessModal && (
+  <dialog className="modal modal-open">
+    <div className="modal-box bg-[#1c1c1c] text-white border border-gray-600">
+      <h3 className="font-bold text-lg text-green-400">
+  {successMessage.includes('assigned') ? '🎉 Achievement Assigned' : '✅ Achievement Removed'}
+</h3>
+
+      <p className="py-4">{successMessage}</p>
+      <div className="modal-action">
+        <button className="btn btn-sm btn-primary" onClick={() => setShowSuccessModal(false)}>
+          OK
         </button>
       </div>
     </div>

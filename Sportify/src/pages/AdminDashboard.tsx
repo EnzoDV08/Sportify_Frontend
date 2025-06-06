@@ -1,27 +1,24 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import EventCreator from '../Components/EventCreator'
 import PastEventsTable from '../Components/PastEventsTable'
 import bannerImage from '../assets/admin-banner.png'
 import AdminLogo from '../assets/AdminLogo.svg'
-//import { fetchAdminDetails } from '../services/api'
+
 
 const AdminDashboard = () => {
-  const [tab, setTab] = useState('achievements')
+  const [tab, setTab] = useState('create')
+
 
 
 const tabs = [
-  { id: 'achievements', label: '🏆 Achievements' },
   { id: 'create', label: '📅 Create Event' },
   { id: 'events', label: '📂 Past Events' }
 ]
 
-  // useEffect(() => {
-  //   fetchAdminDetails().then(setAdmin).catch(console.error)
-  // }, [])
 
   return (
-    <div className="min-h-screen text-[#FF9900]">
+
       <div
         className="w-full h-[420px] relative bg-cover bg-center"
         style={{
@@ -44,13 +41,13 @@ const tabs = [
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.3 }}
-        className="flex justify-center mt-8"
+        className="flex justify-center mt-6"
       >
         <div className="flex gap-4 bg-[#1e1e1e] rounded-full p-3 shadow-lg">
           {tabs.map((t) => (
             <button
               key={t.id}
-              className={`px-5 py-2 rounded-full font-medium transition-all duration-300 cursor-pointer ${
+              className={`px-7 py-2 rounded-full font-medium transition-all duration-300 cursor-pointer ${
                 tab === t.id
                   ? 'bg-[#FF9900] text-white shadow-md'
                   : 'bg-[#2a2a2a] hover:bg-[#333] text-gray-400'
@@ -64,7 +61,7 @@ const tabs = [
       </motion.div>
 
       {/* 🧾 Tab Content */}
-      <div className="px-6 pt-20 pb-20">
+      <div className="px-6 pt-10 pb-20">
         <AnimatePresence mode="wait">
           <motion.div
             key={tab}
@@ -79,7 +76,7 @@ const tabs = [
         </AnimatePresence>
       </div>
     </div>
-    </div>
+
   )
 }
 
