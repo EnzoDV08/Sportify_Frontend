@@ -2,7 +2,7 @@ import { useEffect, useState, Fragment } from 'react'
 import { Event } from '../models/event'
 import { User } from '../models/user'
 import { motion, AnimatePresence } from 'framer-motion'
-import { assignAchievement } from '../services/api'
+import { assignAchievement, fetchProfile, unassignAchievement } from '../services/api'
 import { fetchEvents, fetchAllAchievements } from '../services/api'
 import { FullAchievement } from '../models/achievement';
 
@@ -98,37 +98,41 @@ const PastEventsTable = () => {
   
 
 useEffect(() => {
-  const loadEventsAndAchievements = async () => {
-    try {
-console.log('🎯 Fetching events and achievements...');
-const allEvents = await fetchEvents();
-const achievements = await fetchAllAchievements();
+ const loadEventsAndAchievements = async () => {
+  try {
+    const allEvents = await fetchEvents();
+    const achievements = await fetchAllAchievements();
 
-console.log('📦 All Events:', allEvents);
-console.log('🏅 All Achievements:', achievements);
+    const pastEvents = allEvents
+      .filter(event =>
+        event.creatorUserId === 2 &&
+        new Date(event.endDateTime) < new Date()
+      )
+      .map(event => ({
+        ...event,
+        sportType: event.sportType || 'General',
+        participants: event.participants || [],
+        status: 'Completed',
+      })) as MockEvent[];
 
-
-      const pastEvents = allEvents
-        .filter(event =>
-          event.creatorUserId === 2 &&
-          new Date(event.endDateTime) < new Date()
-        )
-        
-        .map(event => ({
-          ...event,
-          sportType: event.sportType || 'General',
-          participants: event.participants || [],
-          status: 'Completed',
-        })) as MockEvent[];
-
-      setEvents(pastEvents);
-      console.log('🕰️ Filtered Past Events (admin & ended):', pastEvents);
-      setAllAchievements(achievements);
-      
-    } catch (err) {
-      console.error('❌ Failed to load data:', err);
+    // 🌟 Get points for each participant
+    const pointsMap: Record<number, number> = {};
+    for (const event of pastEvents) {
+      for (const user of event.participants) {
+        if (!pointsMap[user.userId]) {
+          const profile = await fetchProfile(user.userId);
+          pointsMap[user.userId] = profile.totalPoints;
+        }
+      }
     }
-  };
+
+    setUserPoints(pointsMap);
+    setEvents(pastEvents);
+    setAllAchievements(achievements);
+  } catch (err) {
+    console.error('❌ Failed to load data:', err);
+  }
+};
 
   loadEventsAndAchievements();
 }, []);
@@ -189,47 +193,46 @@ const getAchievementsForSport = (sportType: string) => {
 
 
 const handleAssign = async (userId: number, eventId: number) => {
-  console.log('🚀 Assign clicked for userId:', userId, 'eventId:', eventId);
-
-  if (assigned[userId]) {
-    setAssigned(prev => ({ ...prev, [userId]: false }));
-    return;
-  }
-
+  const isAlreadyAssigned = assigned[userId];
   const rawValue = selectedAchievements[userId];
-  if (!rawValue || rawValue.trim() === '') {
-    alert('⚠️ Select an achievement before assigning.');
-    return;
-  }
-
   const achievementId = Number(rawValue);
   const achievement = allAchievements.find(a => a.achievementId === achievementId);
+
   if (!achievement) {
     alert('❌ Achievement not found.');
     return;
   }
 
   try {
-    await assignAchievement({
-      userId,
-      achievementId,
-      eventId,
-      awardedByUserId,
-    });
+    if (isAlreadyAssigned) {
+      await unassignAchievement(userId, achievementId, eventId);
 
-    alert(`✅ Achievement assigned successfully`);
+      setAssigned(prev => ({ ...prev, [userId]: false }));
+      setUserPoints(prev => ({
+        ...prev,
+        [userId]: (prev[userId] || 0) - achievement.points,
+      }));
+    } else {
+      await assignAchievement({
+        userId,
+        achievementId,
+        eventId,
+        awardedByUserId,
+      });
 
-    setAssigned(prev => ({ ...prev, [userId]: true }));
-    setUserPoints(prev => ({
-      ...prev,
-      [userId]: (prev[userId] || 0) + achievement.points,
-    }));
-    setSelectedAchievements(prev => ({ ...prev, [userId]: '' }));
+      setAssigned(prev => ({ ...prev, [userId]: true }));
+      setUserPoints(prev => ({
+        ...prev,
+        [userId]: (prev[userId] || 0) + achievement.points,
+      }));
+      setSelectedAchievements(prev => ({ ...prev, [userId]: '' }));
+    }
   } catch (err) {
     console.error(err);
-    alert('❌ Failed to assign achievement.');
+    alert('❌ Failed to update achievement.');
   }
 };
+
 
 
 
