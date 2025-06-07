@@ -19,7 +19,12 @@ const AchievementNotification = () => {
             transition={{ duration: 0.4, ease: 'easeInOut' }}
           >
             {iconUrl && (
-              <img src={iconUrl} alt="icon" className="achievement-icon" />
+              <img
+  src={iconUrl ? iconUrl : '/AdminLogo.png'}
+  alt="icon"
+  className="achievement-icon"
+/>
+
             )}
             <div>
               <p className="achievement-title">{title}</p>

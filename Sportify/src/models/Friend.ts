@@ -12,11 +12,17 @@ export interface FriendRequestDto {
 
 export interface FullFriend {
   id: number;
-  friend: {
+  user: {
     userId: number;
     name: string;
-    profilePicture: string;
-    bio?: string;
+    email: string;
   };
-  status: 'pending' | 'accepted' | 'rejected';
+  profile: {
+    userId: number;
+    profilePicture: string;
+    bio: string;
+    favoriteSports: string;
+    totalPoints: number;
+  };
+  status: 'pending' | 'accepted' | 'rejected' | 'none';
 }

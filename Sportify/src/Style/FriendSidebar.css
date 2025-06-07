@@ -206,3 +206,13 @@
   color: #ef4444;
   padding: 0.2rem 0.5rem;
 }
+
+.disabled-btn {
+  background-color: #aaa;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: not-allowed;
+  border-radius: 5px;
+  font-size: 0.9rem;
+}

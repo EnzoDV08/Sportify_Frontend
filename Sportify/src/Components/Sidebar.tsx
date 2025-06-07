@@ -9,9 +9,9 @@ import {
   FaBell,
   FaCog,
   FaSearch,
-  FaUserShield,
   FaAngleDoubleLeft,
-  FaAngleDoubleRight
+  FaAngleDoubleRight,
+  FaSignOutAlt
 } from 'react-icons/fa';
 import '../Style/Sidebar.css';
 import logo from '../assets/SportifyLogo.png';
@@ -37,19 +37,25 @@ const Sidebar = () => {
   const [showSettings, setShowSettings] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showFriendsSidebar, setShowFriendsSidebar] = useState(false);
+  const [friendRequestCount, setFriendRequestCount] = useState(0);
+const [pendingJoinCount, setPendingJoinCount] = useState(0);
+const [inviteCount, setInviteCount] = useState(0);
+
+
 
   const userType = localStorage.getItem('userType');
-  const userName = localStorage.getItem('userName') || 'Guest';
-  const userEmail = localStorage.getItem('userEmail') || 'guest@example.com';
   const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
   const [profileImageUrl, setProfileImageUrl] = useState<string>('');
   const [userId, setUserId] = useState<string | null>(null);
+  const [fullUser, setFullUser] = useState<{ name: string; email: string } | null>(null);
+
+
 
   const fetchProfileImage = async () => {
     if (!userId) return;
     try {
-      const res = await fetch(`${baseUrl}/api/profile/${userId}`);
+      const res = await fetch(`${baseUrl}/api/Profiles/${userId}`);
       if (!res.ok) return;
       const data = await res.json();
       if (data.profilePicture) {
@@ -60,15 +66,63 @@ const Sidebar = () => {
     }
   };
 
+  const fetchFullUserInfo = async () => {
+  if (!userId) return;
+  try {
+    const [userRes, profileRes] = await Promise.all([
+      fetch(`${baseUrl}/api/Users/${userId}`),
+      fetch(`${baseUrl}/api/Profiles/${userId}`)
+    ]);
+
+    if (!userRes.ok || !profileRes.ok) throw new Error('Failed to fetch user/profile');
+
+    const userData = await userRes.json();
+    const profileData = await profileRes.json();
+
+    setFullUser({ name: userData.name, email: userData.email });
+
+    if (profileData.profilePicture) {
+      setProfileImageUrl(`${baseUrl}/uploads/${profileData.profilePicture}`);
+    }
+  } catch (error) {
+    console.error('Sidebar profile fetch error:', error);
+  }
+};
+
+
   useEffect(() => {
     const id = localStorage.getItem('userId');
+    const fetchCounts = async () => {
+      const invites = await fetch(`${baseUrl}/api/events/invites/${id}`);
+const inviteData = await invites.json();
+setInviteCount(inviteData.length);
+  try {
+    const [friendRes, joinRes] = await Promise.all([
+      fetch(`${baseUrl}/api/friends/requests/${id}`),
+      fetch(`${baseUrl}/api/events/requests/${id}`)
+    ]);
+
+    const friends = await friendRes.json();
+    const joins = await joinRes.json();
+
+    setFriendRequestCount(friends.length);
+    setPendingJoinCount(joins.length);
+  } catch (err) {
+    console.error("❌ Error fetching counts", err);
+  }
+};
+fetchCounts();
     setManuallyToggled(false);
     setUserId(id);
   }, []);
 
-  useEffect(() => {
-    if (userId) fetchProfileImage();
-  }, [userId]);
+useEffect(() => {
+  if (userId) {
+    fetchProfileImage();      
+    fetchFullUserInfo();    
+  }
+}, [userId]);
+
 
   const handleSignOut = () => {
     localStorage.clear();
@@ -110,29 +164,63 @@ const Sidebar = () => {
             <SidebarItem icon={<FaHome />} label="Home" isExpanded={isExpanded} to="/home" currentPath={location.pathname} />
             <SidebarItem icon={<FaCalendarAlt />} label="Events" isExpanded={isExpanded} to="/events" currentPath={location.pathname} />
             <SidebarItem icon={<FaPlusCircle />} label="Add Event" isExpanded={isExpanded} to="/add-event" currentPath={location.pathname} />
-            <SidebarItem icon={<FaTrophy />} label="My Events" isExpanded={isExpanded} to="/my-events" currentPath={location.pathname} />
-            <button onClick={() => setShowFriendsSidebar (prev => !prev)}className={`sidebar-item-wrapper ${showFriendsSidebar ? 'active' : ''}`}>
-              <div className="item" data-tooltip="Friends">
-                <span className="icon"><FaUsers /></span>
-                {isExpanded && <span className="label">Friends</span>}
-              </div>
-            </button>
+            <SidebarItem
+  icon={
+    <>
+      <FaTrophy />
+      {pendingJoinCount > 0 && <span className="badge">{pendingJoinCount}</span>}
+    </>
+  }
+  label="My Events"
+  isExpanded={isExpanded}
+  to="/my-events"
+  currentPath={location.pathname}
+/>
+
+            <button onClick={() => setShowFriendsSidebar(prev => !prev)} className={`sidebar-item-wrapper ${showFriendsSidebar ? 'active' : ''}`}>
+  <div className="item" data-tooltip="Friends">
+    <span className="icon">
+      <FaUsers />
+      {friendRequestCount > 0 && <span className="badge">{friendRequestCount}</span>}
+    </span>
+    {isExpanded && <span className="label">Friends</span>}
+  </div>
+</button>
             {userType === 'admin' && ( 
-            <SidebarItem icon={<FaUserShield />} label="Admin" isExpanded={isExpanded} to="/dashboard" currentPath={location.pathname} />)}
+            <SidebarItem
+  icon={
+    <>
+      <FaTrophy />
+      {pendingJoinCount > 0 && <span className="badge">{pendingJoinCount}</span>}
+    </>
+  }
+  label="My Events"
+  isExpanded={isExpanded}
+  to="/my-events"
+  currentPath={location.pathname}
+/>
+)}
             <hr className="divider" />
             <div className={`dropdown-wrapper ${showNotifications ? 'open' : ''}`}>
               <button onClick={() => setShowNotifications(!showNotifications)} className="item dropdown-toggle" data-tooltip="Notifications">
-                <span className="icon"><FaBell /></span>
+<span className="icon">
+  <FaBell />
+  {(inviteCount > 0 || pendingJoinCount > 0 || friendRequestCount > 0) && (
+    <span className="badge">
+      {inviteCount + pendingJoinCount + friendRequestCount}
+    </span>
+  )}
+</span>
+
+
                 {isExpanded && <><span className="label">Notifications</span><span className="dropdown-arrow">{showNotifications ? '▼' : '▶'}</span></>}
               </button>
-              {showNotifications && isExpanded && (
-                <div className="dropdown-menu">
-                  <p className="dropdown-item">📬 New friend request</p>
-                  <p className="dropdown-item">🏆 You earned a new achievement</p>
-                  <p className="dropdown-item">📅 Event starts soon</p>
-                  <Link to="/notifications" className="dropdown-item">📩 View Event Invites</Link>
-                </div>
-              )}
+{showNotifications && isExpanded && (
+  <div className="dropdown-menu">
+    <p className="dropdown-item">🏆 You earned a new achievement</p>
+    <Link to="/notifications" className="dropdown-item">📩 View Event Invites</Link>
+  </div>
+)}
             </div>
             <div className={`dropdown-wrapper ${showSettings ? 'open' : ''}`}>
               <button onClick={() => setShowSettings(!showSettings)} className="item dropdown-toggle" data-tooltip="Settings">
@@ -147,21 +235,31 @@ const Sidebar = () => {
                 </div>
               )}
             </div>
+            <div className="sidebar-item-wrapper">
+  <button onClick={handleSignOut} className="item" data-tooltip="Sign Out">
+    <span className="icon"><FaSignOutAlt /></span>
+    {isExpanded && <span className="label">Sign Out</span>}
+  </button>
+</div>
           </nav>
         </div>
 
 <div className="profile" data-tooltip="View Profile">
-  <img src={profileImageUrl || '/profile.jpg'} alt="profile" className="profile-img" />
+  <img
+    src={profileImageUrl || '/default-avatar.png'}
+    alt="Profile"
+    className="profile-img"
+  />
   {isExpanded && (
     <div className="profile-info">
-      <p className="name">{userName}</p>
-      <p className="email">{userEmail}</p>
-      <Link to="/profile">
-        <button className="view-btn">View Profile</button>
-      </Link>
+      <p className="name">{fullUser?.name || 'Loading...'}</p>
+      <p className="email">{fullUser?.email}</p>
     </div>
   )}
 </div>
+
+
+
       </div>
 
 <FriendSidebar

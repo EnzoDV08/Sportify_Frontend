@@ -273,8 +273,9 @@ export const fetchFriendRequests = async (userId: number): Promise<FullFriend[]>
   return await res.json();
 };
 
-export const searchUsers = async (query: string): Promise<FullFriend[]> => {
-  const response = await fetch(`${API_BASE_URL}/api/friends/search?query=${encodeURIComponent(query)}`);
+export const searchUsers = async (query: string, currentUserId: number): Promise<FullFriend[]> => {
+  const response = await fetch(`${API_BASE_URL}/api/friends/search?query=${encodeURIComponent(query)}&currentUserId=${currentUserId}`);
+
   if (!response.ok) throw new Error('Failed to search users');
   return await response.json();
 };

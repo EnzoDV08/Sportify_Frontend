@@ -11,7 +11,8 @@ import { useEffect, useState } from 'react';
 import { FullFriend } from '../models/Friend';
 import { RxCross2 } from 'react-icons/rx';
 import { PiUsersThreeBold, PiUserPlusBold, PiHandshakeBold } from 'react-icons/pi';
-import { FiTrash2, FiCheck, FiX } from 'react-icons/fi'; // ✅ NEW icons
+import { FiTrash2, FiCheck, FiX } from 'react-icons/fi';
+import { useNotification } from '../context/NotificationContext'; // ✅ NEW icons
 import '../Style/FriendSidebar.css';
 
 const FriendSidebar = ({ className = '', onClose }: { className?: string; onClose?: () => void }) => {
@@ -23,6 +24,8 @@ const [loading, setLoading] = useState(true);
 const [error, setError] = useState('');
 const [searchTerm, setSearchTerm] = useState('');
 const [searchResults, setSearchResults] = useState<FullFriend[]>([]);
+const { addNotification } = useNotification();
+
 
 
 useEffect(() => {
@@ -52,7 +55,7 @@ useEffect(() => {
     }
 
     try {
-      const results = await searchUsers(searchTerm.trim());
+      const results = await searchUsers(searchTerm.trim(), userId);
       setSearchResults(results);
     } catch (err) {
       console.error('Search failed:', err);
@@ -62,7 +65,29 @@ useEffect(() => {
   return () => clearTimeout(delayDebounce);
 }, [searchTerm]);
 
+useEffect(() => {
+  const interval = setInterval(async () => {
+    try {
+      const updatedRequests = await fetchFriendRequests(userId);
+      const newRequests = updatedRequests.filter(r => !requests.some(old => old.id === r.id));
 
+      if (newRequests.length > 0) {
+        newRequests.forEach(req => {
+          addNotification({
+            title: 'New Friend Request',
+            message: `You got a request from ${req.user.name}`,
+            iconUrl: '/trophy.png',
+          });
+        });
+        setRequests(updatedRequests);
+      }
+    } catch (err) {
+      console.error('Failed to poll friend requests:', err);
+    }
+  }, 5000); // Every 5s
+
+  return () => clearInterval(interval); // Cleanup
+}, [userId, requests]);
 
 const handleAccept = async (id: number) => {
   try {
@@ -96,7 +121,13 @@ const handleRemove = async (id: number) => {
 const handleSendRequest = async (receiverId: number) => {
   try {
     await sendFriendRequest({ senderId: userId, receiverId });
-    setSearchResults(prev => prev.filter(f => f.friend.userId !== receiverId));
+    setSearchResults(prev => prev.filter(f => f.user.userId !== receiverId));
+
+    addNotification({
+      title: 'Friend Request Sent',
+      message: 'Your friend request was sent successfully!',
+      iconUrl: '/trophy.png'
+    });
   } catch (err) {
     console.error('Failed to send friend request:', err);
   }
@@ -126,10 +157,10 @@ const handleSendRequest = async (receiverId: number) => {
     <div className="friend-info">
       <img
         className="friend-avatar"
-        src={friend.friend.profilePicture || '/profile.jpg'}
-        alt={friend.friend.name}
+        src={friend.profile.profilePicture || '/profile.jpg'}
+        alt={friend.user.name}
       />
-      <span className="friend-name">{friend.friend.name}</span>
+      <span className="friend-name">{friend.user.name}</span>
     </div>
     <div className="friend-actions">
       <button className="view-btn small-btn">View</button>
@@ -156,20 +187,33 @@ const handleSendRequest = async (receiverId: number) => {
   onChange={(e) => setSearchTerm(e.target.value)}
 />
 
-{searchResults.map(result => (
-  <div key={result.friend.userId} className="search-result">
-    <div className="friend-info">
-      <img className="friend-avatar" src={result.friend.profilePicture || '/profile.jpg'} alt={result.friend.name} />
-      <span className="friend-name">{result.friend.name}</span>
+{searchResults.map(result => {
+  const isAlreadyFriend = friends.some(f => f.user.userId === result.user.userId);
+  const isPending = requests.some(r => r.user.userId === result.user.userId);
+
+  return (
+    <div key={result.user.userId} className="search-result">
+      <div className="friend-info">
+        <img
+          className="friend-avatar"
+          src={result.profile.profilePicture || '/profile.jpg'}
+          alt={result.user.name}
+        />
+        <span className="friend-name">{result.user.name}</span>
+      </div>
+      {isAlreadyFriend ? (
+        <button className="disabled-btn" disabled>Friend</button>
+      ) : isPending ? (
+        <button className="disabled-btn" disabled>Pending</button>
+      ) : (
+        <button className="add-btn" onClick={() => handleSendRequest(result.user.userId)}>
+          Send Request
+        </button>
+      )}
     </div>
-    <button
-      className="add-btn"
-      onClick={() => handleSendRequest(result.friend.userId)}
-    >
-      Send Request
-    </button>
-  </div>
-))}
+  );
+})}
+
 
       </div>
 
@@ -184,10 +228,10 @@ const handleSendRequest = async (receiverId: number) => {
     <div className="friend-info">
       <img
         className="friend-avatar"
-        src={req.friend.profilePicture || '/profile.jpg'}
-        alt={req.friend.name}
+        src={req.profile.profilePicture || '/profile.jpg'}
+        alt={req.user.name}
       />
-      <span className="friend-name">{req.friend.name}</span>
+      <span className="friend-name">{req.user.name}</span>
     </div>
     <div className="request-actions">
       <button className="accept-btn" onClick={() => handleAccept(req.id)}>
