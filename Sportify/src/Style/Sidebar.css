@@ -277,7 +277,7 @@
 }
 
 .dropdown-wrapper.open .dropdown-arrow {
-  transform: rotate(90deg);
+  transform: rotate(0deg);
 }
 
 /* == TOOLTIP BUBBLE == */
@@ -364,4 +364,11 @@
     transform: scale(1);
     opacity: 1;
   }
+}
+
+.dropdown-arrow {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  padding-left: 8px;
 }

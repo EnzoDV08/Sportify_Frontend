@@ -11,7 +11,9 @@ import {
   FaSearch,
   FaAngleDoubleLeft,
   FaAngleDoubleRight,
-  FaSignOutAlt
+  FaSignOutAlt,
+  FaChevronDown,
+  FaChevronRight,
 } from 'react-icons/fa';
 import '../Style/Sidebar.css';
 import logo from '../assets/SportifyLogo.png';
@@ -213,7 +215,9 @@ useEffect(() => {
 </span>
 
 
-                {isExpanded && <><span className="label">Notifications</span><span className="dropdown-arrow">{showNotifications ? '▼' : '▶'}</span></>}
+                {isExpanded && <><span className="label">Notifications</span><span className="dropdown-arrow">
+  {showNotifications ? <FaChevronDown size={12} /> : <FaChevronRight size={12} />}
+</span></>}
               </button>
 {showNotifications && isExpanded && (
   <div className="dropdown-menu">
@@ -225,13 +229,15 @@ useEffect(() => {
             <div className={`dropdown-wrapper ${showSettings ? 'open' : ''}`}>
               <button onClick={() => setShowSettings(!showSettings)} className="item dropdown-toggle" data-tooltip="Settings">
                 <span className="icon"><FaCog /></span>
-                {isExpanded && <><span className="label">Settings</span><span className="dropdown-arrow">{showSettings ? '▼' : '▶'}</span></>}
+                {isExpanded && <><span className="label">Settings</span><span className="dropdown-arrow">
+  {showSettings ? <FaChevronDown size={12} /> : <FaChevronRight size={12} />}
+</span>
+</>}
               </button>
               {showSettings && isExpanded && (
                 <div className="dropdown-menu">
                   <Link to="/settings" className="dropdown-item">⚙️ Account Preferences</Link>
                   <Link to="/change-password" className="dropdown-item">🔒 Change Password</Link>
-                  <button onClick={handleSignOut} className="dropdown-item">🚪 Sign Out</button>
                 </div>
               )}
             </div>
@@ -278,12 +284,12 @@ interface SidebarItemProps {
   label: string;
   isExpanded: boolean;
   to?: string;
-  currentPath: string; // 🟢 add this
+  currentPath: string; 
 }
 
 
 const SidebarItem = ({ icon, label, isExpanded, to, currentPath }: SidebarItemProps) => {
-  const isActive = to && currentPath.startsWith(to); // 🟢 this marks the current page
+  const isActive = to && currentPath.startsWith(to); 
 
   const content = (
     <div className={`sidebar-item-wrapper ${isActive ? 'active' : ''}`}>
