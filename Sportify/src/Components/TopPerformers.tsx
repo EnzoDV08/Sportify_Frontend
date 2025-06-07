@@ -2,34 +2,54 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import '../Style/TopPerformers.css';
 
-interface Profile {
+interface ProfileData {
   userId: number;
   profilePicture?: string;
-  name: string;
   totalPoints: number;
-  totalWins?: number;
-  currentStreak?: number;
-  eventsAttended?: number;
+}
+
+interface UserData {
+  name: string;
+}
+
+interface TopPerformer extends ProfileData {
+  fullName: string;
 }
 
 const TopPerformers = () => {
-  const [performers, setPerformers] = useState<Profile[]>([]);
+  const [performers, setPerformers] = useState<TopPerformer[]>([]);
   const [loading, setLoading] = useState(true);
   const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
+  // ✅ Fallback image for missing or broken profile pictures
+  const fallbackImage = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
 
   useEffect(() => {
     const loadProfiles = async () => {
       try {
-        const res = await fetch(`${baseUrl}/api/Profiles`);
+        const res = await fetch(`${baseUrl}/api/profiles`);
         if (!res.ok) throw new Error('Failed to load profiles');
-        const data: Profile[] = await res.json();
+        const profiles: ProfileData[] = await res.json();
 
-        const sorted = data
+        const topProfiles = profiles
           .filter((p) => typeof p.totalPoints === 'number')
           .sort((a, b) => b.totalPoints - a.totalPoints)
           .slice(0, 5);
 
-        setPerformers(sorted);
+        const withNames: TopPerformer[] = await Promise.all(
+          topProfiles.map(async (profile) => {
+            try {
+              const res = await fetch(`${baseUrl}/api/users/${profile.userId}`);
+              if (!res.ok) throw new Error('User fetch failed');
+              const user: UserData = await res.json();
+              return { ...profile, fullName: user.name };
+            } catch {
+              return { ...profile, fullName: 'Unknown User' };
+            }
+          })
+        );
+
+        setPerformers(withNames);
       } catch (err) {
         console.error('❌ Failed to fetch top performers:', err);
       } finally {
@@ -62,25 +82,21 @@ const TopPerformers = () => {
               <div className={`leaderboard-card ${isFirst ? 'first-place' : ''}`}>
                 <div className="rank">#{index + 1}</div>
 
-                {user.profilePicture ? (
-                  <img
-                    className="avatar"
-                    src={`${baseUrl}/${user.profilePicture}`}
-                    alt={user.name}
-                  />
-                ) : (
-                  <div className="avatar fallback-avatar">
-                    {user.name?.charAt(0).toUpperCase() || 'U'}
-                  </div>
-                )}
+                <img
+                  className="avatar"
+                  src={
+                    user.profilePicture
+                      ? `${baseUrl}/${user.profilePicture}`
+                      : fallbackImage
+                  }
+                  alt={user.fullName}
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = fallbackImage;
+                  }}
+                />
 
                 <div className="info">
-                  <h3>{user.name}</h3>
-                  <p>
-                    Total Wins: {user.totalWins ?? 0} &nbsp; | &nbsp;
-                    Streak: {user.currentStreak ?? 0} &nbsp; | &nbsp;
-                    Events: {user.eventsAttended ?? 0}
-                  </p>
+                  <h3>{user.fullName}</h3>
                 </div>
 
                 <div className="points">{user.totalPoints} POINTS</div>
@@ -100,3 +116,6 @@ const TopPerformers = () => {
 };
 
 export default TopPerformers;
+
+
+

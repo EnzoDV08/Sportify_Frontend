@@ -8,6 +8,8 @@ import {
 } from '../models/achievement';
 import { JoinRequest } from '../models/request';
 import { Profile } from '../models/profile';
+import { FriendRequestDto, FullFriend } from '../models/Friend';
+
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -218,5 +220,64 @@ export const unassignAchievement = async (
   });
   if (!response.ok) throw new Error(await response.text());
 };
+
+// Send a friend request
+export const sendFriendRequest = async (dto: FriendRequestDto): Promise<void> => {
+  const res = await fetch(`${API_BASE_URL}/api/friends/send`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(dto),
+  });
+
+  if (!res.ok) throw new Error(await res.text());
+};
+
+// Accept a friend request
+export const acceptFriendRequest = async (id: number): Promise<void> => {
+  const res = await fetch(`${API_BASE_URL}/api/friends/accept/${id}`, {
+    method: 'POST',
+  });
+
+  if (!res.ok) throw new Error(await res.text());
+};
+
+// Reject a friend request
+export const declineFriendRequest = async (id: number): Promise<void> => {
+  const res = await fetch(`${API_BASE_URL}/api/friends/reject/${id}`, {
+    method: 'POST',
+  });
+
+  if (!res.ok) throw new Error(await res.text());
+};
+
+// Remove a friend
+export const removeFriend = async (id: number): Promise<void> => {
+  const res = await fetch(`${API_BASE_URL}/api/friends/${id}`, {
+    method: 'DELETE',
+  });
+
+  if (!res.ok) throw new Error(await res.text());
+};
+
+// Fetch all accepted friends for a user
+export const fetchMyFriends = async (userId: number): Promise<FullFriend[]> => {
+  const res = await fetch(`${API_BASE_URL}/api/friends/my-friends/${userId}`);
+  if (!res.ok) throw new Error(await res.text());
+  return await res.json();
+};
+
+// Fetch pending requests for the user
+export const fetchFriendRequests = async (userId: number): Promise<FullFriend[]> => {
+  const res = await fetch(`${API_BASE_URL}/api/friends/requests/${userId}`);
+  if (!res.ok) throw new Error(await res.text());
+  return await res.json();
+};
+
+export const searchUsers = async (query: string): Promise<FullFriend[]> => {
+  const response = await fetch(`${API_BASE_URL}/api/friends/search?query=${encodeURIComponent(query)}`);
+  if (!response.ok) throw new Error('Failed to search users');
+  return await response.json();
+};
+
 
 

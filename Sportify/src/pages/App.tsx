@@ -11,9 +11,12 @@ import Profile from './Profile';
 // import ViewProfile from './ViewProfile';
 import EditProfile from './EditProfile';
 import MyEvents from './MyEvents';
-import OrganizationSignupPage from './OrganizationSignupPage'; // ✅ NEW
+import OrganizationSignupPage from './OrganizationSignupPage'; 
 import EditEvent from './EditEvent';
 import InvitedEvents from './InvitedEvents';
+
+import { NotificationProvider } from '../context/NotificationContext'; // ✅ make sure this file exists
+import NotificationToast from '../Components/NotificationToast'; // ✅ make sure this file exists
 
 const router = createBrowserRouter(
   [
@@ -68,7 +71,6 @@ const router = createBrowserRouter(
         {
           path: '/edit-profile',
           element: <EditProfile />
-        
         },
         {
           path: '/my-events',
@@ -99,7 +101,12 @@ const router = createBrowserRouter(
 );
 
 function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <NotificationProvider>
+      <NotificationToast /> {/* ✅ Global toast alert component */}
+      <RouterProvider router={router} />
+    </NotificationProvider>
+  );
 }
 
 export default App;

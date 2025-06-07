@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { assignAchievement, fetchProfile, unassignAchievement } from '../services/api'
 import { fetchEvents, fetchAllAchievements } from '../services/api'
 import { FullAchievement } from '../models/achievement';
+import { useNotification } from '../context/NotificationContext';
 
 
 
@@ -91,6 +92,9 @@ const PastEventsTable = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+  const { addNotification } = useNotification();
+
+
 
 
 useEffect(() => {
@@ -219,12 +223,22 @@ const handleAssign = async (userId: number, eventId: number) => {
       awardedByUserId,
     });
 
-    setAssigned(prev => ({ ...prev, [userId]: true }));
-    setUserPoints(prev => ({
-      ...prev,
-      [userId]: (prev[userId] || 0) + achievement.points,
-    }));
-    setSelectedAchievements(prev => ({ ...prev, [userId]: '' }));
+setAssigned(prev => ({ ...prev, [userId]: true }));
+setUserPoints(prev => ({
+  ...prev,
+  [userId]: (prev[userId] || 0) + achievement.points,
+}));
+setSelectedAchievements(prev => ({ ...prev, [userId]: '' }));
+
+// ✅ Trigger notification only if this is the CURRENT user
+if (userId === Number(localStorage.getItem('userId'))) {
+addNotification({
+  title: `🏆 ${achievement.title}`,
+  message: `You earned ${achievement.points} points!`,
+  iconUrl: '/AdminLogo.png'
+});
+}
+
   }
 
   // ✅ Show modal
