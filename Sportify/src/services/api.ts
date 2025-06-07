@@ -8,6 +8,7 @@ import {
 } from '../models/achievement';
 import { JoinRequest } from '../models/request';
 import { Profile } from '../models/profile';
+import { User } from '../models/user';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -30,19 +31,19 @@ interface UpdateEventDto extends CreateEventDto {}
 
 // ===== Events =====
 export const fetchEvents = async (): Promise<Event[]> => {
-  const response = await fetch(`${API_BASE_URL}/api/events`);
+  const response = await fetch(`http://localhost:5000/api/events`);
   if (!response.ok) throw new Error('Failed to fetch events');
   return await response.json();
 };
 
 export const fetchSingleEvent = async (id: number): Promise<Event> => {
-  const response = await fetch(`${API_BASE_URL}/api/events/${id}`);
+  const response = await fetch(`http://localhost:5000/api/events/${id}`);
   if (!response.ok) throw new Error('Failed to fetch event');
   return await response.json();
 };
 
 export const fetchEventsByUser = async (userId: number): Promise<Event[]> => {
-  const response = await fetch(`${API_BASE_URL}/api/events/created-by/${userId}`);
+  const response = await fetch(`http://localhost:5000/api/events/created-by/${userId}`);
   if (!response.ok) {
     console.error(await response.text());
     throw new Error('Failed to fetch events created by user.');
@@ -50,9 +51,15 @@ export const fetchEventsByUser = async (userId: number): Promise<Event[]> => {
   return await response.json();
 };
 
+export const fetchUserById = async (userId: number): Promise<User> => {
+  const response = await fetch(`http://localhost:5000/api/users/${userId}`);
+  if (!response.ok) throw new Error('Failed to fetch user');
+  return await response.json();
+};
+
 
 export const createEvent = async (eventData: CreateEventDto, userId: number): Promise<Event> => {
-  const response = await fetch(`${API_BASE_URL}/api/events?userId=${userId}`, {
+  const response = await fetch(`http://localhost:5000/api/events?userId=${userId}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(eventData),
@@ -66,8 +73,16 @@ export const createEvent = async (eventData: CreateEventDto, userId: number): Pr
   return await response.json();
 };
 
+export const fetchEventParticipants = async (eventId: number) => {
+  const response = await fetch(`http://localhost:5000/api/events/${eventId}/participants`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch event participants');
+  }
+  return await response.json();
+};
+
 export const deleteEvent = async (eventId: number): Promise<void> => {
-  const response = await fetch(`${API_BASE_URL}/api/events/${eventId}`, {
+  const response = await fetch(`http://localhost:5000/api/events/${eventId}`, {
     method: 'DELETE',
   });
 
@@ -78,7 +93,7 @@ export const deleteEvent = async (eventId: number): Promise<void> => {
 };
 
 export const updateEvent = async (eventId: number, eventData: UpdateEventDto): Promise<Event> => {
-  const response = await fetch(`${API_BASE_URL}/api/events/${eventId}`, {
+  const response = await fetch(`http://localhost:5000/api/events/${eventId}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(eventData),
@@ -93,7 +108,7 @@ export const updateEvent = async (eventId: number, eventData: UpdateEventDto): P
 };
 
 export const joinEvent = async (eventId: number, userId: number): Promise<void> => {
-  const response = await fetch(`${API_BASE_URL}/api/EventParticipants/JoinEvent?eventId=${eventId}&userId=${userId}`, {
+  const response = await fetch(`http://localhost:5000/api/EventParticipants/JoinEvent?eventId=${eventId}&userId=${userId}`, {
     method: 'POST'
   });
 
@@ -105,20 +120,20 @@ export const joinEvent = async (eventId: number, userId: number): Promise<void> 
 
 // ===== Invites =====
 export const fetchInvitedEvents = async (userId: number): Promise<Event[]> => {
-  const response = await fetch(`${API_BASE_URL}/api/EventParticipants/InvitedEvents/${userId}`);
+  const response = await fetch(`http://localhost:5000/api/EventParticipants/InvitedEvents/${userId}`);
   if (!response.ok) throw new Error('Failed to fetch invited events');
   return await response.json();
 };
 
 export const acceptInvite = async (eventId: number, userId: number): Promise<void> => {
-  const response = await fetch(`${API_BASE_URL}/api/EventParticipants/AcceptInvite?eventId=${eventId}&userId=${userId}`, {
+  const response = await fetch(`http://localhost:5000/api/EventParticipants/AcceptInvite?eventId=${eventId}&userId=${userId}`, {
     method: 'POST'
   });
   if (!response.ok) throw new Error('Failed to accept invite.');
 };
 
 export const rejectInvite = async (eventId: number, userId: number): Promise<void> => {
-  const response = await fetch(`${API_BASE_URL}/api/EventParticipants/RejectInvite?eventId=${eventId}&userId=${userId}`, {
+  const response = await fetch(`http://localhost:5000/api/EventParticipants/RejectInvite?eventId=${eventId}&userId=${userId}`, {
     method: 'POST'
   });
 
@@ -127,20 +142,20 @@ export const rejectInvite = async (eventId: number, userId: number): Promise<voi
 
 // ===== Join Requests =====
 export const fetchPendingRequests = async (creatorId: number): Promise<JoinRequest[]> => {
-  const res = await fetch(`${API_BASE_URL}/api/EventParticipants/PendingRequests/${creatorId}`);
+  const res = await fetch(`http://localhost:5000/api/EventParticipants/PendingRequests/${creatorId}`);
   if (!res.ok) throw new Error("Failed to fetch pending requests");
   return await res.json();
 };
 
 export const approveRequest = async (eventId: number, userId: number, approverUserId: number): Promise<void> => {
-  const res = await fetch(`${API_BASE_URL}/api/EventParticipants/ApproveRequest?eventId=${eventId}&userId=${userId}&approverUserId=${approverUserId}`, {
+  const res = await fetch(`http://localhost:5000/api/EventParticipants/ApproveRequest?eventId=${eventId}&userId=${userId}&approverUserId=${approverUserId}`, {
     method: 'POST'
   });
   if (!res.ok) throw new Error(await res.text());
 };
 
 export const rejectRequest = async (eventId: number, userId: number, approverUserId: number): Promise<void> => {
-  const res = await fetch(`${API_BASE_URL}/api/EventParticipants/RejectRequest?eventId=${eventId}&userId=${userId}&approverUserId=${approverUserId}`, {
+  const res = await fetch(`http://localhost:5000/api/EventParticipants/RejectRequest?eventId=${eventId}&userId=${userId}&approverUserId=${approverUserId}`, {
     method: 'POST'
   });
   if (!res.ok) throw new Error(await res.text());
@@ -148,7 +163,7 @@ export const rejectRequest = async (eventId: number, userId: number, approverUse
 
 // ===== Login =====
 export const loginUser = async (credentials: LoginRequest): Promise<LoginResponse> => {
-  const response = await fetch(`${API_BASE_URL}/api/users/login`, {
+  const response = await fetch(`http://localhost:5000/api/users/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(credentials),
@@ -160,20 +175,20 @@ export const loginUser = async (credentials: LoginRequest): Promise<LoginRespons
 
 // ===== Achievements =====
 export const fetchUserAchievements = async (userId: number): Promise<UserAchievement[]> => {
-  const response = await fetch(`${API_BASE_URL}/api/achievements/user/${userId}`);
+  const response = await fetch(`http://localhost:5000/api/achievements/user/${userId}`);
   if (!response.ok) throw new Error(`Failed to fetch achievements for user ${userId}`);
   return await response.json();
 };
 
 export const fetchAllAchievements = async (): Promise<FullAchievement[]> => {
-  const response = await fetch(`${API_BASE_URL}/api/achievements`);
+  const response = await fetch(`http://localhost:5000/api/achievements`);
   if (!response.ok) throw new Error("Failed to fetch achievements");
   return await response.json();
 };
 
 
 export const createAchievement = async (data: CreateAchievementRequest): Promise<boolean> => {
-  const response = await fetch(`${API_BASE_URL}/api/achievements`, {
+  const response = await fetch(`http://localhost:5000/api/achievements`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
@@ -188,13 +203,13 @@ export const createAchievement = async (data: CreateAchievementRequest): Promise
 };
 
 export const fetchProfile = async (id: number): Promise<Profile> => {
-  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/Profiles/${id}`);
+  const response = await fetch(`http://localhost:5000/api/Profiles/${id}`);
   if (!response.ok) throw new Error('Failed to fetch profile');
   return await response.json();
 };
 
 export const assignAchievement = async (data: AssignAchievementRequest): Promise<boolean> => {
-  const response = await fetch(`${API_BASE_URL}/api/UserAchievements/assign`, {
+  const response = await fetch(`http://localhost:5000/api/UserAchievements/assign`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
@@ -211,7 +226,7 @@ export const unassignAchievement = async (
   achievementId: number,
   eventId: number
 ): Promise<void> => {
-  const response = await fetch(`${API_BASE_URL}/api/UserAchievements/unassign`, {
+  const response = await fetch(`http://localhost:5000/api/UserAchievements/unassign`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ userId, achievementId, eventId }),

@@ -1,15 +1,24 @@
 import { useEffect, useState } from 'react';
-import { fetchEvents } from '../services/api';
+import { fetchEvents, fetchUserById, fetchProfile } from '../services/api';
 import { Event } from '../models/event';
 import { Link } from 'react-router-dom';
 import {
   FaMapMarkerAlt,
   FaUsers,
   FaClock,
-  FaSearch
+  FaSearch,
+  FaCalendarAlt,
+  FaFolder
 } from 'react-icons/fa';
 import '../Style/AllEvents.css';
 import bgWhite from '../assets/Slide 16_9 - 5.png';
+import { Circles } from 'react-loader-spinner';
+
+
+interface CreatorInfo {
+  username: string;
+  profilePicture: string;
+}
 
 function isThisWeekAndNotEnded(start: string, end: string): boolean {
   const now = new Date();
@@ -28,10 +37,9 @@ function isThisWeekAndNotEnded(start: string, end: string): boolean {
   return (
     startDate >= startOfWeek &&
     startDate <= endOfWeek &&
-    endDate >= now // still ongoing or future
+    endDate >= now
   );
 }
-
 
 function AllEvents() {
   const [events, setEvents] = useState<Event[]>([]);
@@ -39,16 +47,41 @@ function AllEvents() {
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState<'upcoming' | 'past'>('upcoming');
+  const [creatorMap, setCreatorMap] = useState<Record<number, CreatorInfo>>({});
+
 
   useEffect(() => {
     fetchEvents()
-      .then((data) => {
+      .then(async (data) => {
         setEvents(data);
         setFilteredEvents(data);
+
+        const uniqueIds = [...new Set(data.map(e => e.creatorUserId))];
+        const userMap: Record<number, CreatorInfo> = {};
+
+        await Promise.all(uniqueIds.map(async (id) => {
+          try {
+            const user = await fetchUserById(id);
+            const profile = await fetchProfile(id);
+            userMap[id] = {
+              username: user.username ?? user.name ?? 'Unknown',
+              profilePicture: profile?.profilePicture ?? '/avatar.png'
+            };
+          } catch (err) {
+            console.error(`Failed to fetch creator info for ID ${id}`, err);
+            userMap[id] = {
+              username: 'Unknown',
+              profilePicture: '/avatar.png'
+            };
+          }
+        }));
+
+        setCreatorMap(userMap);
       })
       .catch(err => console.error(err))
       .finally(() => setLoading(false));
   }, []);
+
 
   useEffect(() => {
     const lower = searchTerm.toLowerCase();
@@ -62,186 +95,226 @@ function AllEvents() {
   const thisWeekEvents = filteredEvents.filter(event =>
     isThisWeekAndNotEnded(event.startDateTime, event.endDateTime)
   );
+
   const now = new Date();
 
-    const upcomingEvents = filteredEvents
-      .filter(event => new Date(event.startDateTime) >= now)
-      .sort((a, b) => new Date(a.startDateTime).getTime() - new Date(b.startDateTime).getTime());
+  const upcomingEvents = filteredEvents
+    .filter(event => new Date(event.startDateTime) >= now)
+    .sort((a, b) => new Date(a.startDateTime).getTime() - new Date(b.startDateTime).getTime());
 
-    const pastEvents = filteredEvents
-      .filter(event => new Date(event.startDateTime) < now)
-      .sort((a, b) => new Date(b.startDateTime).getTime() - new Date(a.startDateTime).getTime());
+  const pastEvents = filteredEvents
+    .filter(event => new Date(event.startDateTime) < now)
+    .sort((a, b) => new Date(b.startDateTime).getTime() - new Date(a.startDateTime).getTime());
 
   const displayedEvents = view === 'upcoming' ? upcomingEvents : pastEvents;
 
-  if (loading) return <p className="loading-text">Loading events...</p>;
+if (loading) {
+  return (
+    <div className="all-events-page event-loading-container">
+      <Circles
+        height="80"
+        width="80"
+        color="#ff9100"
+        ariaLabel="loading-events"
+      />
+      <p className="loading-message">Loading... because good things take time.</p>
+    </div>
+  );
+}
 
   return (
     <div className="sportify-events-page">
-    <div className="all-events-page">
-      <div className="events-section-white"
-        style={{
-          backgroundImage: `url(${bgWhite})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-          minHeight: '65vh',
-        }}>
-        <div className="event-header">
-          <div className="event-bar">
-            <FaSearch className="search-icon" />
-            <input
-              type="text"
-              placeholder="Search"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="event-input"
-            />
+      <div className="all-events-page">
+        <div className="events-section-white"
+          style={{
+            backgroundImage: `url(${bgWhite})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            minHeight: '65vh',
+          }}>
+          <div className="event-header">
+            <div className="event-bar">
+              <FaSearch className="search-icon" />
+              <input
+                type="text"
+                placeholder="Search"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="event-input"
+              />
+            </div>
           </div>
-        </div>
 
-        <div className="section-divider"></div>
-        <div className="events-grid">
-          <div className="main-column">
-            <h2 className="section-subtitle">EVENTS THIS WEEK</h2>
-            <div className="week-events">
-              {thisWeekEvents.length > 0 ? (
-                thisWeekEvents.map((event) => {
-                  const start = new Date(event.startDateTime);
-                  const formattedStart = start.toLocaleString('default', {
-                    day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
-                  });
+          <div className="section-divider"></div>
+          <div className="events-grid">
+            <div className="main-column">
+              <h2 className="section-subtitle">EVENTS THIS WEEK</h2>
+              <div className="week-events">
+                {thisWeekEvents.length > 0 ? (
+                  thisWeekEvents.map((event) => {
+                    const start = new Date(event.startDateTime);
+                    const formattedStart = start.toLocaleString('default', {
+                      day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
+                    });
 
-                  return (
-                    <div key={event.eventId} className="event-card-week">
-                      <div className="event-img-container">
-                        <div className="hosted-badge">
-                          <img src="/avatar.png" alt="Host" className="hosted-avatar" />
-                          <span className="hosted-text">HOSTED BY BEARDED</span>
+                    const creator = creatorMap[event.creatorUserId];
+
+                    return (
+                      <div key={event.eventId} className="event-card-week">
+                        <div className="event-img-container">
+                          <div className="hosted-badge">
+                            <img
+                              src={creator?.profilePicture || '/avatar.png'}
+                              alt="Host"
+                              className="hosted-avatar"
+                            />
+                            <span className="hosted-text">
+                              HOSTED BY {creator?.username?.toUpperCase() || 'UNKNOWN'}
+                            </span>
+                          </div>
+                          <img src={event.imageUrl || '/placeholder.jpg'} alt="Event" className="event-img" />
+                          {(() => {
+                            const now = new Date();
+                            const start = new Date(event.startDateTime);
+                            const end = new Date(event.endDateTime);
+
+                            let label = "Upcoming";
+                            let statusClass = "status-upcoming";
+
+                            const isToday = now.toDateString() === start.toDateString();
+
+                            if (now >= start && now <= end) {
+                              label = "Started";
+                              statusClass = "status-started";
+                            } else if (isToday && now < start) {
+                              label = "Starting Soon";
+                              statusClass = "status-starting";
+                            }
+
+                            return (
+                              <div className={`event-status ${statusClass}`}>{label}</div>
+                            );
+                          })()}
                         </div>
-                        <img src={event.imageUrl || '/placeholder.jpg'} alt="Event" className="event-img" />
-                        {(() => {
-                          const now = new Date();
-                          const start = new Date(event.startDateTime);
-                          const end = new Date(event.endDateTime);
-
-                          let label = "Upcoming";
-                          let statusClass = "status-upcoming"; 
-
-                          const isToday = now.toDateString() === start.toDateString();
-
-                          if (now >= start && now <= end) {
-                            label = "Started";
-                            statusClass = "status-started"; 
-                          } else if (isToday && now < start) {
-                            label = "Starting Soon";
-                            statusClass = "status-starting"; 
-                          }
-
-                          return (
-                            <div className={`event-status ${statusClass}`}>{label}</div>
-                          );
-                        })()}
-
+                        <div className="all-event-body">
+                          <h3 className="week-event-title">{event.title}</h3>
+                          <p className="event-meta"><FaClock className="event-icon" /> {formattedStart}</p>
+                          <p className="event-meta"><FaMapMarkerAlt className="event-icon" /> {event.location}</p>
+                        </div>
+                        <div className="event-footer">
+                          <span className="week-event-visibility">{event.visibility?.toUpperCase() || "PUBLIC"}</span>
+                          <Link to={`/events/${event.eventId}`} className="event-week-view-btn">View</Link>
+                        </div>
                       </div>
-                      <div className="event-body">
-                        <h3 className="week-event-title">{event.title}</h3>
-                        <p className="event-meta"><FaClock className="event-icon" /> {formattedStart}</p>
-                        <p className="event-meta"><FaMapMarkerAlt className="event-icon" /> {event.location}</p>
-                      </div>
-                      <div className="event-footer">
-                        <span className="week-event-visibility">{event.visibility?.toUpperCase() || "PUBLIC"}</span>
-                        <Link to={`/events/${event.eventId}`} className="event-week-view-btn">View</Link>
-                      </div>
-                    </div>
-                  );
-                })
-              ) : (
-                <h6>No events this week.</h6>
-              )}
+                    );
+                  })
+                ) : (
+                  <h6>No events this week.</h6>
+                )}
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <h1 className="event-section-title">
-        {view === 'upcoming' ? 'Upcoming Events' : 'Past Events'}
-      </h1>
+        <div className="button-toggle-wrapper">
+          <button
+            className={`btn-toggle ${view === 'upcoming' ? 'active' : ''}`}
+            onClick={() => setView('upcoming')}
+          >
+            <FaCalendarAlt />
+            Create Event
+          </button>
+          <button
+            className={`btn-toggle ${view === 'past' ? 'active-dark' : ''}`}
+            onClick={() => setView('past')}
+          >
+            <FaFolder />
+            Past Events
+          </button>
+        </div>
 
-      {/* Toggle Buttons */}
-      <div className="event-toggle-buttons">
-        <button
-          className={view === 'upcoming' ? 'toggle-active' : ''}
-          onClick={() => setView('upcoming')}
-        >
-          Upcoming Events
-        </button>
-        <button
-          className={view === 'past' ? 'toggle-active' : ''}
-          onClick={() => setView('past')}
-        >
-          Past Events
-        </button>
-      </div>
+        <h1 className="event-section-title">
+          {view === 'upcoming' ? 'Upcoming Events' : 'Past Events'}
+        </h1>
 
-      <div className="upcoming-events">
-        {displayedEvents.map((event) => {
-          const start = new Date(event.startDateTime);
-          const end = new Date(event.endDateTime);
-          const month = start.toLocaleString('default', { month: 'long' });
-          const day = start.getDate();
-          const startTime = start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-          const endTime = end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        <div className="upcoming-events">
+          {displayedEvents.map((event) => {
+            const start = new Date(event.startDateTime);
+            const end = new Date(event.endDateTime);
+            const month = start.toLocaleString('default', { month: 'long' });
+            const day = start.getDate();
+            const startTime = start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const endTime = end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-          return (
-            <div key={event.eventId} className="event-card-upcoming">
-              <div className="event-img-upcoming">
-                <img src={event.imageUrl || '/placeholder.jpg'} alt="Event" className="event-img" />
-              </div>
-              <div className="event-details-upcoming">
-                <div className="event-title-row">
-                  <h2 className="event-title">{event.title}</h2>
-                  <span className={`event-visibility ${event.visibility?.toLowerCase()}`}>
-                    {event.visibility?.toUpperCase() || 'PUBLIC'}
-                  </span>
+            const creator = creatorMap[event.creatorUserId];
+              const participantCount = event.participants?.length || 0;
+
+            return (
+              <div key={event.eventId} className="event-card-upcoming">
+                <div className="event-img-upcoming">
+                  <img src={event.imageUrl || '/placeholder.jpg'} alt="Event" className="event-img" />
                 </div>
-                <p className="event-description">{event.description}</p>
-                <div className="event-location">
-                  <FaMapMarkerAlt className="event-icon" /> {event.location}
-                </div>
-                <div className="hosted-info">
-                  <div className="host-logo-placeholder" />
-                  <span className="hosted-by">HOSTED BY SUPERSPORT</span>
-                </div>
-                <div className="avatar-stack">
-                  <div className="avatars">
-                    {[...Array(3)].map((_, i) => (
-                      <div key={i} className="avatar" />
-                    ))}
+                <div className="event-details-upcoming">
+                  <div className="event-title-row">
+                    <h2 className="event-title">{event.title}</h2>
+                    <span className={`event-visibility ${event.visibility?.toLowerCase()}`}>
+                      {event.visibility?.toUpperCase() || 'PUBLIC'}
+                    </span>
                   </div>
-                  <span className="plus-count">
-                    <FaUsers className="event-icon" /> +5
-                  </span>
+                  <p className="event-description">{event.description}</p>
+                  <div className="event-location">
+                    <FaMapMarkerAlt className="event-icon" /> {event.location}
+                  </div>
+                  <div className="hosted-info">
+                    <img
+                      src={creator?.profilePicture || '/avatar.png'}
+                      alt="Host"
+                      className="hosted-avatar"
+                    />
+                    <span className="hosted-by">
+                      HOSTED BY {creator?.username?.toUpperCase() || 'UNKNOWN'}
+                    </span>
+                    </div>
+                        {participantCount > 0 ? (
+                          <div className="avatar-stack">
+                            <div className="avatars">
+                              {(event.participants ?? []).slice(0, 3).map((user, index) => (
+                                <img
+                                  key={user.userId || index}
+                                  className="avatar"
+                                  src={user.imageUrl || '/avatar.png'}
+                                  alt={user.username || user.name || 'user'}
+                                />
+                              ))}
+                            </div>
+                            {participantCount > 3 && (
+                              <span className="plus-count">
+                                <FaUsers className="event-icon" /> +{participantCount - 3}
+                              </span>
+                            )}
+                          </div>
+                        ) : (
+                          <div className="no-participants-text">No participants yet</div>
+                        )}
+                </div>
+                <div className="event-date-container">
+                  <div className="event-date-box">
+                    <div className="event-date-top">{month}</div>
+                    <div className="event-date-middle">{day}</div>
+                    <div className="event-date-bottom">{startTime} &ndash; {endTime}</div>
+                  </div>
+                  <Link to={`/events/${event.eventId}`} className="event-view-btn">
+                    View
+                  </Link>
                 </div>
               </div>
-              <div className="event-date-container">
-                <div className="event-date-box">
-                  <div className="event-date-top">{month}</div>
-                  <div className="event-date-middle">{day}</div>
-                  <div className="event-date-bottom">{startTime} &ndash; {endTime}</div>
-                </div>
-                <Link to={`/events/${event.eventId}`} className="event-view-btn">
-                  View
-                </Link>
-              </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
-    </div>
     </div>
   );
 }
 
 export default AllEvents;
-

@@ -4,6 +4,9 @@ import { fetchSingleEvent, updateEvent } from '../services/api';
 import { Event } from '../models/event';
 import ImageSelector from '../Components/ImageSelector';
 import '../Style/CreateEvent.css';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { Circles } from 'react-loader-spinner';
 
 function EditEvent() {
   const { id } = useParams();
@@ -35,16 +38,51 @@ function EditEvent() {
       };
 
       await updateEvent(updated.eventId, updated);
-      alert('Event updated successfully!');
-      navigate(`/events/${updated.eventId}`);
+
+      toast.success('Event updated successfully!', {
+        style: {
+          background: 'linear-gradient(to right, #28a745, #56d679)',
+          color: 'white',
+          fontWeight: 'bold',
+          borderRadius: '12px',
+          padding: '12px 20px',
+          textAlign: 'center',
+          width: '100%',
+        },
+      });
+
+      setTimeout(() => {
+        navigate(`/events/${updated.eventId}`);
+      }, 2600);
     } catch (err) {
       console.error(err);
-      alert('Failed to update event.');
+      toast.error('Failed to update event.', {
+        style: {
+          background: 'linear-gradient(to right, #d9534f, #e57373)',
+          color: 'white',
+          fontWeight: 'bold',
+          borderRadius: '12px',
+          padding: '12px 20px',
+          textAlign: 'center',
+          width: '100%',
+        },
+      });
     }
   };
 
-  if (loading || !eventData) return <p>Loading event...</p>;
-
+  if (loading || !eventData) {
+    return (
+      <div className="all-events-page event-loading-container">
+        <Circles
+          height="80"
+          width="80"
+          color="#ff9100"
+          ariaLabel="loading-events"
+        />
+        <p className="loading-message">Loading... because good things take time.</p>
+      </div>
+    );
+  }
   return (
     <div className="create-event-container">
       <form className="create-event-form" onSubmit={handleSubmit}>
@@ -161,12 +199,21 @@ function EditEvent() {
         {eventData.imageUrl && (
           <div className="form-group full">
             <label>Selected Image Preview</label>
-            <img src={eventData.imageUrl} alt="Selected" style={{ width: '100%', borderRadius: '8px' }} />
+            <img
+              src={eventData.imageUrl}
+              alt="Selected"
+              style={{ width: '100%', borderRadius: '8px' }}
+            />
           </div>
         )}
 
         <button type="submit">Update Event</button>
       </form>
+
+      <ToastContainer position="top-center" 
+      autoClose={2500} 
+      hideProgressBar 
+      closeButton={false}  />
     </div>
   );
 }

@@ -6,6 +6,7 @@ export interface User {
   userType?: string
   username?: string;
   imageUrl?: string;
+  status?: 'Pending' | 'Approved' | 'Rejected' | 'Invited';
 }
 
 export interface LoginRequest {

@@ -81,20 +81,3 @@ const tabs = [
 }
 
 export default AdminDashboard
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

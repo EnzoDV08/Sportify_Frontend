@@ -35,8 +35,8 @@ const EditProfile: React.FC = () => {
 
       try {
         const [userRes, profileRes] = await Promise.all([
-          fetch(`${API_BASE}/api/Users/${userId}`),
-          fetch(`${API_BASE}/api/Profiles/${userId}`)
+          fetch(`http://localhost:5000/api/Users/${userId}`),
+          fetch(`http://localhost:5000/api/Profiles/${userId}`)
         ]);
 
         if (!userRes.ok || !profileRes.ok) throw new Error('Failed to load profile');
@@ -80,7 +80,7 @@ const EditProfile: React.FC = () => {
     data.append('image', file);
 
     try {
-      const res = await fetch(`${API_BASE}/api/upload`, {
+      const res = await fetch(`http://localhost:5000/api/upload`, {
         method: 'POST',
         body: data,
       });
@@ -104,7 +104,7 @@ const EditProfile: React.FC = () => {
     if (!userId) return;
 
     try {
-      await fetch(`${API_BASE}/api/Users/${userId}`, {
+      await fetch(`http://localhost:5000/api/Users/${userId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -114,7 +114,7 @@ const EditProfile: React.FC = () => {
         })
       });
 
-      await fetch(`${API_BASE}/api/Profiles/${userId}`, {
+      await fetch(`http://localhost:5000/api/Profiles/${userId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
