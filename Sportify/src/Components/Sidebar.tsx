@@ -14,6 +14,7 @@ import {
   FaSignOutAlt,
   FaChevronDown,
   FaChevronRight,
+  FaUserShield
 } from 'react-icons/fa';
 import '../Style/Sidebar.css';
 import logo from '../assets/SportifyLogo.png';
@@ -179,6 +180,8 @@ useEffect(() => {
   currentPath={location.pathname}
 />
 
+
+
             <button onClick={() => setShowFriendsSidebar(prev => !prev)} className={`sidebar-item-wrapper ${showFriendsSidebar ? 'active' : ''}`}>
   <div className="item" data-tooltip="Friends">
     <span className="icon">
@@ -188,20 +191,16 @@ useEffect(() => {
     {isExpanded && <span className="label">Friends</span>}
   </div>
 </button>
-            {userType === 'admin' && ( 
-            <SidebarItem
-  icon={
-    <>
-      <FaTrophy />
-      {pendingJoinCount > 0 && <span className="badge">{pendingJoinCount}</span>}
-    </>
-  }
-  label="My Events"
+           {userType === 'admin' && (
+  <SidebarItem
+  icon={<FaUserShield />}
+  label="Admin Panel"
   isExpanded={isExpanded}
-  to="/my-events"
+  to="/dashboard" // ✅ this matches the route in App.tsx
   currentPath={location.pathname}
 />
 )}
+
             <hr className="divider" />
             <div className={`dropdown-wrapper ${showNotifications ? 'open' : ''}`}>
               <button onClick={() => setShowNotifications(!showNotifications)} className="item dropdown-toggle" data-tooltip="Notifications">

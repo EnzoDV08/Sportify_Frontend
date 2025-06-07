@@ -1,4 +1,6 @@
-import { createContext, useContext, useState, ReactNode, useRef } from 'react';
+import { createContext, useContext, useState, ReactNode, useRef, useEffect } from 'react';
+
+
 
 export interface Notification {
   id: number;
@@ -41,6 +43,18 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
     setNotifications((prev) => prev.filter((n) => n.id !== id));
   };
 
+useEffect(() => {
+    const interval = setInterval(() => {
+      const stored = localStorage.getItem('newAchievement');
+      if (stored) {
+        const notification = JSON.parse(stored);
+        addNotification(notification);
+        localStorage.removeItem('newAchievement');
+      }
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <NotificationContext.Provider value={{ notifications, addNotification, removeNotification }}>
       {children}
@@ -53,3 +67,4 @@ export const useNotification = () => {
   if (!context) throw new Error("useNotification must be used within NotificationProvider");
   return context;
 };
+

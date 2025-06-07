@@ -208,6 +208,13 @@ const handleAssign = async (userId: number, eventId: number) => {
 
   try {
   if (isAlreadyAssigned) {
+    if (userId !== awardedByUserId) {
+  localStorage.setItem('newAchievement', JSON.stringify({
+    title: `🏆 ${achievement.title}`,
+    message: `You earned ${achievement.points} points!`,
+    iconUrl: '/AdminLogo.png'
+  }));
+}
     await unassignAchievement(userId, achievementId, eventId);
 
     setAssigned(prev => ({ ...prev, [userId]: false }));
@@ -231,7 +238,9 @@ setUserPoints(prev => ({
 setSelectedAchievements(prev => ({ ...prev, [userId]: '' }));
 
 // ✅ Trigger notification only if this is the CURRENT user
-if (userId === Number(localStorage.getItem('userId'))) {
+const currentUserId = Number(localStorage.getItem('userId'));
+if (userId === currentUserId && currentUserId !== awardedByUserId) {
+
 addNotification({
   title: `🏆 ${achievement.title}`,
   message: `You earned ${achievement.points} points!`,

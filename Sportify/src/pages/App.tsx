@@ -35,7 +35,6 @@ const router = createBrowserRouter(
       path: '/',
       element: <MainLayout />,
       children: [
-        { path: '/', element: <Login /> },
         { path: '/home', element: <Home /> },
         { path: '/dashboard', element: <AdminDashboard /> },
         { path: '/events', element: <AllEvents /> },
