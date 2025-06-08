@@ -417,6 +417,7 @@
   object-fit: cover;
   border: 2px solid #f59e0b;
   flex-shrink: 0; /* ✅ makes sure image doesn't get squeezed */
+  margin-left: -9px;
 }
 
 
