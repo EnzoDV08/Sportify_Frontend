@@ -36,7 +36,7 @@ const LoginPage: FC = () => {
       const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
       // Try logging in as a regular user first
-      let response = await fetch(`${baseUrl}/api/users/login`, {
+      let response = await fetch(`http://localhost:5000/api/users/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -44,7 +44,7 @@ const LoginPage: FC = () => {
 
       // If user login fails, try organization login
       if (!response.ok) {
-        response = await fetch(`${baseUrl}/api/organizations/login`, {
+        response = await fetch(`http://localhost:5000/api/organizations/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, password }),

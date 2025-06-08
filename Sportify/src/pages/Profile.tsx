@@ -44,8 +44,8 @@ function Profile() {
     const fetchUserInfo = async () => {
       try {
         const [userRes, profileRes] = await Promise.all([
-          fetch(`${baseUrl}/api/Users/${userId}`),
-          fetch(`${baseUrl}/api/Profiles/${userId}`)
+          fetch(`http://localhost:5000/api/Users/${userId}`),
+          fetch(`http://localhost:5000/api/Profiles/${userId}`)
         ]);
 
         if (!userRes.ok || !profileRes.ok) throw new Error('Fetch failed');
@@ -103,7 +103,7 @@ function Profile() {
 
         <div className="profile-avatar">
           {profile?.profilePicture && (
-            <img src={`${baseUrl}/${profile.profilePicture}`} alt="Profile" />
+            <img src={`http://localhost:5000/${profile.profilePicture}`} alt="Profile" />
           )}
           <button className="edit-profile-btn" onClick={() => navigate('/edit-profile')}>
             Edit Profile

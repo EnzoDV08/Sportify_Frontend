@@ -1,11 +1,16 @@
 import { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { fetchSingleEvent, fetchEvents, joinEvent } from '../services/api';
 import { Event } from '../models/event';
+import { fetchUserById } from '../services/api';
 import '../Style/SingleEvents.css';
+import { Circles } from 'react-loader-spinner';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function SingleEvent() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -22,19 +27,40 @@ function SingleEvent() {
     }
 
     fetchSingleEvent(eventId)
-      .then(setEvent)
+      .then(async (fetched) => {
+        const participants = fetched.participants ?? [];
+        const creatorId = fetched.creatorUserId;
+
+        const alreadyIncluded = participants.some(p => p.userId === creatorId);
+        if (!alreadyIncluded) {
+          try {
+            const creator = await fetchUserById(creatorId);
+            participants.unshift({ ...creator, status: 'Approved' });
+          } catch (e) {
+            participants.unshift({
+              userId: creatorId,
+              name: 'Event Creator',
+              email: '',
+              password: '',
+              status: 'Approved'
+            });
+          }
+        }
+
+        fetched.participants = participants;
+        setEvent(fetched);
+      })
       .catch(() => setError('Failed to fetch event.'))
       .finally(() => setLoading(false));
 
-    fetchEvents()
-      .then(events => {
-        const now = new Date();
-        const filtered = events
-          .filter(e => e.eventId !== eventId && new Date(e.startDateTime) > now)
-          .sort((a, b) => new Date(a.startDateTime).getTime() - new Date(b.startDateTime).getTime())
-          .slice(0, 2);
-        setOtherEvents(filtered);
-      });
+    fetchEvents().then(events => {
+      const now = new Date();
+      const filtered = events
+        .filter(e => e.eventId !== eventId && new Date(e.startDateTime) > now)
+        .sort((a, b) => new Date(a.startDateTime).getTime() - new Date(b.startDateTime).getTime())
+        .slice(0, 2);
+      setOtherEvents(filtered);
+    });
   }, [id]);
 
   useEffect(() => {
@@ -62,12 +88,45 @@ function SingleEvent() {
     return () => clearInterval(interval);
   }, [event]);
 
-  if (loading) return <p>Loading event...</p>;
+  const handleJoin = async () => {
+    if (!event) return;
+    try {
+      await joinEvent(event.eventId, userId);
+      toast.success('🎉 Join request sent!');
+      setEvent({
+        ...event,
+        participants: [...(event.participants || []), {
+          userId,
+          name: 'You',
+          email: '',
+          password: '',
+          status: 'Pending'
+        }]
+      });
+    } catch (err) {
+      console.error(err);
+      toast.error('❌ Failed to join event.');
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="single-events-page event-loading-container">
+        <Circles height="80" width="80" color="#ff9100" ariaLabel="loading-events" />
+        <p className="loading-message">Unpacking the event details...</p>
+      </div>
+    );
+  }
   if (error) return <p className="single-error-text">{error}</p>;
   if (!event) return <p>Event not found.</p>;
 
+  const currentParticipant = event.participants?.find(p => p.userId === userId);
+  const userStatus = currentParticipant?.status?.toLowerCase();
+
   return (
     <div className="single-event-page">
+      <ToastContainer position="top-center" autoClose={2500} hideProgressBar closeButton={false} />
+
       <div className="single-event-banner" style={{ backgroundImage: `url(${event.imageUrl})` }}>
         <h1 className="single-banner-title">{event.title}</h1>
         <div className="single-countdown-timer">
@@ -77,25 +136,16 @@ function SingleEvent() {
           <div><span>{String(countdown.seconds).padStart(2, '0')}</span> Seconds</div>
         </div>
         <div style={{ display: 'flex', gap: '1rem' }}>
-        <button className="single-join-button"
-          onClick={async () => {
-            try {
-              await joinEvent(event.eventId, userId);
-              alert('Join request sent!');
-            } catch (err) {
-              alert('Failed to join event');
-              console.error(err);
-            }
-          }}
-        >
-          JOIN
-        </button>
-        {event.creatorUserId === userId && (
-          <Link to={`/edit-event/${event.eventId}`} className="single-join-button">
-            Edit Event
-          </Link>
-        )}
-  </div>
+          {event.creatorUserId === userId ? (
+            <Link to={`/edit-event/${event.eventId}`} className="single-join-button">Edit Event</Link>
+          ) : userStatus === 'approved' ? (
+            <button className="single-join-button" disabled>Joined</button>
+          ) : userStatus === 'pending' ? (
+            <button className="single-join-button" disabled>Pending</button>
+          ) : (
+            <button className="single-join-button" onClick={handleJoin}>Join</button>
+          )}
+        </div>
       </div>
 
       <div className="single-event-main-content">
@@ -107,8 +157,12 @@ function SingleEvent() {
             </div>
             <div className="single-location-block">{event.location}</div>
           </div>
-          <iframe className="single-event-map" src={`https://www.google.com/maps?q=${encodeURIComponent(event.location)}&output=embed`} allowFullScreen loading="lazy"></iframe>
-
+          <iframe
+            className="single-event-map"
+            src={`https://www.google.com/maps?q=${encodeURIComponent(event.location?.trim() || 'South Africa')}&output=embed`}
+            allowFullScreen
+            loading="lazy"
+          ></iframe>
           <div className="single-requirements">
             <h3>Requirements</h3>
             <ul>
@@ -122,22 +176,18 @@ function SingleEvent() {
 
         <div className="single-event-info-right">
           <div className="single-participants-section">
-            <h3>Participants <span className="single-view-all">View all</span></h3>
-            <div className="single-participant">
-              <img src="/avatar.png" alt="avatar" />
-              <span>David Beckham</span>
-              <button>View Profile</button>
-            </div>
-            <div className="single-participant">
-              <img src="/avatar.png" alt="avatar" />
-              <span>Raphaël Junior</span>
-              <button>View Profile</button>
-            </div>
-            <div className="single-participant">
-              <img src="/avatar.png" alt="avatar" />
-              <span>Jana Roberts</span>
-              <button>View Profile</button>
-            </div>
+            <h3>Participants</h3>
+            {event.participants && event.participants.length > 0 ? (
+              event.participants.map(user => (
+                <div key={user.userId} className="single-participant">
+                  <img src="/avatar.png" alt="avatar" />
+                  <span>{user.name}</span>
+                  <button onClick={() => navigate(`/view-profile?userId=${user.userId}`)}>View Profile</button>
+                </div>
+              ))
+            ) : (
+              <p>No participants yet.</p>
+            )}
           </div>
 
           <div className="single-other-events-section">
