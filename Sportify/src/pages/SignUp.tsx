@@ -97,7 +97,8 @@ const SignupPage: FC = () => {
     }
 
     try {
-      const response = await fetch('${API_BASE_URL}/api/auth/google', {
+      const baseUrl = import.meta.env.VITE_API_BASE_URL.replace(/\/+$/, '');
+      const response = await fetch(`${baseUrl}/api/auth/google`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token }),

@@ -150,41 +150,44 @@ const LoginPage: FC = () => {
             </div>
 
             <div className="google-full-btn">
-              <GoogleLogin
-                onSuccess={async (credentialResponse) => {
-                  try {
-                    const token = credentialResponse.credential;
-                    const res = await fetch('${API_BASE_URL}/api/auth/google', {
-                      method: 'POST',
-                      headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({ token }),
-                    });
-
-                    if (!res.ok) {
-                      const text = await res.text();
-                      showToast(text || 'Google login failed.', 'error');
-                      return;
-                    }
-
-                    const user = await res.json();
-                    localStorage.setItem('isLoggedIn', 'true');
-                    localStorage.setItem('userType', user.userType);
-                    localStorage.setItem('userId', user.userId);
-
-                    showToast('Google login successful!', 'success');
-                    setTimeout(() => navigate('/home'), 1500);
-                  } catch (err) {
-                    console.error('Google login error', err);
-                    showToast('Google login error.', 'error');
+            <GoogleLogin
+              onSuccess={async (credentialResponse) => {
+                try {
+                  if (!credentialResponse.credential) {
+                    showToast('Missing Google token.', 'error');
+                    return;
                   }
-                }}
-                onError={() => showToast('Google login failed.', 'error')}
-                theme="outline"       // Best for customizing or hiding the border
-                size="large"
-                width="100%"
-                useOneTap={false}
 
-              />
+                  const token = credentialResponse.credential;
+                  const baseUrl = import.meta.env.VITE_API_BASE_URL.replace(/\/+$/, '');
+
+                  const res = await fetch(`${baseUrl}/api/auth/google`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token }),
+                  });
+
+                  if (!res.ok) {
+                    const text = await res.text();
+                    showToast(text || 'Google login failed.', 'error');
+                    return;
+                  }
+
+                  const user = await res.json();
+                  localStorage.setItem('isLoggedIn', 'true');
+                  localStorage.setItem('userType', user.userType);
+                  localStorage.setItem('userId', user.userId);
+
+                  showToast('Google login successful!', 'success');
+                  setTimeout(() => navigate('/home'), 1500);
+                } catch (err) {
+                  console.error('Google login error', err);
+                  showToast('Google login error.', 'error');
+                }
+              }}
+              onError={() => showToast('Google login failed.', 'error')}
+              useOneTap={false}
+            />
             </div>
           </form>
 
