@@ -296,16 +296,24 @@
   overflow: hidden;
 }
 
-.google-full-btn:hover {
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+/* Target the iframe container and forcefully remove any borders */
+.google-full-btn iframe {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  width: 100% !important;
 }
 
-.google-full-btn img {
-  flex-shrink: 0;
-  width: 30px;
-  height: 30px;
-  object-fit: contain;
+/* Optional: Also override container div if Google injects any */
+.google-full-btn > div {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  width: 100% !important;
 }
+
+
+
 
 /* Signup Text CTA */
 .SignUpButtonText {

@@ -1,6 +1,7 @@
 import { FC, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { GoogleLogin } from '@react-oauth/google';
 import '../Style/Login.css';
 import GoogleIcon from '../assets/Icons/Google.svg';
 import SportifyLogo from '../assets/Icons/SportifyLogo.svg';
@@ -27,63 +28,57 @@ const LoginPage: FC = () => {
     }
   };
 
-const handleLogin = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setError('');
-  setLoading(true);
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
 
-  try {
-    // Try logging in as a regular user first
-    let response = await fetch('http://localhost:5000/api/users/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-    });
-
-    // If user login fails, try organization login
-    if (!response.ok) {
-      response = await fetch('http://localhost:5000/api/organizations/login', {
+    try {
+      let response = await fetch('http://localhost:5000/api/users/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
-        showToast(errorText || 'Login failed.', 'error');
-        setError(errorText);
+        response = await fetch('http://localhost:5000/api/organizations/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          showToast(errorText || 'Login failed.', 'error');
+          setError(errorText);
+          return;
+        }
+
+        const orgResult = await response.json();
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('userType', 'organization');
+        localStorage.setItem('userId', orgResult.organizationId);
+
+        showToast('Organization login successful!', 'success');
+        setTimeout(() => navigate('/home'), 1500);
         return;
       }
 
-      // ✅ Org login success
-      const orgResult = await response.json();
+      const userResult = await response.json();
       localStorage.setItem('isLoggedIn', 'true');
-      localStorage.setItem('userType', 'organization');
-      localStorage.setItem('userId', orgResult.organizationId);
+      localStorage.setItem('userType', userResult.userType);
+      localStorage.setItem('userId', userResult.userId);
 
-      showToast('Organization login successful!', 'success');
+      showToast('Login successful!', 'success');
       setTimeout(() => navigate('/home'), 1500);
-      return;
+    } catch (err) {
+      console.error('Login failed:', err);
+      showToast('An error occurred. Please try again.', 'error');
+      setError('An error occurred. Please try again.');
+    } finally {
+      setLoading(false);
     }
-
-    // ✅ User login success
-    const userResult = await response.json();
-    localStorage.setItem('isLoggedIn', 'true');
-    localStorage.setItem('userType', userResult.userType);
-    localStorage.setItem('userId', userResult.userId);
-
-    showToast('Login successful!', 'success');
-    setTimeout(() => navigate('/home'), 1500);
-
-  } catch (err) {
-    console.error('Login failed:', err);
-    showToast('An error occurred. Please try again.', 'error');
-    setError('An error occurred. Please try again.');
-  } finally {
-    setLoading(false);
-  }
-};
-
+  };
 
   return (
     <div className="login-page">
@@ -149,14 +144,50 @@ const handleLogin = async (e: React.FormEvent) => {
               <hr />
             </div>
 
-            <button className="google-full-btn" type="button">
-              <span>Login with Google</span>
-              <img src={GoogleIcon} alt="Google login" />
-            </button>
+            <div className="google-full-btn">
+              <GoogleLogin
+                onSuccess={async (credentialResponse) => {
+                  try {
+                    const token = credentialResponse.credential;
+                    const res = await fetch('http://localhost:5000/api/auth/google', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ token }),
+                    });
+
+                    if (!res.ok) {
+                      const text = await res.text();
+                      showToast(text || 'Google login failed.', 'error');
+                      return;
+                    }
+
+                    const user = await res.json();
+                    localStorage.setItem('isLoggedIn', 'true');
+                    localStorage.setItem('userType', user.userType);
+                    localStorage.setItem('userId', user.userId);
+
+                    showToast('Google login successful!', 'success');
+                    setTimeout(() => navigate('/home'), 1500);
+                  } catch (err) {
+                    console.error('Google login error', err);
+                    showToast('Google login error.', 'error');
+                  }
+                }}
+                onError={() => showToast('Google login failed.', 'error')}
+                theme="outline"       // Best for customizing or hiding the border
+                size="large"
+                width="100%"
+                useOneTap={false}
+
+              />
+            </div>
           </form>
 
           <p className="SignUpButtonText">
-            Don't have an account? <span onClick={() => navigate('/signup')} style={{ cursor: 'pointer', color: '#dd8100' }}>Sign up</span>
+            Don't have an account?{' '}
+            <span onClick={() => navigate('/signup')} style={{ cursor: 'pointer', color: '#dd8100' }}>
+              Sign up
+            </span>
           </p>
         </div>
       </div>

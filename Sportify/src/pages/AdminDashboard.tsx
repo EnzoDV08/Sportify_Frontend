@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react'
+import {  useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import EventCreator from '../Components/EventCreator'
 import PastEventsTable from '../Components/PastEventsTable'
 import bannerImage from '../assets/admin-banner.png'
 import AdminLogo from '../assets/AdminLogo.svg'
-import { fetchAdminDetails } from '../services/api'
+// import { fetchAdminDetails } from '../services/api'
 import { Admin } from '../models/admin'
 
 const AdminDashboard = () => {
@@ -17,9 +17,9 @@ const tabs = [
   { id: 'events', label: '📂 Past Events' }
 ]
 
-  useEffect(() => {
-    fetchAdminDetails().then(setAdmin).catch(console.error)
-  }, [])
+  // useEffect(() => {
+  //   fetchAdminDetails().then(setAdmin).catch(console.error)
+  // }, [])
 
   return (
     <div className="min-h-screen text-[#FF9900]">

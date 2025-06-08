@@ -1,8 +1,9 @@
 import { FC, useState } from 'react';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import { GoogleLogin } from '@react-oauth/google';
 import '../Style/SignUp.css';
-import GoogleIcon from '../assets/Icons/Google.svg';
+
 import SportifyLogo from '../assets/Icons/SportifyLogo.svg';
 
 const SignupPage: FC = () => {
@@ -21,7 +22,6 @@ const SignupPage: FC = () => {
     const toast = document.createElement('div');
     toast.className = `toast ${type === 'success' ? 'toast-success' : 'toast-error'}`;
     toast.innerText = message;
-
     const toastContainer = document.getElementById('toast-container');
     if (toastContainer) {
       toastContainer.appendChild(toast);
@@ -45,10 +45,8 @@ const SignupPage: FC = () => {
     }
 
     try {
-      // 🔍 Step 1: Check for existing email
       const usersResponse = await fetch('http://localhost:5000/api/users');
       const users = await usersResponse.json();
-
       const emailExists = users.some((user: any) => user.email.toLowerCase() === email.toLowerCase());
 
       if (emailExists) {
@@ -58,7 +56,6 @@ const SignupPage: FC = () => {
         return;
       }
 
-      // ✅ Step 2: Create user if email is unique
       const response = await fetch('http://localhost:5000/api/users', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -71,12 +68,9 @@ const SignupPage: FC = () => {
 
       if (response.ok) {
         const result = await response.json();
-
-        // 🎉 Auto-login
         localStorage.setItem('isLoggedIn', 'true');
         localStorage.setItem('userType', result.userType);
         localStorage.setItem('userId', result.userId);
-
         showToast('Signup successful!', 'success');
         setTimeout(() => navigate('/home'), 1500);
       } else {
@@ -91,6 +85,37 @@ const SignupPage: FC = () => {
     }
   };
 
+  const handleGoogleSignup = async (credentialResponse: any) => {
+    const token = credentialResponse.credential;
+    if (!token) {
+      showToast('Google login failed: no token', 'error');
+      return;
+    }
+
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/google', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token }),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('userType', result.userType);
+        localStorage.setItem('userId', result.userId);
+        showToast('Google signup successful!', 'success');
+        setTimeout(() => navigate('/home'), 1500);
+      } else {
+        const text = await response.text();
+        showToast(text || 'Google signup failed.', 'error');
+      }
+    } catch (err) {
+      console.error(err);
+      showToast('Google signup error.', 'error');
+    }
+  };
+
   return (
     <div className="signup-page">
       <div className="signup-container">
@@ -102,7 +127,6 @@ const SignupPage: FC = () => {
 
         <div className="signup-form">
           <img src={SportifyLogo} alt="Sportify Logo" className="sportify-logo-mobile" />
-
           <h1>Welcome!</h1>
           <h2>SIGN UP</h2>
 
@@ -169,7 +193,6 @@ const SignupPage: FC = () => {
               {passwordError && <p className="inline-error">{passwordError}</p>}
             </div>
 
-
             <div className="SignupButtonCont">
               <button
                 type="submit"
@@ -180,7 +203,10 @@ const SignupPage: FC = () => {
               </button>
 
               <p className="SignUpButtonText">
-              Already have an account? <span onClick={() => navigate('/')} style={{ cursor: 'pointer', color: '#dd8100' }}>Log in</span>
+                Already have an account?{' '}
+                <span onClick={() => navigate('/')} style={{ cursor: 'pointer', color: '#dd8100' }}>
+                  Log in
+                </span>
               </p>
             </div>
 
@@ -190,13 +216,13 @@ const SignupPage: FC = () => {
               <hr />
             </div>
 
-            <button className="google-full-btn" type="button">
-              <span>Sign up with Google</span>
-              <img src={GoogleIcon} alt="Google sign up" />
-            </button>
+            <div className="google-full-btn">
+              <GoogleLogin
+                onSuccess={handleGoogleSignup}
+                onError={() => showToast('Google sign-in failed.', 'error')}
+              />
+            </div>
           </form>
-
-
 
           <p className="SignUpButtonText">
             Want to register as an organization?{' '}
