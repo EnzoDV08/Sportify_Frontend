@@ -157,7 +157,13 @@ const handleSendRequest = async (receiverId: number) => {
     <div className="friend-info">
       <img
         className="friend-avatar"
-        src={friend.profile.profilePicture || '/profile.jpg'}
+        src={
+  friend.profile.profilePicture?.startsWith('http')
+    ? friend.profile.profilePicture
+    : friend.profile.profilePicture
+    ? `${import.meta.env.VITE_API_BASE_URL}/uploads/${friend.profile.profilePicture}`
+    : '/profile.jpg'
+}
         alt={friend.user.name}
       />
       <span className="friend-name">{friend.user.name}</span>

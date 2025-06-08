@@ -19,6 +19,9 @@ import {
 import '../Style/Sidebar.css';
 import logo from '../assets/SportifyLogo.png';
 import FriendSidebar from './FriendSidebar';
+import DefaultAvatar from '../assets/default-profile.png'; // fallback
+// replace with actual icon path
+
 
 
 const Sidebar = () => {
@@ -252,11 +255,19 @@ useEffect(() => {
 
 <div className="profile-section" data-tooltip="My Profile">
   <Link to="/profile" className="profile-link">
-    <img
-      src={profileImageUrl || '/default-avatar.png'}
-      alt="Profile"
-      className="profile-img"
-    />
+<img
+  src={profileImageUrl || DefaultAvatar}
+  alt="Profile"
+  className="profile-img"
+  onError={(e) => {
+    const target = e.target as HTMLImageElement;
+    target.onerror = null;
+    target.src = DefaultAvatar;
+  }}
+/>
+
+
+
     {isExpanded && (
       <div className="profile-meta">
         <div className="profile-name">{fullUser?.name || 'Loading...'}</div>
