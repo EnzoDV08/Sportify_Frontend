@@ -21,12 +21,12 @@ function CreateEvent() {
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState<{ userId: number; name: string }[]>([]);
   const [invitedUsers, setInvitedUsers] = useState<{ userId: number; name: string }[]>([]);
-
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const navigate = useNavigate();
 
   const searchUsers = async (term: string) => {
     if (!term.trim()) return setSearchResults([]);
-    const res = await fetch(`http://localhost:5000/api/users/search?name=${term}`);
+    const res = await fetch(`${API_BASE_URL}/api/users/search?name=${term}`);
     const data = await res.json();
     setSearchResults(data);
   };

@@ -12,7 +12,7 @@ const LoginPage: FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const showToast = (message: string, type: 'success' | 'error') => {
     const toast = document.createElement('div');
     toast.className = `toast ${type === 'success' ? 'toast-success' : 'toast-error'}`;
@@ -33,10 +33,10 @@ const LoginPage: FC = () => {
     setLoading(true);
 
     try {
-      const baseUrl = import.meta.env.VITE_API_BASE_URL;
+      
 
       // Try logging in as a regular user first
-      let response = await fetch(`http://localhost:5000/api/users/login`, {
+      let response = await fetch(`${API_BASE_URL}/api/users/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -44,7 +44,7 @@ const LoginPage: FC = () => {
 
       // If user login fails, try organization login
       if (!response.ok) {
-        response = await fetch(`http://localhost:5000/api/organizations/login`, {
+        response = await fetch(`${API_BASE_URL}/api/organizations/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, password }),
@@ -154,7 +154,7 @@ const LoginPage: FC = () => {
                 onSuccess={async (credentialResponse) => {
                   try {
                     const token = credentialResponse.credential;
-                    const res = await fetch('http://localhost:5000/api/auth/google', {
+                    const res = await fetch('${API_BASE_URL}/api/auth/google', {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify({ token }),

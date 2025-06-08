@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import '../Style/EditProfile.css';
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL;
+
 
 const EditProfile: React.FC = () => {
   const userId = localStorage.getItem('userId');
@@ -20,7 +20,7 @@ const EditProfile: React.FC = () => {
     age: '',
     selectedAchievement: '',
   });
-
+  
   const achievements = [
     'Most Valuable Player',
     'Best Team Player',
@@ -28,15 +28,15 @@ const EditProfile: React.FC = () => {
     'Longest Distance',
     'Fastest Time'
   ];
-
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   useEffect(() => {
     const fetchData = async () => {
       if (!userId) return;
 
       try {
         const [userRes, profileRes] = await Promise.all([
-          fetch(`http://localhost:5000/api/Users/${userId}`),
-          fetch(`http://localhost:5000/api/Profiles/${userId}`)
+          fetch(`${API_BASE_URL}/api/Users/${userId}`),
+          fetch(`${API_BASE_URL}/api/Profiles/${userId}`)
         ]);
 
         if (!userRes.ok || !profileRes.ok) throw new Error('Failed to load profile');
@@ -80,7 +80,7 @@ const EditProfile: React.FC = () => {
     data.append('image', file);
 
     try {
-      const res = await fetch(`http://localhost:5000/api/upload`, {
+      const res = await fetch(`${API_BASE_URL}/api/upload`, {
         method: 'POST',
         body: data,
       });
@@ -104,7 +104,7 @@ const EditProfile: React.FC = () => {
     if (!userId) return;
 
     try {
-      await fetch(`http://localhost:5000/api/Users/${userId}`, {
+      await fetch(`${API_BASE_URL}/api/Users/${userId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -114,7 +114,7 @@ const EditProfile: React.FC = () => {
         })
       });
 
-      await fetch(`http://localhost:5000/api/Profiles/${userId}`, {
+      await fetch(`${API_BASE_URL}/api/Profiles/${userId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

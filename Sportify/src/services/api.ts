@@ -4,12 +4,12 @@ import {
   UserAchievement,
   FullAchievement,
   CreateAchievementRequest,
-  AssignAchievementRequest
+  AssignAchievementRequest,
 } from '../models/achievement';
 import { JoinRequest } from '../models/request';
 import { Profile } from '../models/profile';
 import { FriendRequestDto, FullFriend } from '../models/Friend';
-
+import {User} from '../models/user';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -280,5 +280,9 @@ export const searchUsers = async (query: string, currentUserId: number): Promise
   return await response.json();
 };
 
-
+export const fetchUserById = async (userId: number): Promise<User> => {
+  const response = await fetch(`${API_BASE_URL}/api/users/${userId}`);
+  if (!response.ok) throw new Error('Failed to fetch user');
+  return await response.json();
+};
 

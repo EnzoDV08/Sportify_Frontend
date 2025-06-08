@@ -31,8 +31,8 @@ function Profile() {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-  const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
     const userId = localStorage.getItem('userId');
@@ -44,8 +44,8 @@ function Profile() {
     const fetchUserInfo = async () => {
       try {
         const [userRes, profileRes] = await Promise.all([
-          fetch(`http://localhost:5000/api/Users/${userId}`),
-          fetch(`http://localhost:5000/api/Profiles/${userId}`)
+          fetch(`${API_BASE_URL}/api/Users/${userId}`),
+          fetch(`${API_BASE_URL}/api/Profiles/${userId}`)
         ]);
 
         if (!userRes.ok || !profileRes.ok) throw new Error('Fetch failed');
@@ -103,7 +103,7 @@ function Profile() {
 
         <div className="profile-avatar">
           {profile?.profilePicture && (
-            <img src={`http://localhost:5000/${profile.profilePicture}`} alt="Profile" />
+            <img src={`${API_BASE_URL}/${profile.profilePicture}`} alt="Profile" />
           )}
           <button className="edit-profile-btn" onClick={() => navigate('/edit-profile')}>
             Edit Profile

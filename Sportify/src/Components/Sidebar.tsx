@@ -201,6 +201,7 @@ useEffect(() => {
 />
 )}
 
+
             <hr className="divider" />
             <div className={`dropdown-wrapper ${showNotifications ? 'open' : ''}`}>
               <button onClick={() => setShowNotifications(!showNotifications)} className="item dropdown-toggle" data-tooltip="Notifications">
@@ -249,19 +250,24 @@ useEffect(() => {
           </nav>
         </div>
 
-<div className="profile" data-tooltip="View Profile">
-  <img
-    src={profileImageUrl || '/default-avatar.png'}
-    alt="Profile"
-    className="profile-img"
-  />
-  {isExpanded && (
-    <div className="profile-info">
-      <p className="name">{fullUser?.name || 'Loading...'}</p>
-      <p className="email">{fullUser?.email}</p>
-    </div>
-  )}
+<div className="profile-section" data-tooltip="My Profile">
+  <Link to="/profile" className="profile-link">
+    <img
+      src={profileImageUrl || '/default-avatar.png'}
+      alt="Profile"
+      className="profile-img"
+    />
+    {isExpanded && (
+      <div className="profile-meta">
+        <div className="profile-name">{fullUser?.name || 'Loading...'}</div>
+        <div className="profile-email">{fullUser?.email}</div>
+        <div className="view-profile-btn">View Profile</div>
+      </div>
+    )}
+  </Link>
 </div>
+
+
 
 
 
