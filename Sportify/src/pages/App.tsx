@@ -8,11 +8,14 @@ import CreateEvent from './CreateEvent';
 import AdminDashboard from './AdminDashboard';
 import MainLayout from './MainLayout';
 import Profile from './Profile';
-import ViewProfile from './ViewProfile';
 import EditProfile from './EditProfile';
 import MyEvents from './MyEvents';
-import OrganizationSignupPage from './OrganizationSignupPage'; // ✅ NEW
+import OrganizationSignupPage from './OrganizationSignupPage'; 
 import EditEvent from './EditEvent';
+import InvitedEvents from './InvitedEvents';
+
+import { NotificationProvider } from '../context/NotificationContext';
+import AchievementNotification from '../Components/AchievementNotification'; // ✅ Replace the old one
 
 const router = createBrowserRouter(
   [
@@ -25,58 +28,23 @@ const router = createBrowserRouter(
       element: <Signup />
     },
     {
-      path: '/org-signup', // ✅ NEW
+      path: '/org-signup',
       element: <OrganizationSignupPage />
     },
     {
       path: '/',
       element: <MainLayout />,
       children: [
-        {
-          path: '/',
-          element: <Login />
-        },
-        {
-          path: '/home',
-          element: <Home />
-        },
-        {
-          path: '/dashboard',
-          element: <AdminDashboard />
-        },
-        {
-          path: '/events',
-          element: <AllEvents />
-        },
-        {
-          path: '/events/:id',
-          element: <SingleEvent />
-        },
-        {
-          path: '/add-event',
-          element: <CreateEvent />
-        },
-        {
-          path: '/profile',
-          element: <Profile />
-        },
-        {
-          path: '/view-profile',
-          element: <ViewProfile />
-        },
-        {
-          path: '/edit-profile',
-          element: <EditProfile />
-        
-        },
-        {
-          path: '/my-events',
-          element: <MyEvents />
-        },
-        {
-          path: '/edit-event/:id',
-          element: <EditEvent />
-        }
+        { path: '/home', element: <Home /> },
+        { path: '/dashboard', element: <AdminDashboard /> },
+        { path: '/events', element: <AllEvents /> },
+        { path: '/events/:id', element: <SingleEvent /> },
+        { path: '/add-event', element: <CreateEvent /> },
+        { path: '/profile', element: <Profile /> },
+        { path: '/edit-profile', element: <EditProfile /> },
+        { path: '/my-events', element: <MyEvents /> },
+        { path: '/edit-event/:id', element: <EditEvent /> },
+        { path: '/notifications', element: <InvitedEvents /> }
       ]
     },
     {
@@ -94,7 +62,13 @@ const router = createBrowserRouter(
 );
 
 function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <NotificationProvider>
+      <AchievementNotification /> {/* ✅ Use only this one */}
+      <RouterProvider router={router} />
+    </NotificationProvider>
+  );
 }
 
 export default App;
+

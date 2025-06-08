@@ -46,7 +46,9 @@ const OrganizationSignupPage: FC = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/organizations/register', {
+      const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
+      const response = await fetch(`${baseUrl}/api/organizations/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -63,7 +65,7 @@ const OrganizationSignupPage: FC = () => {
 
         localStorage.setItem('isLoggedIn', 'true');
         localStorage.setItem('userType', 'organization');
-        localStorage.setItem('organizationId', result.organizationId);
+        localStorage.setItem('userId', result.organizationId);
 
         showToast('Organization signup successful!', 'success');
         setTimeout(() => navigate('/home'), 1500);
@@ -176,13 +178,14 @@ const OrganizationSignupPage: FC = () => {
             >
               {loading ? 'Signing up...' : 'Sign Up'}
             </button>
-        </form>
-            <p className="SignUpButtonText">
-                Want to register as a user instead?{' '}
-                <span onClick={() => navigate('/signup')} style={{ cursor: 'pointer', color: '#dd8100' }}>
-                    Click here
-                </span>
-            </p>
+          </form>
+
+          <p className="SignUpButtonText">
+            Want to register as a user instead?{' '}
+            <span onClick={() => navigate('/signup')} style={{ cursor: 'pointer', color: '#dd8100' }}>
+              Click here
+            </span>
+          </p>
         </div>
       </div>
     </div>

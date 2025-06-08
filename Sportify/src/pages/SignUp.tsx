@@ -45,7 +45,10 @@ const SignupPage: FC = () => {
     }
 
     try {
-      const usersResponse = await fetch('http://localhost:5000/api/users');
+      const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
+      // 🔍 Step 1: Check for existing email
+      const usersResponse = await fetch(`${baseUrl}/api/users`);
       const users = await usersResponse.json();
       const emailExists = users.some((user: any) => user.email.toLowerCase() === email.toLowerCase());
 
@@ -56,7 +59,8 @@ const SignupPage: FC = () => {
         return;
       }
 
-      const response = await fetch('http://localhost:5000/api/users', {
+      // ✅ Step 2: Create user
+      const response = await fetch(`${baseUrl}/api/users`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

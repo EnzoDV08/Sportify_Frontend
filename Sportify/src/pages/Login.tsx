@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { GoogleLogin } from '@react-oauth/google';
 import '../Style/Login.css';
-import GoogleIcon from '../assets/Icons/Google.svg';
 import SportifyLogo from '../assets/Icons/SportifyLogo.svg';
 
 const LoginPage: FC = () => {
@@ -34,14 +33,18 @@ const LoginPage: FC = () => {
     setLoading(true);
 
     try {
-      let response = await fetch('http://localhost:5000/api/users/login', {
+      const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
+      // Try logging in as a regular user first
+      let response = await fetch(`${baseUrl}/api/users/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
 
+      // If user login fails, try organization login
       if (!response.ok) {
-        response = await fetch('http://localhost:5000/api/organizations/login', {
+        response = await fetch(`${baseUrl}/api/organizations/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, password }),
@@ -54,6 +57,7 @@ const LoginPage: FC = () => {
           return;
         }
 
+        // ✅ Org login success
         const orgResult = await response.json();
         localStorage.setItem('isLoggedIn', 'true');
         localStorage.setItem('userType', 'organization');
@@ -64,6 +68,7 @@ const LoginPage: FC = () => {
         return;
       }
 
+      // ✅ User login success
       const userResult = await response.json();
       localStorage.setItem('isLoggedIn', 'true');
       localStorage.setItem('userType', userResult.userType);

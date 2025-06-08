@@ -1,0 +1,7 @@
+[build]
+base = "Sportify"             # 👈 go into the frontend folder
+publish = "dist"              # 👈 Vite outputs here
+command = "npm run build"     # 👈 uses vite.config.web.ts inside Sportify
+
+[build.environment]
+NODE_VERSION = "18"

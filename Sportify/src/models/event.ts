@@ -1,3 +1,5 @@
+import { User } from './user';
+
 export interface Event {
   eventId: number;
   title: string;
@@ -6,14 +8,17 @@ export interface Event {
   type?: string;
   visibility?: string;
   status?: string;
-  imageUrl?: string | null;
   requiredItems?: string;
+  imageUrl?: string | null;
   startDateTime: string;
   endDateTime: string;
   creatorUserId: number;
-  adminId?: number;
-  invitedUserIds?: number[] | null;
-  isPrivate?: boolean;
-  latitude?: number | null;
-  longitude?: number | null;
+  creator?: User;
+  creatorName?: string;
+  invitedUserIds?: number[];
+  participants?: User[];
+  
+  // ✅ Add these to fix the TypeScript errors:
+  sportType?: string;
+  adminId: number;
 }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { fetchSingleEvent, fetchEvents } from '../services/api';
+import { fetchSingleEvent, fetchEvents, joinEvent } from '../services/api';
 import { Event } from '../models/event';
 import '../Style/SingleEvents.css';
 
@@ -77,7 +77,19 @@ function SingleEvent() {
           <div><span>{String(countdown.seconds).padStart(2, '0')}</span> Seconds</div>
         </div>
         <div style={{ display: 'flex', gap: '1rem' }}>
-        <button className="single-join-button">JOIN</button>
+        <button className="single-join-button"
+          onClick={async () => {
+            try {
+              await joinEvent(event.eventId, userId);
+              alert('Join request sent!');
+            } catch (err) {
+              alert('Failed to join event');
+              console.error(err);
+            }
+          }}
+        >
+          JOIN
+        </button>
         {event.creatorUserId === userId && (
           <Link to={`/edit-event/${event.eventId}`} className="single-join-button">
             Edit Event
