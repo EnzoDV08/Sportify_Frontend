@@ -8,6 +8,7 @@ import {
   searchUsers,
 } from '../services/api';
 import { useEffect, useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { FullFriend } from '../models/Friend';
 import { RxCross2 } from 'react-icons/rx';
 import { PiUsersThreeBold, PiUserPlusBold, PiHandshakeBold } from 'react-icons/pi';
@@ -169,7 +170,9 @@ const handleSendRequest = async (receiverId: number) => {
       <span className="friend-name">{friend.user.name}</span>
     </div>
     <div className="friend-actions">
-      <button className="view-btn small-btn">View</button>
+      <Link to={`/view-profile/${friend.user.userId}`} className="view-btn small-btn">
+        View
+      </Link>
       <button className="remove-btn" onClick={() => handleRemove(friend.id)}>
         <FiTrash2 size={16} />
       </button>

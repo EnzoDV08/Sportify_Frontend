@@ -13,6 +13,7 @@ import MyEvents from './MyEvents';
 import OrganizationSignupPage from './OrganizationSignupPage'; 
 import EditEvent from './EditEvent';
 import InvitedEvents from './InvitedEvents';
+import ViewProfile from './ViewProfile';
 
 import { NotificationProvider } from '../context/NotificationContext';
 import AchievementNotification from '../Components/AchievementNotification'; // ✅ Replace the old one
@@ -44,7 +45,9 @@ const router = createBrowserRouter(
         { path: '/edit-profile', element: <EditProfile /> },
         { path: '/my-events', element: <MyEvents /> },
         { path: '/edit-event/:id', element: <EditEvent /> },
-        { path: '/notifications', element: <InvitedEvents /> }
+        { path: '/notifications', element: <InvitedEvents /> },
+        { path: '/view-profile/:id', element: <ViewProfile /> }
+        
       ]
     },
     {

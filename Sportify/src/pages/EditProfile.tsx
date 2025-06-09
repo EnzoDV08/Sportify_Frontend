@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../Style/EditProfile.css';
 
-
-
 const EditProfile: React.FC = () => {
+  const navigate = useNavigate();
   const userId = localStorage.getItem('userId');
   const [formData, setFormData] = useState({
     name: '',
@@ -99,45 +99,47 @@ const EditProfile: React.FC = () => {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!userId) return;
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  if (!userId) return;
 
-    try {
-      await fetch(`${API_BASE_URL}/api/Users/${userId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId: parseInt(userId),
-          name: formData.name,
-          email: formData.email
-        })
-      });
+  try {
+    await fetch(`${API_BASE_URL}/api/Users/${userId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        userId: parseInt(userId),
+        name: formData.name,
+        email: formData.email,
+      }),
+    });
 
-      await fetch(`${API_BASE_URL}/api/Profiles/${userId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId: parseInt(userId),
-          profilePicture: formData.profilePicture,
-          location: formData.location,
-          interests: formData.interests,
-          favoriteSports: formData.favoriteSports,
-          availability: formData.availability,
-          bio: formData.bio,
-          phoneNumber: formData.phoneNumber,
-          socialMediaLink: formData.socialMediaLink,
-          gender: formData.gender,
-          age: parseInt(formData.age),
-        })
-      });
+    await fetch(`${API_BASE_URL}/api/Profiles/${userId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        userId: parseInt(userId),
+        profilePicture: formData.profilePicture,
+        location: formData.location,
+        interests: formData.interests,
+        favoriteSports: formData.favoriteSports,
+        availability: formData.availability,
+        bio: formData.bio,
+        phoneNumber: formData.phoneNumber,
+        socialMediaLink: formData.socialMediaLink,
+        gender: formData.gender,
+        age: parseInt(formData.age),
+      }),
+    });
 
-      alert("Profile updated successfully!");
-    } catch (err) {
-      console.error("Failed to update profile:", err);
-      alert("Update failed.");
-    }
-  };
+    alert("Profile updated successfully!");
+    navigate('/profile'); // ✅ Redirect after successful update
+  } catch (err) {
+    console.error("Failed to update profile:", err);
+    alert("Update failed.");
+  }
+};
+
 
   return (
     <div className="edit-profile-container">
@@ -153,26 +155,14 @@ const EditProfile: React.FC = () => {
         <label>Location</label>
         <input type="text" name="location" value={formData.location} onChange={handleChange} />
 
-        <label>Interests</label>
-        <input type="text" name="interests" value={formData.interests} onChange={handleChange} />
-
         <label>Favourite Sports</label>
         <input type="text" name="favoriteSports" value={formData.favoriteSports} onChange={handleChange} />
-
-        <label>Availability</label>
-        <input type="text" name="availability" value={formData.availability} onChange={handleChange} />
 
         <label>Bio</label>
         <textarea name="bio" value={formData.bio} onChange={handleChange} rows={3} />
 
         <label>Phone Number</label>
         <input type="text" name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} />
-
-        <label>Social Media Link</label>
-        <input type="text" name="socialMediaLink" value={formData.socialMediaLink} onChange={handleChange} />
-
-        <label>Gender</label>
-        <input type="text" name="gender" value={formData.gender} onChange={handleChange} />
 
         <label>Age</label>
         <input type="number" name="age" value={formData.age} onChange={handleChange} />

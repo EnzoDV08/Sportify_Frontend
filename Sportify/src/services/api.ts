@@ -52,6 +52,11 @@ export const fetchEventsByUser = async (userId: number): Promise<Event[]> => {
   return await response.json();
 };
 
+export const fetchEventParticipants = async (): Promise<any[]> => {
+  const res = await fetch(`${API_BASE_URL}/api/EventParticipants`);
+  if (!res.ok) throw new Error('Failed to fetch participants');
+  return await res.json();
+};
 
 export const createEvent = async (eventData: CreateEventDto, userId: number): Promise<Event> => {
   const response = await fetch(`${API_BASE_URL}/api/events?userId=${userId}`, {

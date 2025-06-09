@@ -1,3 +1,5 @@
+@import './fonts.css'; 
+
 @media (max-width: 768px) {
   .stats-container {
     grid-template-columns: repeat(2, 1fr); /* 2 per row on tablet */
@@ -17,6 +19,14 @@
   padding: 1.5rem 0;
 }
 
+.profile-title {
+  font-family: 'Eveleth Dot', sans-serif;
+  font-size: 2.5rem;
+  color: #333;
+  margin-bottom: 1rem;
+  text-align: left;
+}
+
 .profile-header {
   width: 80%;
   display: flex;
@@ -25,11 +35,17 @@
   gap: 2rem; /* Reduce the space between the three sections */
   padding: 2rem 0;
   flex-wrap: wrap;
+  color: black;
 }
 
 .profile-info {
   flex: 1;
   min-width: 250px;
+}
+
+.label-points {
+  color: #ff9100;
+  font-weight: bold;
 }
 
 .profile-about {
@@ -51,46 +67,9 @@
   border-radius: 50%;
   object-fit: cover;
 }
-
-
-.profile-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 2rem; /* Reduce the space between the three sections */
-  padding: 2rem 0;
-  flex-wrap: wrap;
-}
-
-.profile-info {
-  flex: 1;
-  min-width: 250px;
-}
-
-.profile-about {
-  flex: 1;
-  min-width: 200px;
-}
-
-.profile-avatar {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-width: 200px;
-  gap: 1rem;
-}
-
-.profile-avatar img {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-
 
 .edit-profile-btn {
-  background-color: orange;
+  background-color: #ff9100;
   color: white;
   padding: 0.5rem 1.2rem;
   border: none;
@@ -98,67 +77,94 @@
   cursor: pointer;
 }
 
-.icons-bar {
-  display: flex;
-  gap: 1rem;
-  justify-content: space-between;
-  padding: 1rem;
+.section-title {
+  font-size: 1.6rem; /* or 1.8rem if you want it bigger */
+  font-weight: bold;
   margin-top: 2rem;
-  background-color: #f3f3f3;
-  border-radius: 8px;
+  margin-bottom: 1rem;
 }
 
-.stats-wrapper {
-  margin-top: 2rem;
-}
-
-.stats-container {
+.profile-events-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: 1.5rem;
+  margin-top: 1rem;
+  justify-content: flex-start;
 }
 
-.stats-box {
-  background: orange;
-  color: white;
-  padding: 1rem 1.5rem;
-  border-radius: 6px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  min-width: 140px;
+.achievement-card {
+  width: 220px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
   text-align: center;
+  transition: transform 0.2s ease;
 }
 
+.achievement-card:hover {
+  transform: scale(1.03);
+}
 
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 1rem;
+.achievement-icon {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  margin-bottom: 0.75rem;
+}
+
+.achievement-info h4 {
+  font-size: 1.1rem;
+  margin: 0.5rem 0;
+  color: #333;
+}
+
+.achievement-info p {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0.4rem 0;
+}
+
+.achievement-info small {
+  font-size: 0.75rem;
+  color: #999;
+}
+
+.profile-events-row {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+  justify-content: center;
+}
+
+.event-card-week {
+  flex: 1 1 300px;
+  max-width: 300px;
+
 }
 
 .profile-events {
   margin-top: 2rem;
 }
 
-.events-won-section {
+.event-card-week {
   display: flex;
-  gap: 20px;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin-top: 2rem;
-  height: 450px;
-}
-
-.event-card {
-  width: 300px;
-  border-radius: 8px;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 300px;
+  border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  background: #fff;
   font-family: 'Montserrat', sans-serif;
+  height: 100%; /* ✅ ensure card grows fully */
 }
 
 .event-banner {
-  position: relative;
   height: 160px;
+  width: 100%;
   overflow: hidden;
 }
 
@@ -166,90 +172,46 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-}
-
-.host-badge {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  background: white;
-  padding: 4px 8px;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 0.7rem;
-  font-weight: 600;
-  border-radius: 4px;
-}
-
-.host-badge img {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-}
-
-.status-badge {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: #DD8100;
-  color: white;
-  font-size: 0.7rem;
-  font-weight: 600;
-  padding: 4px 10px;
-  border-radius: 4px;
+  display: block;
 }
 
 .profile-event-details {
+  flex-grow: 1; /* ✅ fill vertical space */
   padding: 1rem;
-  background-color: #DD8100;
-  color: black;
-}
-
-.prfile-event-meta {
-  font-size: 0.9rem;
-  margin: 0.5rem 0;
-}
-
-.prfile-event-meta i {
-  margin-right: 5px;
-}
-
-.prfile-event-buttons {
+  background-color: #ff9100;
+  color: #1c1c1c;
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
-  margin-top: 1rem;
 }
 
-.prfile-event-type {
-  background: black;
-  color: white;
+.profile-event-details h3 {
+  margin: 0;
+  font-size: 1.1rem;
   font-weight: bold;
-  padding: 0.3rem 0.8rem;
-  border-radius: 4px;
-  font-size: 0.8rem;
 }
 
-.prfile-view-btn {
-  background: #2c2c2c;
+.profile-event-details p {
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.view-event-btn {
+  margin-top: 1rem;
+  background-color: #1c1c1c;
   color: white;
-  padding: 0.3rem 1rem;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
+  text-align: center;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: bold;
+  text-decoration: none;
+  display: inline-block;
+  transition: background-color 0.3s ease;
 }
 
-
-
-/* Responsive adjustments */
-@media screen and (max-width: 768px) {
-  .profile-header {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .profile-avatar img {
-    width: 100px;
-    height: 100px;
-  }
+.view-event-btn:hover {
+  background-color: #333;
 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { fetchEvents } from '../services/api';
 import { Event } from '../models/event';
 import { FaMapMarkerAlt, FaClock } from 'react-icons/fa';
@@ -23,16 +23,37 @@ interface UserProfile {
   gender?: string;
   age?: number;
   selectedAchievement?: string;
+  totalPoints?: number;
+}
+
+interface UserAchievement {
+  userAchievementId: number;
+  userId: number;
+  achievementId: number;
+  eventId?: number;
+  dateAwarded: string;
+}
+
+interface Achievement {
+  achievementId: number;
+  title: string;
+  description: string;
+  sportType: string;
+  iconUrl: string;
+  points: number;
 }
 
 function Profile() {
   const [user, setUser] = useState<UserData | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [events, setEvents] = useState<Event[]>([]);
+  const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
+  const [userAchievements, setUserAchievements] = useState<UserAchievement[]>([]);
+  const [allAchievements, setAllAchievements] = useState<Achievement[]>([]);
   const [loading, setLoading] = useState(true);
+
   const navigate = useNavigate();
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
 
   useEffect(() => {
     const userId = localStorage.getItem('userId');
@@ -48,7 +69,7 @@ function Profile() {
           fetch(`${API_BASE_URL}/api/Profiles/${userId}`)
         ]);
 
-        if (!userRes.ok || !profileRes.ok) throw new Error('Fetch failed');
+        if (!userRes.ok || !profileRes.ok) throw new Error('User/Profile fetch failed');
 
         const userData = await userRes.json();
         const profileData = await profileRes.json();
@@ -56,22 +77,46 @@ function Profile() {
         setProfile(profileData);
       } catch (err) {
         console.error('Error loading user/profile:', err);
+      }
+    };
+
+    const fetchAchievements = async () => {
+      try {
+        const userId = localStorage.getItem('userId');
+        const [userAchRes, allAchRes] = await Promise.all([
+          fetch(`${API_BASE_URL}/api/UserAchievements/user/${userId}`),
+          fetch(`${API_BASE_URL}/api/Achievements`)
+        ]);
+
+        if (!userAchRes.ok || !allAchRes.ok) throw new Error("Achievements fetch failed");
+
+        const userAch = await userAchRes.json();
+        const allAch = await allAchRes.json();
+
+        setUserAchievements(userAch);
+        setAllAchievements(allAch);
+      } catch (err) {
+        console.error("Failed to load achievements:", err);
+      }
+    };
+
+    const fetchEventData = async () => {
+      try {
+        const allEvents = await fetchEvents();
+        setEvents(allEvents);
+
+        const recommended = [...allEvents].sort(() => 0.5 - Math.random()).slice(0, 3);
+        setUpcomingEvents(recommended);
+      } catch (err) {
+        console.error('Failed to fetch events:', err);
       } finally {
         setLoading(false);
       }
     };
 
-    const fetchAllEvents = async () => {
-      try {
-        const data = await fetchEvents();
-        setEvents(data);
-      } catch (err) {
-        console.error('Failed to fetch events:', err);
-      }
-    };
-
     fetchUserInfo();
-    fetchAllEvents();
+    fetchAchievements();
+    fetchEventData();
   }, []);
 
   const formatDate = (dateStr: string): string => {
@@ -88,12 +133,15 @@ function Profile() {
 
   return (
     <div className="profile-container">
+      <h1 className="profile-title">{user?.name}'s Profile</h1>
+
       <div className="profile-header">
         <div className="profile-info">
           <h1>{user?.name}</h1>
           <p><span className="label">Email:</span> {user?.email}</p>
           <p><span className="label">Favourite sport:</span> {profile?.favoriteSports}</p>
           <p><span className="label">Age:</span> {profile?.age}</p>
+          <p><span className="label-points">Total Points:</span> {profile?.totalPoints}</p>
         </div>
 
         <div className="profile-about">
@@ -102,29 +150,67 @@ function Profile() {
         </div>
 
         <div className="profile-avatar">
-          {profile?.profilePicture && (
-            <img src={`${API_BASE_URL}/${profile.profilePicture}`} alt="Profile" />
-          )}
+          <img
+            src={
+              profile?.profilePicture
+                ? profile.profilePicture.startsWith('http')
+                  ? profile.profilePicture
+                  : `${API_BASE_URL}/uploads/${profile.profilePicture.replace(/^\/?uploads\//, '')}`
+                : '/default-profile.png'
+            }
+            alt="Profile"
+            className="profile-picture"
+          />
           <button className="edit-profile-btn" onClick={() => navigate('/edit-profile')}>
             Edit Profile
           </button>
         </div>
       </div>
 
-      <div className="icons-bar">
-        <span>⚽</span><span>🏀</span><span>🏋️‍♂️</span><span>🎯</span><span>🏕️</span><span>🏊</span>
+      <h2 className="section-title" style={{ fontSize: '1.5rem' }}>Achievements</h2>
+      <div className="profile-events-row">
+        {userAchievements.length > 0 ? (
+          userAchievements.map((ua) => {
+            const achievement = allAchievements.find(a => a.achievementId === ua.achievementId);
+            if (!achievement) return null;
+
+            return (
+              <div key={ua.userAchievementId} className="achievement-card">
+                <img src={achievement.iconUrl} alt={achievement.title} className="achievement-icon" />
+                <div className="achievement-info">
+                  <h4>{achievement.title}</h4>
+                  <p>{achievement.description}</p>
+                  <small>{achievement.sportType} • {achievement.points} pts</small>
+                </div>
+              </div>
+            );
+          })
+        ) : (
+          <p>No achievements yet — get active!</p>
+        )}
       </div>
 
-      <h2 className="section-title">Overall Stats</h2>
-      <div className="stats-wrapper">
-        <div className="stats-container">
-          <div className="stats-box"><span>Competed Events </span><span>8</span></div>
-          <div className="stats-box"><span>Active Event Time </span><span>300h</span></div>
-          <div className="stats-box"><span>First Places </span><span>3</span></div>
-          <div className="stats-box"><span>Second Places </span><span>6</span></div>
-          <div className="stats-box"><span>Third Places </span><span>4</span></div>
-          <div className="stats-box"><span>Total Points </span><span>3059</span></div>
-        </div>
+      <h2 className="section-title" style={{ fontSize: '1.5rem' }}>Events You Might Like</h2>
+      <div className="profile-events-row">
+        {upcomingEvents.map((event) => (
+          <div key={event.eventId} className="event-card-week">
+            <div className="event-banner">
+              <img
+                src={event.imageUrl || '/fallback.jpg'}
+                alt={event.title}
+                className="event-image"
+              />
+            </div>
+            <div className="profile-event-details">
+              <h3>{event.title}</h3>
+              <p><FaClock /> {formatDate(event.startDateTime)}</p>
+              <p><FaMapMarkerAlt /> {event.location}</p>
+              <Link to={`/events/${event.eventId}`} className="view-event-btn">
+                View
+              </Link>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
