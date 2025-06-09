@@ -183,7 +183,7 @@ function ViewProfile() {
           );
         })}
         {userAchievements.length === 0 && (
-          <p>No achievements yet — get active!</p>
+          <p style={{ color: '#ff9100'}}>No achievements yet — get active!</p>
         )}
       </div>
 

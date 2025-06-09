@@ -2,13 +2,13 @@
 
 @media (max-width: 768px) {
   .stats-container {
-    grid-template-columns: repeat(2, 1fr); /* 2 per row on tablet */
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (max-width: 480px) {
   .stats-container {
-    grid-template-columns: 1fr; /* 1 per row on mobile */
+    grid-template-columns: 1fr;
   }
 }
 
@@ -32,7 +32,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 2rem; /* Reduce the space between the three sections */
+  gap: 2rem; 
   padding: 2rem 0;
   flex-wrap: wrap;
   color: black;
@@ -78,7 +78,7 @@
 }
 
 .section-title {
-  font-size: 1.6rem; /* or 1.8rem if you want it bigger */
+  font-size: 1.6rem;
   font-weight: bold;
   margin-top: 2rem;
   margin-bottom: 1rem;
@@ -127,7 +127,7 @@
 
 .achievement-info small {
   font-size: 0.75rem;
-  color: #999;
+  color: #666;
 }
 
 .profile-events-row {
@@ -159,7 +159,7 @@
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   background: #fff;
   font-family: 'Montserrat', sans-serif;
-  height: 100%; /* ✅ ensure card grows fully */
+  height: 100%;
 }
 
 .event-banner {
@@ -176,7 +176,7 @@
 }
 
 .profile-event-details {
-  flex-grow: 1; /* ✅ fill vertical space */
+  flex-grow: 1;
   padding: 1rem;
   background-color: #ff9100;
   color: #1c1c1c;
