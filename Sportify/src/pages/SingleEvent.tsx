@@ -1,21 +1,36 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { fetchSingleEvent, fetchEvents, joinEvent } from '../services/api';
+import { fetchSingleEvent, fetchEvents, joinEvent, fetchProfile } from '../services/api';
 import { Event } from '../models/event';
 import { fetchUserById } from '../services/api';
 import '../Style/SingleEvents.css';
 import { Circles } from 'react-loader-spinner';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { FaCheckCircle, FaMapMarkerAlt, FaClock } from 'react-icons/fa';
+
+
+
+const resolveImageUrl = (path: string | undefined | null): string => {
+  const base = import.meta.env.VITE_API_BASE_URL;
+  if (!path) return '/avatar.png';
+  if (path.startsWith('http')) return path;
+  if (path.includes('/uploads')) return `${base}${path.startsWith('/') ? '' : '/'}${path}`;
+  return `${base}/uploads/${path}`;
+};
 
 function SingleEvent() {
   const { id } = useParams();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [id]);
   const navigate = useNavigate();
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [otherEvents, setOtherEvents] = useState<Event[]>([]);
   const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  const [participantProfiles, setParticipantProfiles] = useState<Record<number, string>>({});
   const userId = Number(localStorage.getItem('userId'));
 
   useEffect(() => {
@@ -49,6 +64,19 @@ function SingleEvent() {
 
         fetched.participants = participants;
         setEvent(fetched);
+
+        const profileMap: Record<number, string> = {};
+        await Promise.all(
+          participants.map(async (p) => {
+            try {
+              const profile = await fetchProfile(p.userId);
+              profileMap[p.userId] = resolveImageUrl(profile?.profilePicture);
+            } catch {
+              profileMap[p.userId] = '/avatar.png';
+            }
+          })
+        );
+        setParticipantProfiles(profileMap);
       })
       .catch(() => setError('Failed to fetch event.'))
       .finally(() => setLoading(false));
@@ -165,9 +193,12 @@ function SingleEvent() {
           ></iframe>
           <div className="single-requirements">
             <h3>Requirements</h3>
-            <ul>
+            <ul className="requirements-list">
               {event.requiredItems?.split(',').map((item, index) => (
-                <li key={index}>{item.trim()}</li>
+                <li key={index}>
+                  <FaCheckCircle className="requirement-icon" />
+                  {item.trim()}
+                </li>
               ))}
             </ul>
           </div>
@@ -180,9 +211,9 @@ function SingleEvent() {
             {event.participants && event.participants.length > 0 ? (
               event.participants.map(user => (
                 <div key={user.userId} className="single-participant">
-                  <img src="/avatar.png" alt="avatar" />
+                  <img src={participantProfiles[user.userId] || '/avatar.png'} alt="avatar" />
                   <span>{user.name}</span>
-                  <button onClick={() => navigate(`/view-profile?userId=${user.userId}`)}>View Profile</button>
+                  <button onClick={() => navigate(`/view-profile/${user.userId}`)}>View Profile</button>
                 </div>
               ))
             ) : (
@@ -205,18 +236,21 @@ function SingleEvent() {
                   </div>
                   <div className="single-event-body">
                     <h4 className="single-week-event-title">{event.title}</h4>
-                    <p className="single-event-meta">{day} · {time}</p>
-                    <p className="single-event-meta">{event.location}</p>
+                      <p className="single-event-meta"><FaClock /> {day} · {time}</p>
+                      <p className="single-event-meta"><FaMapMarkerAlt /> {event.location}</p>
                   </div>
                   <div className="single-event-footer">
-                    <Link to={`/events/${event.eventId}`} className="single-event-week-view-btn">View</Link>
+                    <button
+                      className="single-event-week-view-btn"
+                      onClick={() => {
+                        navigate(`/events/${event.eventId}`);
+                        setLoading(true);
+                      }}
+                    > View</button>
                   </div>
                 </div>
               );
             })}
-            <Link to="/events">
-              <button className="single-all-events-button">Go to All Events</button>
-            </Link>
           </div>
         </div>
       </div>

@@ -121,6 +121,11 @@
   color: #ff9100;
 }
 
+.sportify-events-page .event-icon {
+  font-size: 1rem;
+  color: white;
+}
+
 .sportify-events-page .event-card-week {
   background-color: #ff9100;
   color: black;
@@ -130,29 +135,28 @@
 
 .sportify-events-page .hosted-badge {
   position: absolute;
-  top: 0.5rem;
-  left: 0.5rem;
+  background-color: white;
+  padding: 0.5rem 1rem;
+  margin: 12px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
-  background-color: white;
-  border-top-left-radius: 10px;
-  border-bottom-right-radius: 10px;
-  padding: 0.3rem 0.6rem;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-  font-weight: bold;
+  gap: 0.60rem;
   z-index: 2;
 }
 
 .sportify-events-page .hosted-avatar {
-  width: 20px;
-  height: 20px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  margin-right: 0.4rem;
+  object-fit: cover;
+  border: 2px solid white;
 }
 
 .sportify-events-page .hosted-text {
-  font-size: 0.75rem;
-  color: #2c2c2c;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: black;
 }
 
 
@@ -492,6 +496,7 @@
   text-decoration: none;
   padding: 0.75rem 2rem;
   border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   font-size: 18px;
   font-weight: bold;
   transition: background 0.3s;

@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { fetchUnsplashImages } from '../services/unsplash.ts';
 
-console.log("🔑 UNSPLASH KEY CHECK:", import.meta.env.VITE_UNSPLASH_KEY);
 interface ImageSelectorProps {
   query: string;
   onSelect: (url: string) => void;
