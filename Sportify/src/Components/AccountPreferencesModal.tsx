@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import '../Style/AccountPreferencesModal.css';
 
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
 interface Props {
   onClose: () => void;
 }
@@ -24,14 +26,14 @@ const AccountPreferencesModal: React.FC<Props> = ({ onClose }) => {
   useEffect(() => {
     const fetchSettings = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/Users/${userId}`);
+        const res = await fetch(`${baseUrl}/api/Users/${userId}`);
         const data = await res.json();
         const enabled = Boolean(data.isTwoFactorEnabled);
         setIsEnabled(enabled);
         setIs2FAVerified(enabled);
 
         if (enabled && !data.twoFactorSecret) {
-          const genRes = await fetch(`http://localhost:5000/api/Users/${userId}/generate-2fa`, {
+          const genRes = await fetch(`${baseUrl}/api/Users/${userId}/generate-2fa`, {
             method: 'POST',
           });
           const setupData: QrSetupData = await genRes.json();
@@ -53,7 +55,7 @@ const AccountPreferencesModal: React.FC<Props> = ({ onClose }) => {
     if (isEnabled && is2FAVerified) return;
 
     try {
-      const res = await fetch(`http://localhost:5000/api/Users/${userId}/toggle-2fa`, {
+      const res = await fetch(`${baseUrl}/api/Users/${userId}/toggle-2fa`, {
         method: 'PUT',
       });
 
@@ -62,7 +64,7 @@ const AccountPreferencesModal: React.FC<Props> = ({ onClose }) => {
       setIsEnabled(twoFA);
 
       if (twoFA) {
-        const genRes = await fetch(`http://localhost:5000/api/Users/${userId}/generate-2fa`, {
+        const genRes = await fetch(`${baseUrl}/api/Users/${userId}/generate-2fa`, {
           method: 'POST',
         });
         const setupData: QrSetupData = await genRes.json();
@@ -82,7 +84,7 @@ const AccountPreferencesModal: React.FC<Props> = ({ onClose }) => {
 
   const handleVerify = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/Users/verify-2fa`, {
+      const res = await fetch(`${baseUrl}/api/Users/verify-2fa`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId, code: verificationCode }),
@@ -99,7 +101,7 @@ const AccountPreferencesModal: React.FC<Props> = ({ onClose }) => {
 
   const handleDisable = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/Users/disable-2fa`, {
+      const res = await fetch(`${baseUrl}/api/Users/disable-2fa`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId, code: disableCode }),

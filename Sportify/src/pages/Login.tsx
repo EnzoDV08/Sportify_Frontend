@@ -46,7 +46,7 @@ const LoginPage: FC = () => {
     setLoading(true);
 
     try {
-      const baseUrl = 'http://localhost:5000';
+      const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
       // Try logging in as a regular user first
       let response = await fetch(`${baseUrl}/api/users/login`, {
@@ -110,7 +110,7 @@ const LoginPage: FC = () => {
   const handle2FAVerification = async () => {
     if (!pendingUserId) return;
 
-    const baseUrl = 'http://localhost:5000';
+    const baseUrl = import.meta.env.VITE_API_BASE_URL;
     try {
       const response = await fetch(`${baseUrl}/api/users/verify-2fa`, {
         method: 'POST',
@@ -215,7 +215,7 @@ const LoginPage: FC = () => {
                   }
 
                   const token = credentialResponse.credential;
-                  const baseUrl = 'http://localhost:5000';
+                  const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
                   const res = await fetch(`${baseUrl}/api/auth/google`, {
                     method: 'POST',
@@ -354,7 +354,8 @@ const LoginPage: FC = () => {
                   className="login-btn"
                   style={{ marginTop: '1rem' }}
                   onClick={async () => {
-                    const res = await fetch(`http://localhost:5000/api/users/email/${resetEmail}`);
+                    const baseUrl = import.meta.env.VITE_API_BASE_URL;
+                    const res = await fetch(`${baseUrl}/api/users/email/${resetEmail}`);
                     if (!res.ok) {
                       showToast('User not found', 'error');
                       return;
@@ -424,10 +425,11 @@ const LoginPage: FC = () => {
                   className="login-btn"
                   style={{ marginTop: '1rem' }}
                   onClick={async () => {
-                    const res = await fetch(`http://localhost:5000/api/users/verify-2fa`, {
+                    const baseUrl = import.meta.env.VITE_API_BASE_URL;
+                    const res = await fetch(`${baseUrl}/api/users/verify-2fa`, {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({ userId: resetUserId, code: resetCode }),
+                      body: JSON.stringify({ userId: pendingUserId, code: verificationCode }),
                     });
                     if (!res.ok) {
                       showToast('Invalid code', 'error');
@@ -465,7 +467,8 @@ const LoginPage: FC = () => {
                   className="login-btn"
                   style={{ marginTop: '1rem' }}
                   onClick={async () => {
-                    const res = await fetch(`http://localhost:5000/api/users/${resetUserId}/reset-password`, {
+                    const baseUrl = import.meta.env.VITE_API_BASE_URL;
+                    const res = await fetch(`${baseUrl}/api/users/${resetUserId}/reset-password`, {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify({ newPassword }),

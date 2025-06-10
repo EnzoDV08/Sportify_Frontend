@@ -13,6 +13,8 @@ const ChangePasswordModal: React.FC<Props> = ({ onClose }) => {
   const [canReset, setCanReset] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
 
+  const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
   useEffect(() => {
     const id = localStorage.getItem('userId');
     if (id) setUserId(Number(id));
@@ -80,7 +82,7 @@ const ChangePasswordModal: React.FC<Props> = ({ onClose }) => {
               className="login-btn"
               style={{ marginTop: '1rem' }}
               onClick={async () => {
-                const res = await fetch(`http://localhost:5000/api/users/verify-2fa`, {
+                const res = await fetch(`${baseUrl}/api/users/verify-2fa`, {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({ userId, code }),
@@ -121,7 +123,7 @@ const ChangePasswordModal: React.FC<Props> = ({ onClose }) => {
               className="login-btn"
               style={{ marginTop: '1rem' }}
               onClick={async () => {
-                const res = await fetch(`http://localhost:5000/api/users/${userId}/reset-password`, {
+                const res = await fetch(`${baseUrl}/api/users/${userId}/reset-password`, {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({ newPassword }),
