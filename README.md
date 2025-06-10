@@ -238,31 +238,31 @@ _For more screenshots, see the [Mockups](#mockups) section._
 Below are UI mockups that guided the design and development of Sportify:
 
 ### 🖼️ Home Page
-![Home Page](./ReadMEAssets/mockups/HomePage.png)
+![Home Page](./ReadMeAssets/mockups/HomePage.png)
 
 ### 📝 Sign Up Page
-![Sign Up Page](./ReadMEAssets/mockups/SignupPage.png)
+![Sign Up Page](./ReadMeAssets/mockups/SignupPage.png)
 
 ### 🔐 Two Factor Authorization
-![Friend Sidebar](./ReadMEAssets/mockups/2FA.png)
+![Friend Sidebar](./ReadMeAssets/mockups/2FA.png)
 
 ### 📌 Single Event View
-![Single Event](./ReadMEAssets/mockups/SingleEventPage.png)
+![Single Event](./ReadMeAssets/mockups/SingleEventPage.png)
 
 ### 📁 My Event Page
-![Single Event](./ReadMEAssets/mockups/MyEvents.png)
+![Single Event](./ReadMeAssets/mockups/MyEvents.png)
 
 ### 🧾 Create Event Form
-![Create Event](./ReadMEAssets/mockups/CreateEventPage.png)
+![Create Event](./ReadMeAssets/mockups/CreateEventPage.png)
 
 ### 📊 Admin Dashboard
-![Admin Dashboard](./ReadMEAssets/mockups/Admin.png)
+![Admin Dashboard](./ReadMeAssets/mockups/Admin.png)
 
 ### 🧍 Profile Page
-![Profile Page](./ReadMEAssets/mockups/Profile.png)
+![Profile Page](./ReadMeAssets/mockups/Profile.png)
 
 ### 👥 Friend Sidebar
-![Friend Sidebar](./ReadMEAssets/mockups/FriendSidebar.png)
+![Friend Sidebar](./ReadMeAssets/mockups/FriendSidebar.png)
 
 <p align="right"><a href="#readme-top">[⬆️ Back to top]</a></p>
 
