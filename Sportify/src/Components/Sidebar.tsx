@@ -18,6 +18,7 @@ import {
 } from 'react-icons/fa';
 import '../Style/Sidebar.css';
 import logo from '../assets/SportifyLogo.png';
+import DefaultAvatar from '../assets/default-profile.png';
 import FriendSidebar from './FriendSidebar';
 import AccountPreferencesModal from './AccountPreferencesModal';
 import ChangePasswordModal from './ChangePasswordModal';
@@ -58,78 +59,67 @@ const Sidebar = () => {
   const [userId, setUserId] = useState<string | null>(null);
   const [fullUser, setFullUser] = useState<{ name: string; email: string } | null>(null);
 
-
-
-  const fetchProfileImage = async () => {
+  const fetchFullUserInfo = async () => {
     if (!userId) return;
     try {
-      const res = await fetch(`${baseUrl}/api/Profiles/${userId}`);
-      if (!res.ok) return;
-      const data = await res.json();
-      if (data.profilePicture) {
-        setProfileImageUrl(`${baseUrl}/uploads/${data.profilePicture}`);
+      const [userRes, profileRes] = await Promise.all([
+        fetch(`${baseUrl}/api/Users/${userId}`),
+        fetch(`${baseUrl}/api/Profiles/${userId}`)
+      ]);
+
+      if (!userRes.ok || !profileRes.ok) throw new Error('Failed to fetch user/profile');
+
+      const userData = await userRes.json();
+      const profileData = await profileRes.json();
+
+      setFullUser({ name: userData.name, email: userData.email });
+
+      if (profileData.profilePicture) {
+        const cleanPath = profileData.profilePicture.replace(/^\/?uploads\//, '');
+        setProfileImageUrl(`${baseUrl}/uploads/${cleanPath}`);
       }
     } catch (error) {
       console.error('Sidebar profile fetch error:', error);
     }
   };
 
-  const fetchFullUserInfo = async () => {
-  if (!userId) return;
-  try {
-    const [userRes, profileRes] = await Promise.all([
-      fetch(`${baseUrl}/api/Users/${userId}`),
-      fetch(`${baseUrl}/api/Profiles/${userId}`)
-    ]);
 
-    if (!userRes.ok || !profileRes.ok) throw new Error('Failed to fetch user/profile');
-
-    const userData = await userRes.json();
-    const profileData = await profileRes.json();
-
-    setFullUser({ name: userData.name, email: userData.email });
-
-    if (profileData.profilePicture) {
-      setProfileImageUrl(`${baseUrl}/uploads/${profileData.profilePicture}`);
-    }
-  } catch (error) {
-    console.error('Sidebar profile fetch error:', error);
-  }
-};
-
-
-  useEffect(() => {
+    useEffect(() => {
     const id = localStorage.getItem('userId');
-    const fetchCounts = async () => {
-      const invites = await fetch(`${baseUrl}/api/events/invites/${id}`);
-const inviteData = await invites.json();
-setInviteCount(inviteData.length);
-  try {
-    const [friendRes, joinRes] = await Promise.all([
-      fetch(`${baseUrl}/api/friends/requests/${id}`),
-      fetch(`${baseUrl}/api/events/requests/${id}`)
-    ]);
-
-    const friends = await friendRes.json();
-    const joins = await joinRes.json();
-
-    setFriendRequestCount(friends.length);
-    setPendingJoinCount(joins.length);
-  } catch (err) {
-    console.error("❌ Error fetching counts", err);
-  }
-};
-fetchCounts();
-    setManuallyToggled(false);
     setUserId(id);
+
+    const fetchCounts = async () => {
+      if (!id) return;
+
+      try {
+        const [friendRes, joinRes, inviteRes] = await Promise.all([
+          fetch(`${baseUrl}/api/friends/requests/${id}`),
+          fetch(`${baseUrl}/api/events/requests/${id}`),
+          fetch(`${baseUrl}/api/events/invites/${id}`)
+        ]);
+
+        const friends = await friendRes.json();
+        const joins = await joinRes.json();
+        const invites = await inviteRes.json();
+
+        setFriendRequestCount(friends.length);
+        setPendingJoinCount(joins.length);
+        setInviteCount(invites.length);
+      } catch (err) {
+        console.error("❌ Error fetching counts", err);
+      }
+    };
+
+    fetchCounts();
+    setManuallyToggled(false);
   }, []);
 
-useEffect(() => {
-  if (userId) {
-    fetchProfileImage();      
-    fetchFullUserInfo();    
-  }
-}, [userId]);
+  useEffect(() => {
+    if (userId) {
+      fetchFullUserInfo();
+    }
+  }, [userId]);
+
 
 
   const handleSignOut = () => {
@@ -173,50 +163,45 @@ useEffect(() => {
             <SidebarItem icon={<FaCalendarAlt />} label="Events" isExpanded={isExpanded} to="/events" currentPath={location.pathname} />
             <SidebarItem icon={<FaPlusCircle />} label="Add Event" isExpanded={isExpanded} to="/add-event" currentPath={location.pathname} />
             <SidebarItem
-  icon={
-    <>
-      <FaTrophy />
-      {pendingJoinCount > 0 && <span className="badge">{pendingJoinCount}</span>}
-    </>
-  }
-  label="My Events"
-  isExpanded={isExpanded}
-  to="/my-events"
-  currentPath={location.pathname}
-/>
-
-
-
+              icon={<><FaTrophy />{pendingJoinCount > 0 && <span className="badge">{pendingJoinCount}</span>}</>}
+              label="My Events"
+              isExpanded={isExpanded}
+              to="/my-events"
+              currentPath={location.pathname}
+            />
             <button onClick={() => setShowFriendsSidebar(prev => !prev)} className={`sidebar-item-wrapper ${showFriendsSidebar ? 'active' : ''}`}>
-  <div className="item" data-tooltip="Friends">
-    <span className="icon">
-      <FaUsers />
-      {friendRequestCount > 0 && <span className="badge">{friendRequestCount}</span>}
-    </span>
-    {isExpanded && <span className="label">Friends</span>}
-  </div>
-</button>
+              <div className="item" data-tooltip="Friends">
+                <span className="icon">
+                  <FaUsers />
+                  {friendRequestCount > 0 && <span className="badge">{friendRequestCount}</span>}
+                </span>
+                {isExpanded && <span className="label">Friends</span>}
+              </div>
+            </button>
            {userType === 'admin' && (
-  <SidebarItem
-  icon={<FaUserShield />}
-  label="Admin Panel"
-  isExpanded={isExpanded}
-  to="/dashboard" // ✅ this matches the route in App.tsx
-  currentPath={location.pathname}
-/>
-)}
+              <SidebarItem
+              icon={<FaUserShield />}
+              label="Admin Panel"
+              isExpanded={isExpanded}
+              to="/dashboard" // ✅ this matches the route in App.tsx
+              currentPath={location.pathname}
+            />
+            )}
 
             <hr className="divider" />
+
             <div className={`dropdown-wrapper ${showNotifications ? 'open' : ''}`}>
               <button onClick={() => setShowNotifications(!showNotifications)} className="item dropdown-toggle" data-tooltip="Notifications">
-<span className="icon">
-  <FaBell />
-  {(inviteCount > 0 || pendingJoinCount > 0 || friendRequestCount > 0) && (
-    <span className="badge">
-      {inviteCount + pendingJoinCount + friendRequestCount}
-    </span>
-  )}
-</span>
+
+                <span className="icon">
+                  <FaBell />
+                  {(inviteCount > 0 || pendingJoinCount > 0 || friendRequestCount > 0) && (
+                    <span className="badge">
+                      {inviteCount + pendingJoinCount + friendRequestCount}
+                </span>
+
+              )}
+            </span>
 
 
                 {isExpanded && <><span className="label">Notifications</span><span className="dropdown-arrow">
@@ -246,44 +231,43 @@ useEffect(() => {
               )}
             </div>
             <div className="sidebar-item-wrapper">
-  <button onClick={handleSignOut} className="item" data-tooltip="Sign Out">
-    <span className="icon"><FaSignOutAlt /></span>
-    {isExpanded && <span className="label">Sign Out</span>}
-  </button>
-</div>
+              <button onClick={handleSignOut} className="item" data-tooltip="Sign Out">
+                <span className="icon"><FaSignOutAlt /></span>
+                {isExpanded && <span className="label">Sign Out</span>}
+              </button>
+            </div>
           </nav>
         </div>
 
-<div className="profile" data-tooltip="View Profile">
-  <img
-    src={profileImageUrl || '/default-avatar.png'}
-    alt="Profile"
-    className="profile-img"
-  />
-  {isExpanded && (
-    <div className="profile-info">
-      <p className="name">{fullUser?.name || 'Loading...'}</p>
-      <p className="email">{fullUser?.email}</p>
-    </div>
-  )}
-</div>
-
-
-
+        <div className="profile-section" data-tooltip="My Profile">
+          <Link to="/profile" className="profile-link">
+            <img
+              src={profileImageUrl || DefaultAvatar}
+              alt="Profile"
+              className="profile-img"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.onerror = null;
+                target.src = DefaultAvatar;
+              }}
+            />
+            {isExpanded && (
+              <div className="profile-meta">
+                <div className="profile-name">{fullUser?.name || 'Loading...'}</div>
+                <div className="profile-email">{fullUser?.email}</div>
+                <div className="view-profile-btn">View Profile</div>
+              </div>
+            )}
+          </Link>
+        </div>
       </div>
 
-{showAccountPrefs && <AccountPreferencesModal onClose={() => setShowAccountPrefs(false)} />}
-{showChangePassword && <ChangePasswordModal onClose={() => setShowChangePassword(false)} />}
-
-
-
-<FriendSidebar
-  className={showFriendsSidebar ? 'visible' : ''}
-  onClose={() => setShowFriendsSidebar(false)}
-/>
-
-
-
+      {showAccountPrefs && <AccountPreferencesModal onClose={() => setShowAccountPrefs(false)} />}
+      {showChangePassword && <ChangePasswordModal onClose={() => setShowChangePassword(false)} />}
+      <FriendSidebar
+        className={showFriendsSidebar ? 'visible' : ''}
+        onClose={() => setShowFriendsSidebar(false)}
+      />
     </div>
   );
 };
