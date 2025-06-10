@@ -25,19 +25,15 @@ const AccountPreferencesModal: React.FC<Props> = ({ onClose }) => {
     const fetchSettings = async () => {
       try {
         const res = await fetch(`http://localhost:5000/api/Users/${userId}`);
-        if (!res.ok) throw new Error('Failed to fetch user');
         const data = await res.json();
+        const enabled = Boolean(data.isTwoFactorEnabled);
+        setIsEnabled(enabled);
+        setIs2FAVerified(enabled);
 
-        const backendValue = Boolean(data.isTwoFactorEnabled);
-        setIsEnabled(backendValue);
-        setIs2FAVerified(backendValue);
-
-        if (backendValue && data.twoFactorSecret) {
+        if (enabled && !data.twoFactorSecret) {
           const genRes = await fetch(`http://localhost:5000/api/Users/${userId}/generate-2fa`, {
             method: 'POST',
           });
-
-          if (!genRes.ok) throw new Error('Failed to get QR');
           const setupData: QrSetupData = await genRes.json();
           setupData.qrCodeImageUrl = setupData.qrCodeImageUrl.replace(/^"|"$/g, '');
           setQrData(setupData);
@@ -54,13 +50,12 @@ const AccountPreferencesModal: React.FC<Props> = ({ onClose }) => {
   }, [userId]);
 
   const toggle2FA = async () => {
-    if (isEnabled && is2FAVerified) return; // Prevent disabling without confirmation
+    if (isEnabled && is2FAVerified) return;
 
     try {
       const res = await fetch(`http://localhost:5000/api/Users/${userId}/toggle-2fa`, {
         method: 'PUT',
       });
-      if (!res.ok) throw new Error('Toggle failed');
 
       const updated = await res.json();
       const twoFA = Boolean(updated.isTwoFactorEnabled);
@@ -70,7 +65,6 @@ const AccountPreferencesModal: React.FC<Props> = ({ onClose }) => {
         const genRes = await fetch(`http://localhost:5000/api/Users/${userId}/generate-2fa`, {
           method: 'POST',
         });
-        if (!genRes.ok) throw new Error('QR gen failed');
         const setupData: QrSetupData = await genRes.json();
         setupData.qrCodeImageUrl = setupData.qrCodeImageUrl.replace(/^"|"$/g, '');
         setQrData(setupData);
@@ -105,19 +99,13 @@ const AccountPreferencesModal: React.FC<Props> = ({ onClose }) => {
 
   const handleDisable = async () => {
     try {
-      if (!isEnabled || !is2FAVerified) {
-        alert('2FA is already disabled.');
-        return;
-      }
-
       const res = await fetch(`http://localhost:5000/api/Users/disable-2fa`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId, code: disableCode }),
       });
 
-      if (!res.ok) throw new Error('Disable verification failed');
-
+      if (!res.ok) throw new Error('Disable failed');
       alert('🔓 Two-Factor Authentication disabled!');
       setIsEnabled(false);
       setQrData(null);
@@ -129,11 +117,13 @@ const AccountPreferencesModal: React.FC<Props> = ({ onClose }) => {
     }
   };
 
-
   return (
     <div className="modal-overlay">
-      <div className="modal-content">
-        <h2>Account Preferences</h2>
+      <div className="modal-2fa-container">
+        <div className="modal-2fa-header">
+          <h2 className="modal-heading">Account Preferences</h2>
+          <p className="modal-subheading">Manage your 2FA security settings</p>
+        </div>
 
         {isLoading ? (
           <p>Loading 2FA status...</p>
@@ -141,7 +131,7 @@ const AccountPreferencesModal: React.FC<Props> = ({ onClose }) => {
           <p className="error">{error}</p>
         ) : (
           <>
-            <p>Enable Two-Factor Authentication</p>
+            <p style={{ fontWeight: 600 }}>Enable Two-Factor Authentication</p>
             {isEnabled !== null && (
               <label className="switch">
                 <input
@@ -158,33 +148,90 @@ const AccountPreferencesModal: React.FC<Props> = ({ onClose }) => {
               <div className="qr-section">
                 <p>Scan this QR code with Google Authenticator:</p>
                 <img src={qrData.qrCodeImageUrl} alt="QR Code" className="qr-img" />
-                <p style={{ fontSize: '0.7rem', color: '#777' }}>QR Visible ✅</p>
                 <p>Manual code:</p>
                 <code>{qrData.manualEntryKey}</code>
                 <div className="verify-section">
-                  <input
-                    type="text"
-                    placeholder="Enter 6-digit code"
-                    value={verificationCode}
-                    onChange={(e) => setVerificationCode(e.target.value)}
-                  />
-                  <button onClick={handleVerify}>Verify Code</button>
+                  <div className="code-input-wrapper">
+                    {Array(6).fill(0).map((_, i) => (
+                      <input
+                        key={i}
+                        type="text"
+                        inputMode="numeric"
+                        maxLength={1}
+                        className="code-box"
+                        value={verificationCode[i] || ''}
+                        onChange={(e) => {
+                          const val = e.target.value.replace(/[^0-9]/g, '');
+                          if (!val) return;
+
+                          const newCode = verificationCode.split('');
+                          newCode[i] = val;
+                          setVerificationCode(newCode.join('').slice(0, 6));
+
+                          const next = document.getElementById(`code-${i + 1}`);
+                          if (next) (next as HTMLInputElement).focus();
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Backspace') {
+                            e.preventDefault();
+                            const newCode = verificationCode.split('');
+                            newCode[i] = '';
+                            setVerificationCode(newCode.join(''));
+
+                            const prev = document.getElementById(`code-${i - 1}`);
+                            if (prev) (prev as HTMLInputElement).focus();
+                          }
+                        }}
+                        id={`code-${i}`}
+                      />
+                    ))}
+                  </div>
+                  <button className="verify-btn" onClick={handleVerify}>Verify Code</button>
                 </div>
               </div>
             )}
 
             {isEnabled && is2FAVerified && (
               <div className="disable-section">
-                <p style={{ marginTop: '1rem', fontWeight: 500 }}>
+                <p style={{ fontWeight: 500 }}>
                   Disable Two-Factor Authentication:
                 </p>
-                <input
-                  type="text"
-                  placeholder="Enter 6-digit code"
-                  value={disableCode}
-                  onChange={(e) => setDisableCode(e.target.value)}
-                />
-                <button onClick={handleDisable} style={{ backgroundColor: '#e74c3c' }}>
+                <div className="disable-code-wrapper">
+                  {Array(6).fill(0).map((_, i) => (
+                    <input
+                      key={`disable-${i}`}
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={1}
+                      className="code-box"
+                      value={disableCode[i] || ''}
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/[^0-9]/g, '');
+                        if (!val) return;
+
+                        const newCode = disableCode.split('');
+                        newCode[i] = val;
+                        setDisableCode(newCode.join('').slice(0, 6));
+
+                        const next = document.getElementById(`disable-code-${i + 1}`);
+                        if (next) (next as HTMLInputElement).focus();
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Backspace') {
+                          e.preventDefault();
+                          const newCode = disableCode.split('');
+                          newCode[i] = '';
+                          setDisableCode(newCode.join(''));
+
+                          const prev = document.getElementById(`disable-code-${i - 1}`);
+                          if (prev) (prev as HTMLInputElement).focus();
+                        }
+                      }}
+                      id={`disable-code-${i}`}
+                    />
+                  ))}
+                </div>
+                <button className="verify-btn" style={{ backgroundColor: '#e74c3c' }} onClick={handleDisable}>
                   Disable 2FA
                 </button>
               </div>

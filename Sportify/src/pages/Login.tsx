@@ -11,6 +11,10 @@ const LoginPage: FC = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [show2FAModal, setShow2FAModal] = useState(false);
+  const [verificationCode, setVerificationCode] = useState('');
+  const [pendingUserId, setPendingUserId] = useState<number | null>(null);
+
   const navigate = useNavigate();
 
   const showToast = (message: string, type: 'success' | 'error') => {
@@ -33,7 +37,7 @@ const LoginPage: FC = () => {
     setLoading(true);
 
     try {
-      const baseUrl = import.meta.env.VITE_API_BASE_URL;
+      const baseUrl = 'http://localhost:5000';
 
       // Try logging in as a regular user first
       let response = await fetch(`${baseUrl}/api/users/login`, {
@@ -70,18 +74,58 @@ const LoginPage: FC = () => {
 
       // ✅ User login success
       const userResult = await response.json();
-      localStorage.setItem('isLoggedIn', 'true');
-      localStorage.setItem('userType', userResult.userType);
-      localStorage.setItem('userId', userResult.userId);
+      console.log('🔍 userResult:', userResult);
+      if (userResult.isTwoFactorEnabled) {
+        console.log('🛡️ 2FA required for User ID:', userResult.userId);
+        setPendingUserId(userResult.userId); // ✅ Now it's being used
+        setShow2FAModal(true);
+        return;
+      } else {
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('userType', userResult.userType);
+        localStorage.setItem('userId', userResult.userId);
 
-      showToast('Login successful!', 'success');
-      setTimeout(() => navigate('/home'), 1500);
+        showToast('Login successful!', 'success');
+        setTimeout(() => navigate('/home'), 1500);
+      }
+
     } catch (err) {
       console.error('Login failed:', err);
       showToast('An error occurred. Please try again.', 'error');
       setError('An error occurred. Please try again.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handle2FAVerification = async () => {
+    if (!pendingUserId) return;
+
+    const baseUrl = 'http://localhost:5000';
+    try {
+      const response = await fetch(`${baseUrl}/api/users/verify-2fa`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: pendingUserId, code: verificationCode }),
+      });
+
+      if (!response.ok) {
+        const errorMsg = await response.text();
+        showToast(errorMsg || 'Invalid verification code.', 'error');
+        return;
+      }
+
+      const result = await response.json();
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('userType', result.userType);
+      localStorage.setItem('userId', result.userId);
+
+      showToast('Login successful!', 'success');
+      setShow2FAModal(false);
+      setTimeout(() => navigate('/home'), 1500);
+    } catch (err) {
+      showToast('Verification failed. Please try again.', 'error');
+      console.error('2FA error:', err);
     }
   };
 
@@ -199,6 +243,82 @@ const LoginPage: FC = () => {
           </p>
         </div>
       </div>
+
+      {show2FAModal && (
+        <div className="modal-overlay">
+          <div className="modal-content twofa-modal">
+            <h2 className="modal-heading">ENTER 2FA CODE</h2>
+            <p className="modal-subheading">Enter your 6-digit code from your authenticator app</p>
+
+            <div className="code-input-wrapper">
+              {[...Array(6)].map((_, index) => (
+                <input
+                  key={index}
+                  id={`code-${index}`}
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={1}
+                  className="code-box"
+                  value={verificationCode[index] || ''}
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/\D/, '');
+                    if (!val) return;
+
+                    const newCode = verificationCode.split('');
+                    newCode[index] = val;
+                    setVerificationCode(newCode.join(''));
+
+                    const next = document.getElementById(`code-${index + 1}`);
+                    if (next) (next as HTMLInputElement).focus();
+                  }}
+                  onKeyDown={(e) => {
+                    const prev = document.getElementById(`code-${index - 1}`);
+                    const next = document.getElementById(`code-${index + 1}`);
+
+                    if (e.key === 'Backspace') {
+                      e.preventDefault();
+                      const newCode = verificationCode.split('');
+                      newCode[index] = '';
+                      setVerificationCode(newCode.join(''));
+
+                      if (index > 0 && prev) (prev as HTMLInputElement).focus();
+                    } else if (e.key === 'ArrowLeft' && prev) {
+                      e.preventDefault();
+                      (prev as HTMLInputElement).focus();
+                    } else if (e.key === 'ArrowRight' && next) {
+                      e.preventDefault();
+                      (next as HTMLInputElement).focus();
+                    } else if (e.key === 'Enter' && verificationCode.length === 6) {
+                      handle2FAVerification();
+                    }
+                  }}
+                />
+              ))}
+            </div>
+
+            <button
+              onClick={handle2FAVerification}
+              className="login-btn"
+              style={{ marginTop: '1.5rem' }}
+              disabled={verificationCode.length !== 6}
+            >
+              Verify
+            </button>
+
+            <button
+              onClick={() => setShow2FAModal(false)}
+              className="modal-back"
+            >
+              ← Back to Login
+            </button>
+          </div>
+        </div>
+      )}
+
+
+
+
+
     </div>
   );
 };
