@@ -1,4 +1,4 @@
-![Sportify Header Image](./ReadMEAssets/ReadMeFile.png)
+![Sportify Header Image](./ReadMeAssets/ReadMeFile.png)
 <a id="readme-top"></a>
 
 <!-- PROJECT SHIELDS -->
