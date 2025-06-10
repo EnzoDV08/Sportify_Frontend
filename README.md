@@ -241,7 +241,7 @@ Below are UI mockups that guided the design and development of Sportify:
 ![Home Page](./ReadMeAssets/mockups/HomePage.png)
 
 ### 📝 Sign Up Page
-![Sign Up Page](./ReadMeAssets/mockups/SignupPage.png)
+![Sign Up Page](./ReadMeAssets/mockups/SignUpPage.png)
 
 ### 🔐 Two Factor Authorization
 ![Friend Sidebar](./ReadMeAssets/mockups/2FA.png)
