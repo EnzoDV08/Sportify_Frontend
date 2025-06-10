@@ -101,7 +101,7 @@ const TopPerformers = () => {
 
                 <div className="points">{user.totalPoints} POINTS</div>
 
-                <Link to={`/profile/${user.userId}`} className="profile-button">
+                <Link to={`/view-profile/${user.userId}`} className="profile-button">
                   View Profile
                 </Link>
               </div>
