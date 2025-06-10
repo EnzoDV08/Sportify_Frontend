@@ -20,6 +20,8 @@ import '../Style/Sidebar.css';
 import logo from '../assets/SportifyLogo.png';
 import FriendSidebar from './FriendSidebar';
 import AccountPreferencesModal from './AccountPreferencesModal';
+import ChangePasswordModal from './ChangePasswordModal';
+
 
 
 const Sidebar = () => {
@@ -42,6 +44,7 @@ const Sidebar = () => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showFriendsSidebar, setShowFriendsSidebar] = useState(false);
   const [showAccountPrefs, setShowAccountPrefs] = useState(false);
+  const [showChangePassword, setShowChangePassword] = useState(false);
   const [friendRequestCount, setFriendRequestCount] = useState(0);
   const [pendingJoinCount, setPendingJoinCount] = useState(0);
   const [inviteCount, setInviteCount] = useState(0);
@@ -238,7 +241,7 @@ useEffect(() => {
               {showSettings && isExpanded && (
                 <div className="dropdown-menu">
                   <button onClick={() => setShowAccountPrefs(true)} className="dropdown-item">⚙️ Account Preferences</button>
-                  <Link to="/change-password" className="dropdown-item">🔒 Change Password</Link>
+                  <button onClick={() => setShowChangePassword(true)} className="dropdown-item">🔒 Change Password</button>
                 </div>
               )}
             </div>
@@ -270,6 +273,8 @@ useEffect(() => {
       </div>
 
 {showAccountPrefs && <AccountPreferencesModal onClose={() => setShowAccountPrefs(false)} />}
+{showChangePassword && <ChangePasswordModal onClose={() => setShowChangePassword(false)} />}
+
 
 
 <FriendSidebar
