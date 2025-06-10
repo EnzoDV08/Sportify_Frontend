@@ -429,7 +429,7 @@ const LoginPage: FC = () => {
                     const res = await fetch(`${baseUrl}/api/users/verify-2fa`, {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({ userId: pendingUserId, code: verificationCode }),
+                      body: JSON.stringify({ userId: resetUserId, code: resetCode }),
                     });
                     if (!res.ok) {
                       showToast('Invalid code', 'error');
