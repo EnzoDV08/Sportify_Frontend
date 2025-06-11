@@ -21,13 +21,6 @@ const EditProfile: React.FC = () => {
     selectedAchievement: '',
   });
   
-  const achievements = [
-    'Most Valuable Player',
-    'Best Team Player',
-    'Top Scorer',
-    'Longest Distance',
-    'Fastest Time'
-  ];
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   useEffect(() => {
     const fetchData = async () => {

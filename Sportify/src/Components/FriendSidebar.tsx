@@ -8,7 +8,7 @@ import {
   searchUsers,
 } from '../services/api';
 import { useEffect, useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { FullFriend } from '../models/Friend';
 import { RxCross2 } from 'react-icons/rx';
 import { PiUsersThreeBold, PiUserPlusBold, PiHandshakeBold } from 'react-icons/pi';
@@ -35,8 +35,8 @@ const FriendSidebar = ({ className = '', onClose }: { className?: string; onClos
           fetchMyFriends(userId),
           fetchFriendRequests(userId)
         ]);
-        setFriends(myFriends);
-        setRequests(incoming);
+        setFriends(myFriends ?? []);
+        setRequests(incoming ?? []);
       } catch (err) {
         setError('Could not load friends or requests.');
       } finally {
@@ -52,19 +52,19 @@ const FriendSidebar = ({ className = '', onClose }: { className?: string; onClos
 
       try {
         const results = await searchUsers(searchTerm.trim(), userId);
-        setSearchResults(results);
+        setSearchResults(results ?? []);
       } catch (err) {
         console.error('Search failed:', err);
       }
     }, 400);
     return () => clearTimeout(delayDebounce);
-  }, [searchTerm]);
+  }, [searchTerm, userId]);
 
   useEffect(() => {
     const interval = setInterval(async () => {
       try {
         const updatedRequests = await fetchFriendRequests(userId);
-        const newRequests = updatedRequests.filter(r => !requests.some(old => old.id === r.id));
+        const newRequests = (updatedRequests ?? []).filter(r => !requests.some(old => old.id === r.id));
         if (newRequests.length > 0) {
           newRequests.forEach(req =>
             addNotification({
@@ -73,21 +73,21 @@ const FriendSidebar = ({ className = '', onClose }: { className?: string; onClos
               iconUrl: '/trophy.png',
             })
           );
-          setRequests(updatedRequests);
+          setRequests(updatedRequests ?? []);
         }
       } catch (err) {
         console.error('Polling error:', err);
       }
     }, 5000);
     return () => clearInterval(interval);
-  }, [userId, requests]);
+  }, [userId, requests, addNotification]);
 
   const handleAccept = async (id: number) => {
     try {
       await acceptFriendRequest(id);
       setRequests(prev => prev.filter(r => r.id !== id));
       const updated = await fetchMyFriends(userId);
-      setFriends(updated);
+      setFriends(updated ?? []);
     } catch (err) {
       console.error('Accept error:', err);
     }
@@ -138,12 +138,18 @@ const FriendSidebar = ({ className = '', onClose }: { className?: string; onClos
         {loading && <p className="friend-status-msg">Loading friends...</p>}
         {error && <p className="friend-error-msg">{error}</p>}
         <button className="close-btn" onClick={onClose}><RxCross2 size={18} /></button>
-        <input type="text" className="friend-search" placeholder="Search my friends..." />
+        <input
+          type="text"
+          className="friend-search"
+          placeholder="Search my friends..."
+          value={searchTerm}
+          onChange={e => setSearchTerm(e.target.value)}
+        />
       </div>
 
       <div className="friend-section">
         <h3 className="section-title"><PiUsersThreeBold className="section-icon" /> My Friends</h3>
-        {friends.map(friend => (
+        {(friends ?? []).map(friend => (
           <div key={friend.id} className="friend-item">
             <div className="friend-info">
               <img className="friend-avatar" src={getImageSrc(friend.profile.profilePicture)} alt={friend.user.name} />
@@ -159,10 +165,16 @@ const FriendSidebar = ({ className = '', onClose }: { className?: string; onClos
 
       <div className="friend-section">
         <h3 className="section-title"><PiUserPlusBold className="section-icon" /> Add New Friends</h3>
-        <input type="text" className="friend-search" placeholder="Search users..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
-        {searchResults.map(result => {
-          const isAlreadyFriend = friends.some(f => f.user.userId === result.user.userId);
-          const isPending = requests.some(r => r.user.userId === result.user.userId);
+        <input
+          type="text"
+          className="friend-search"
+          placeholder="Search users..."
+          value={searchTerm}
+          onChange={e => setSearchTerm(e.target.value)}
+        />
+        {(searchResults ?? []).map(result => {
+          const isAlreadyFriend = (friends ?? []).some(f => f.user.userId === result.user.userId);
+          const isPending = (requests ?? []).some(r => r.user.userId === result.user.userId);
           return (
             <div key={result.user.userId} className="search-result">
               <div className="friend-info">
@@ -183,7 +195,7 @@ const FriendSidebar = ({ className = '', onClose }: { className?: string; onClos
 
       <div className="friend-section">
         <h3 className="section-title"><PiHandshakeBold className="section-icon" /> Friend Requests</h3>
-        {requests.map(req => (
+        {(requests ?? []).map(req => (
           <div key={req.id} className="request-item">
             <div className="friend-info">
               <img className="friend-avatar" src={getImageSrc(req.profile.profilePicture)} alt={req.user.name} />

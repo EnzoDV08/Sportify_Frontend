@@ -7,6 +7,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 function CreateEvent() {
+  const [error, setError] = useState('');
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [startDateTime, setStartDateTime] = useState('');
@@ -64,7 +65,11 @@ function CreateEvent() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const userId = Number(localStorage.getItem('userId'));
-    if (!userId) return showToast('User not logged in.', 'error');
+    if (!userId) {
+      setError('User not logged in.');
+      showToast('User not logged in.', 'error');
+      return;
+    }
 
     try {
       const cleanedImageUrl = imageUrl.includes('images.unsplash.com')
@@ -99,42 +104,43 @@ function CreateEvent() {
 
   return (
     <div className="create-event-container">
+      {error && <div role="alert" className="error-message">{error}</div>}
       <form className="create-event-form" onSubmit={handleSubmit}>
         <h2>Create a New Event</h2>
 
         <div className="form-group full">
-          <label>Title</label>
-          <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required />
+          <label htmlFor="title">Title</label>
+          <input type="text" id="title" value={title} onChange={(e) => setTitle(e.target.value)} required />
         </div>
 
         <div className="form-group full">
-          <label>Description</label>
-          <textarea value={description} onChange={(e) => setDescription(e.target.value)} />
+          <label htmlFor="description">Description</label>
+          <textarea value={description} id="description" onChange={(e) => setDescription(e.target.value)} />
         </div>
 
         <div className="form-group half">
-          <label>Start Date & Time</label>
-          <input type="datetime-local" value={startDateTime} onChange={(e) => setStartDateTime(e.target.value)} required />
+          <label htmlFor="startDateTime">Start Date & Time</label>
+          <input type="datetime-local" id="startDateTime" value={startDateTime} onChange={(e) => setStartDateTime(e.target.value)} required />
         </div>
 
         <div className="form-group half">
-          <label>End Date & Time</label>
-          <input type="datetime-local" value={endDateTime} onChange={(e) => setEndDateTime(e.target.value)} required />
+          <label htmlFor="endDateTime">End Date & Time</label>
+          <input type="datetime-local" id="endDateTime" value={endDateTime} onChange={(e) => setEndDateTime(e.target.value)} required />
         </div>
 
         <div className="form-group full">
-          <label>Required Items</label>
-          <input type="text" value={requiredItems} onChange={(e) => setRequiredItems(e.target.value)} placeholder="e.g. Water bottle, Shoes" />
+          <label htmlFor="requiredItems">Required Items</label>
+          <input type="text" id="requiredItems" value={requiredItems} onChange={(e) => setRequiredItems(e.target.value)} placeholder="e.g. Water bottle, Shoes" />
         </div>
 
         <div className="form-group full">
-          <label>Location</label>
-          <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} required />
+          <label htmlFor="location">Location</label>
+          <input type="text" id="location" value={location} onChange={(e) => setLocation(e.target.value)} required />
         </div>
 
         <div className="form-group full">
-          <label>Sport Type</label>
-          <select value={sportType} onChange={(e) => setSportType(e.target.value)} required>
+          <label htmlFor="sportType">Sport Type</label>
+          <select id="sportType" value={sportType} onChange={(e) => setSportType(e.target.value)} required>
             <option value="">Select sport</option>
             <option value="Soccer">Soccer</option>
             <option value="Basketball">Basketball</option>
@@ -152,8 +158,8 @@ function CreateEvent() {
         </div>
 
         <div className="form-group half">
-          <label>Type</label>
-          <select value={type} onChange={(e) => setType(e.target.value)} required>
+          <label htmlFor="type">Type</label>
+          <select id="type" value={type} onChange={(e) => setType(e.target.value)} required>
             <option value="">Select type</option>
             <option value="training">Training</option>
             <option value="match">Match</option>
@@ -162,8 +168,8 @@ function CreateEvent() {
         </div>
 
         <div className="form-group half">
-          <label>Visibility</label>
-          <select value={visibility} onChange={(e) => setVisibility(e.target.value)} required>
+          <label htmlFor="visibility">Visibility</label>
+          <select id="visibility" value={visibility} onChange={(e) => setVisibility(e.target.value)} required>
             <option value="">Select visibility</option>
             <option value="public">Public</option>
             <option value="private">Private</option>
@@ -171,9 +177,10 @@ function CreateEvent() {
         </div>
 
         <div className="form-group full">
-          <label>Invite Users</label>
+          <label htmlFor="inviteUsers">Invite Users</label>
           <input
             type="text"
+            id="inviteUsers"
             placeholder="Type a name..."
             value={searchTerm}
             onChange={(e) => {
@@ -213,9 +220,10 @@ function CreateEvent() {
         </div>
 
         <div className="form-group full">
-          <label>Image Search Term</label>
+          <label htmlFor="imageSearch">Image Search Term</label>
           <input
             type="text"
+            id="imageSearch"
             value={imageSearchTerm}
             onChange={(e) => setImageSearchTerm(e.target.value)}
             placeholder="e.g. marathon, soccer"

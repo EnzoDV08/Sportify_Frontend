@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import { fetchProfile } from '../services/api';
 
 
+
 const EventCreator = () => {
   const [form, setForm] = useState({
     title: '',
@@ -390,7 +391,7 @@ setCreatedEvents(prev => prev.filter(e => e.eventId !== eventId));
         <h2 className="text-2xl font-bold text-[#DD8100]">📢 Created Events</h2>
         {loading && (
   <div className="flex justify-center items-center py-10">
-    <span className="loading loading-spinner text-orange-500 loading-lg"></span>
+    <span role="status" className="loading loading-spinner text-orange-500 loading-lg"></span>
   </div>
 )}
 

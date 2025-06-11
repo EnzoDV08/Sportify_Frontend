@@ -71,7 +71,7 @@ const EventsNearby = () => {
 
       {loading ? (
         <div className="flex justify-center py-12">
-          <span className="loading loading-spinner text-orange-500 loading-lg"></span>
+          <span className="loading loading-spinner text-orange-500 loading-lg" role="status"></span>
         </div>
       ) : (
         <div className="nearby-events-list fade-in">

@@ -104,7 +104,7 @@ useEffect(() => {
       const allEvents = await fetchEvents();
       const achievements = await fetchAllAchievements();
 
-      const pastEvents = allEvents
+      const pastEvents = (allEvents || [])
         .filter(event =>
           event.creatorUserId === 2 &&
           new Date(event.endDateTime) < new Date()
@@ -286,7 +286,7 @@ addNotification({
   
 
   const renderEventTable = (data: MockEvent[], title: string, headerColor: string) => (
-    <div className="mt-10">
+    <div className="mt-10" data-testid="past-events-table">
       <h2 className={`text-2xl font-bold mb-4 ${headerColor === '#DD8100' ? 'text-[#dd8100e8]' : 'text-[#BB6E00]'}`}>
         {title}
       </h2>
@@ -484,7 +484,7 @@ const calculateUserPoints = (userId: number): number => {
 
 
 return (
-  <div className="space-y-14 px-6 pb-16 text-white min-h-screen">
+  <div className="space-y-14 px-6 pb-16 text-white min-h-screen" data-testid="past-events-table">
     {/* Filter Bar */}
 <div className="bg-[#1e1e1e] p-4  shadow-lg flex flex-col md:flex-row items-center gap-4 justify-between max-w-6xl mx-auto mt-10 -mb-3 ">
   <input
@@ -568,7 +568,7 @@ return (
 )}
 {isLoading && (
   <div className="flex items-center justify-center py-16">
-    <span className="loading loading-spinner text-orange-500 loading-lg"></span>
+    <span data-testid="loading-spinner" className="loading loading-spinner text-orange-500 loading-lg"></span>
   </div>
 )}
 
