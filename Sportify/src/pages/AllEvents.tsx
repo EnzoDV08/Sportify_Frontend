@@ -220,7 +220,7 @@ function AllEvents() {
                     <span className={`event-visibility ${event.visibility?.toLowerCase()}`}>{event.visibility?.toUpperCase() || 'PUBLIC'}</span>
                   </div>
                   <p className="event-description">{event.description}</p>
-                  <div className="event-location"><FaMapMarkerAlt className="event-icon" /> {event.location}</div>
+                  <div className="event-location"><FaMapMarkerAlt className="all-event-icon" /> {event.location}</div>
                   <div className="hosted-info">
                     <img src={creator?.profilePicture} alt="Host" className="hosted-avatar" />
                     <span className="hosted-by">HOSTED BY {creator?.username?.toUpperCase() || 'UNKNOWN'}</span>
@@ -233,7 +233,7 @@ function AllEvents() {
                         ))}
                       </div>
                       {participantCount > 3 && (
-                        <span className="plus-count"><FaUsers className="event-icon" /> +{participantCount - 3}</span>
+                        <span className="plus-count"><FaUsers className="all-event-icon" /> +{participantCount - 3}</span>
                       )}
                     </div>
                   ) : <div className="no-participants-text">No participants yet</div>}
@@ -242,7 +242,7 @@ function AllEvents() {
                   <div className="event-date-box">
                     <div className="event-date-top">{month}</div>
                     <div className="event-date-middle">{day}</div>
-                    <div className="event-date-bottom">{startTime} – {endTime}</div>
+                    <div className="event-date-bottom">{startTime} - {endTime}</div>
                   </div>
                   <Link to={`/events/${event.eventId}`} className="event-view-btn">View</Link>
                 </div>

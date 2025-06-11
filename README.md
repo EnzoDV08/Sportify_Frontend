@@ -246,6 +246,9 @@ Below are UI mockups that guided the design and development of Sportify:
 ### 🔐 Two Factor Authorization
 ![Friend Sidebar](./ReadMeAssets/mockups/2FA.png)
 
+### 📁 All events Page
+![Friend Sidebar](./ReadMeAssets/mockups/All%20Events.png)
+
 ### 📌 Single Event View
 ![Single Event](./ReadMeAssets/mockups/SingleEventPage.png)
 
