@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "ES2020",      // ← ES2015+ satisfies the bundler requirement
+    "target": "es2020",
+    "outDir": "dist-electron",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": ["electron-main/**/*"]
+}

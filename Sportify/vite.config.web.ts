@@ -6,6 +6,7 @@ import svgr from 'vite-plugin-svgr';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
+  base: './',           // relative paths for file:// loading
   plugins: [
     react(),
     envCompatible(),
@@ -14,6 +15,8 @@ export default defineConfig({
     tailwindcss(),
   ],
   build: {
-    outDir: 'dist',
+    outDir: 'dist-web',  // ← match what Electron expects
+    emptyOutDir: true,   // wipe old builds
+    // no need to re-specify plugins here
   },
 });
